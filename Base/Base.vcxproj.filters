@@ -34,6 +34,9 @@
     <Filter Include="DepthFBO">
       <UniqueIdentifier>{3e16b3eb-3ece-4238-80a6-b2862d789eb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SpatialPartition">
+      <UniqueIdentifier>{85e8efcc-f2a4-4ba3-8149-ef62bf3f6fa8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -93,6 +96,12 @@
     <ClCompile Include="Source\DepthFBO\DepthFBO.cpp">
       <Filter>DepthFBO</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp">
+      <Filter>SpatialPartition</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SpatialPartition\SpatialPartitionManager.cpp">
+      <Filter>SpatialPartition</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -148,6 +157,12 @@
     </ClInclude>
     <ClInclude Include="Source\DepthFBO\DepthFBO.h">
       <Filter>DepthFBO</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SpatialPartition\SpatialPartition.h">
+      <Filter>SpatialPartition</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SpatialPartition\SpatialPartitionManager.h">
+      <Filter>SpatialPartition</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

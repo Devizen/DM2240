@@ -25,6 +25,8 @@
     <ClCompile Include="Source\Projectile\Projectile.cpp" />
     <ClCompile Include="Source\SceneText.cpp" />
     <ClCompile Include="Source\SkyBox\SkyBoxEntity.cpp" />
+    <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp" />
+    <ClCompile Include="Source\SpatialPartition\SpatialPartitionManager.cpp" />
     <ClCompile Include="Source\SpriteEntity.cpp" />
     <ClCompile Include="Source\Terrain\LoadHmap.cpp" />
     <ClCompile Include="Source\TextEntity.cpp" />
@@ -45,6 +47,8 @@
     <ClInclude Include="Source\Projectile\Projectile.h" />
     <ClInclude Include="Source\SceneText.h" />
     <ClInclude Include="Source\SkyBox\SkyBoxEntity.h" />
+    <ClInclude Include="Source\SpatialPartition\SpatialPartition.h" />
+    <ClInclude Include="Source\SpatialPartition\SpatialPartitionManager.h" />
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\Terrain\LoadHmap.h" />
     <ClInclude Include="Source\TextEntity.h" />

@@ -29,6 +29,10 @@
 #include "EntityTypes\EntityTypes.h"
 /*Shadow*/
 #include "DepthFBO\DepthFBO.h"
+/*Spatial Partitioning*/
+#include "SpatialPartition\SpatialPartition.h"
+#include "SpatialPartition\SpatialPartitionManager.h"
+
 #include <iostream>
 using namespace std;
 
@@ -198,6 +202,8 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("GRASS_DARKGREEN")->textureID[0] = LoadTGA("Image//grass_darkgreen.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("GEO_GRASS_LIGHTGREEN", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("GEO_GRASS_LIGHTGREEN")->textureID[0] = LoadTGA("Image//grass_lightgreen.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("W_GRASS", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("W_GRASS")->textureID[0] = LoadTGA("Image//WORLD//W_GRASS.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_FRONT", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BACK", Color(1, 1, 1), 1.f);
@@ -230,12 +236,12 @@ void SceneText::Init()
 
 	GenericEntity* aSphere = Create::Entity("sphere", Vector3(0.f, 20.f, 0.f));
 
-	MeshBuilder::GetInstance()->GenerateQuad("floor", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("floor")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
-	GenericEntity* aQuad = Create::Entity("floor", Vector3(0.f, -5.f, 0.f));
-	aQuad->SetScale(Vector3(100.f, 100.f, 1.f));
-	aQuad->SetRotateAngle(-90.f);
-	aQuad->SetRotateAxis(Vector3(1.f, 0.f, 0.f));
+	//MeshBuilder::GetInstance()->GenerateQuad("floor", Color(1, 1, 1), 1.f);
+	//MeshBuilder::GetInstance()->GetMesh("floor")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
+	//GenericEntity* aQuad = Create::Entity("floor", Vector3(0.f, -5.f, 0.f));
+	//aQuad->SetScale(Vector3(100.f, 100.f, 1.f));
+	//aQuad->SetRotateAngle(-90.f);
+	//aQuad->SetRotateAxis(Vector3(1.f, 0.f, 0.f));
 
 	// Create entities into the scene
 	Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
@@ -250,21 +256,25 @@ void SceneText::Init()
 											 "SKYBOX_LEFT", "SKYBOX_RIGHT",
 											 "SKYBOX_TOP", "SKYBOX_BOTTOM");
 
-	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
+	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
+	groundEntity = Create::Ground("W_GRASS", "W_GRASS");
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, -10, 0));
-	groundEntity->SetScale(Vector3(100.0f, 100.0f, 100.0f));
+	groundEntity->SetScale(Vector3(200.0f, 200.0f, 200.0f));
 	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
 	playerInfo->SetTerrain(groundEntity);
+
+	/*Create spatial partitions with ground size.*/
+	CSpatialPartitionManager::GetInstance()->Init(10, static_cast<unsigned>(groundEntity->GetScale().x), playerInfo);
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
 	float fontSize = 25.0f;
 	float halfFontSize = fontSize / 2.0f;
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
-		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,1.0f,0.0f));
+		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,0.0f,0.0f));
 	}
 	textObj[0]->SetText("HELLO WORLD");
 }
@@ -366,6 +376,10 @@ void SceneText::Update(double dt)
 	ss1.precision(4);
 	ss1 << "Player:" << playerInfo->GetPos();
 	textObj[2]->SetText(ss1.str());
+
+	std::ostringstream ss2;
+	ss2 << "Player in Partition: " << CSpatialPartitionManager::GetInstance()->GetPlayerGrid();
+	textObj[3]->SetText(ss2.str());
 }
 
 void SceneText::Render()
