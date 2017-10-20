@@ -12,6 +12,9 @@
     <Filter Include="Collider">
       <UniqueIdentifier>{512a2aec-0fb3-4599-86d8-e551c7edff75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{b83c935a-2b92-4066-a2eb-2e0d423d9ff8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\MatrixStack.cpp">
@@ -79,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="Source\Mesh.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Manager\CollisionManager.cpp">
+      <Filter>Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +168,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mesh.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Manager\CollisionManager.h">
+      <Filter>Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

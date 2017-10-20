@@ -181,6 +181,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
+	MeshBuilder::GetInstance()->GenerateLine("redline", Color(1, 0, 0));
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
 	MeshBuilder::GetInstance()->GetMesh("text")->textureID[0] = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
@@ -253,7 +254,7 @@ void SceneText::Init()
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, -10, 0));
 	groundEntity->SetScale(Vector3(100.0f, 100.0f, 100.0f));
-	groundEntity->SetGrids(Vector3(10.0f, 1.0f, 10.0f));
+	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
 	playerInfo->SetTerrain(groundEntity);
 
 	// Setup the 2D entities
@@ -417,6 +418,7 @@ void SceneText::RenderPassGPass(void)
 	DepthFBO::GetInstance()->m_lightDepthView.SetToLookAt(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z, 0, 0, 0, 0, 1, 0);
 
 	RenderWorld();
+	EntityManager::GetInstance()->Render();
 }
 
 void SceneText::RenderPassMain(void)
@@ -442,6 +444,7 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 	EntityManager::GetInstance()->Render();
+	RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 1, 1));
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;

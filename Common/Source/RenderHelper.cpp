@@ -5,6 +5,7 @@
 #include "MatrixStack.h"
 #include "DepthFBO\DepthFBO.h"
 #include "GraphicsManager.h"
+#include "MeshBuilder.h"
 
 #define MAX_TEXTURES 8
 
@@ -235,4 +236,29 @@ void RenderHelper::RenderText(Mesh* _mesh, const std::string& _text, Color _colo
 
 	GraphicsManager::GetInstance()->UnbindTexture(0);
 	currProg->UpdateInt("textEnabled", 0);
+}
+
+void RenderHelper::DrawLine(Vector3 start, Vector3 end, Color color)
+{
+	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+
+	Vector3 dir = end - start;
+	Vector3 rotate_about(0, 0, 1);
+	float angle = 0;
+	try {
+		rotate_about = Vector3(1, 0, 0).Cross(dir.Normalized()).Normalize();
+		angle = Vector3(1, 0, 0).Dot(dir.Normalized());
+
+		angle = Math::RadianToDegree(acos(angle));
+	}
+	catch (DivideByZero) {
+		angle = 0;
+	}
+	ms.PushMatrix();
+	ms.Translate(dir * 0.5f + start);
+	ms.Rotate(45, rotate_about);
+	ms.Scale(dir.Length());
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("redline"));
+	ms.PopMatrix();
+	
 }
