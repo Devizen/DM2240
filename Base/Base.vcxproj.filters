@@ -37,6 +37,9 @@
     <Filter Include="SpatialPartition">
       <UniqueIdentifier>{85e8efcc-f2a4-4ba3-8149-ef62bf3f6fa8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MasterEntityManager">
+      <UniqueIdentifier>{3600928f-28d2-4234-88c7-ba4469867120}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -105,6 +108,9 @@
     <ClCompile Include="Source\SpatialPartition\PartitionInfo.cpp">
       <Filter>SpatialPartition</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MasterEntityManager\MasterEntityManager.cpp">
+      <Filter>MasterEntityManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -169,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="Source\SpatialPartition\PartitionInfo.h">
       <Filter>SpatialPartition</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MasterEntityManager\MasterEntityManager.h">
+      <Filter>MasterEntityManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

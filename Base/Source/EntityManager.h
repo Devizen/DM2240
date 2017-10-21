@@ -1,15 +1,16 @@
 #ifndef ENTITY_MANAGER_H
 #define ENTITY_MANAGER_H
 
-#include "SingletonTemplate.h"
 #include <list>
+#include <vector>
 #include "Vector3.h"
 
 class EntityBase;
+class CMasterEntityManager;
 
-class EntityManager : public Singleton<EntityManager>
+class EntityManager
 {
-	friend Singleton<EntityManager>;
+	friend CMasterEntityManager;
 public:
 	void Update(double _dt);
 	void Render();
@@ -31,7 +32,9 @@ private:
 	// Check if any Collider is colliding with another Collider
 	bool CheckForCollision(void);
 
-	std::list<EntityBase*> entityList;
+	/*Entity list to store entity that is in partition.*/
+	typedef std::vector<EntityBase*> EntityList;
+	EntityList entityList;
 };
 
 #endif // ENTITY_MANAGER_H

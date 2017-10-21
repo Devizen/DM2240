@@ -95,6 +95,23 @@ unsigned CSpatialPartitionManager::GetPlayerGrid(void)
 	return grid;
 }
 
+unsigned CSpatialPartitionManager::GetEntityGrid(Vector3 _position)
+{
+	unsigned grid = 0;
+
+	for (std::vector<Partition>::iterator it = partitionList.begin(); it != partitionList.end(); ++it)
+	{
+		if (_position >= it->second->GetMinBoundary() &&
+			_position <= it->second->GetMaxBoundary())
+		{
+			grid = std::stoi(it->first);
+			std::cout << "CHECKING" << std::endl;
+			break;
+		}
+	}
+	return grid;
+}
+
 CSpatialPartition * CSpatialPartitionManager::GetPartition(unsigned partitionNum)
 {
 	return partitionList[partitionNum].second;

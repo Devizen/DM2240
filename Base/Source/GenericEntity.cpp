@@ -5,7 +5,7 @@
 #include "RenderHelper.h"
 /*For categorising entity types.*/
 #include "EntityTypes\EntityTypes.h"
-
+#include "MasterEntityManager\MasterEntityManager.h"
 GenericEntity::GenericEntity(Mesh* _modelMesh)
 	: modelMesh(_modelMesh)
 	, entityType(ECEntityTypes::OTHERS)
@@ -74,6 +74,9 @@ GenericEntity* Create::Entity(	const std::string& _meshName,
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetCollider(false);
-	EntityManager::GetInstance()->AddEntity(result);
+	if (_meshName == "TERRAIN")
+		CMasterEntityManager::GetInstance()->AddStaticEntity(result);
+	else
+		CMasterEntityManager::GetInstance()->AddEntity(result);
 	return result;
 }

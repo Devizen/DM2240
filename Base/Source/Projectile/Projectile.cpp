@@ -4,6 +4,7 @@
 #include "../EntityManager.h"
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
+#include "../MasterEntityManager\MasterEntityManager.h"
 
 CProjectile::CProjectile(void)
 	: modelMesh(NULL)
@@ -158,7 +159,7 @@ CProjectile* Create::Projectile(const std::string& _meshName,
 	result->SetStatus(true);
 	result->SetCollider(true);
 	result->SetSource(_source);
-	EntityManager::GetInstance()->AddEntity(result);
+	CMasterEntityManager::GetInstance()->AddEntity(result);
 
 	return result;
 }

@@ -3,6 +3,7 @@
 #include "EntityManager.h"
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
+#include "MasterEntityManager\MasterEntityManager.h"
 
 GroundEntity::GroundEntity(Mesh* _modelMesh1, Mesh* _modelMesh2) 
 	: position(0.0f, 0.0f, 0.0f)
@@ -97,6 +98,6 @@ GroundEntity* Create::Ground(const std::string& _meshName1, const std::string& _
 		return nullptr;
 
 	GroundEntity* result = new GroundEntity(modelMesh1, modelMesh2);
-	EntityManager::GetInstance()->AddEntity(result);
+	CMasterEntityManager::GetInstance()->AddStaticEntity(result);
 	return result;
 }

@@ -3,6 +3,7 @@
 #include "../EntityManager.h"
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
+#include "../MasterEntityManager\MasterEntityManager.h"
 
 SkyBoxEntity::SkyBoxEntity(void)
 	: size(1000.0f, 1000.0f, 1000.0f)
@@ -133,6 +134,6 @@ SkyBoxEntity* Create::SkyBox(	const std::string& _meshName0,
 	result->SetMesh(SkyBoxEntity::TOP, modelMesh4);
 	result->SetMesh(SkyBoxEntity::BOTTOM, modelMesh5);
 
-	EntityManager::GetInstance()->AddEntity(result);
+	CMasterEntityManager::GetInstance()->AddStaticEntity(result);
 	return result;
 }

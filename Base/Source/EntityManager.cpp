@@ -2,6 +2,9 @@
 #include "EntityBase.h"
 #include "Collider/Collider.h"
 
+/*Spatial Partition Manager for checking which entityList to push entity to.*/
+#include "SpatialPartition\SpatialPartitionManager.h"
+
 #include <iostream>
 using namespace std;
 
@@ -9,15 +12,14 @@ using namespace std;
 void EntityManager::Update(double _dt)
 {
 	// Update all entities
-	std::list<EntityBase*>::iterator it, end;
-	end = entityList.end();
-	for (it = entityList.begin(); it != end; ++it)
+	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
 		(*it)->Update(_dt);
 	}
 
 	// Clean up entities that are done
-	it = entityList.begin();
+	EntityList::iterator it = entityList.begin();
+	EntityList::iterator end = entityList.end();
 	while (it != end)
 	{
 		if ((*it)->IsDone())
@@ -38,9 +40,7 @@ void EntityManager::Update(double _dt)
 void EntityManager::Render()
 {
 	// Render all entities
-	std::list<EntityBase*>::iterator it, end;
-	end = entityList.end();
-	for (it = entityList.begin(); it != end; ++it)
+	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
 		(*it)->Render();
 	}
@@ -50,9 +50,7 @@ void EntityManager::Render()
 void EntityManager::RenderUI()
 {
 	// Render all entities UI
-	std::list<EntityBase*>::iterator it, end;
-	end = entityList.end();
-	for (it = entityList.begin(); it != end; ++it)
+	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
 		(*it)->RenderUI();
 	}
@@ -68,7 +66,7 @@ void EntityManager::AddEntity(EntityBase* _newEntity)
 bool EntityManager::RemoveEntity(EntityBase* _existingEntity)
 {
 	// Find the entity's iterator
-	std::list<EntityBase*>::iterator findIter = std::find(entityList.begin(), entityList.end(), _existingEntity);
+	EntityList::iterator findIter = std::find(entityList.begin(), entityList.end(), _existingEntity);
 
 	// Delete the entity if found
 	if (findIter != entityList.end())

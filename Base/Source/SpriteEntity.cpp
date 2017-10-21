@@ -3,6 +3,7 @@
 #include "EntityManager.h"
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
+#include "MasterEntityManager\MasterEntityManager.h"
 
 SpriteEntity::SpriteEntity(Mesh* _modelMesh) :
 modelMesh(_modelMesh),
@@ -57,7 +58,7 @@ SpriteEntity* Create::Sprite2DObject(const std::string& _meshName, const Vector3
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetTextRenderMode(SpriteEntity::MODE_2D);
-	EntityManager::GetInstance()->AddEntity(result);
+	CMasterEntityManager::GetInstance()->AddEntity(result);
 	return result;
 }
 
@@ -71,6 +72,6 @@ SpriteEntity* Create::Sprite3DObject(const std::string& _meshName, const Vector3
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetTextRenderMode(SpriteEntity::MODE_3D);
-	EntityManager::GetInstance()->AddEntity(result);
+	CMasterEntityManager::GetInstance()->AddEntity(result);
 	return result;
 }
