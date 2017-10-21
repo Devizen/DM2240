@@ -9,6 +9,8 @@
 GenericEntity::GenericEntity(Mesh* _modelMesh)
 	: modelMesh(_modelMesh)
 	, entityType(ECEntityTypes::OTHERS)
+	, timer(0.f)
+	, translateDirection(false)
 {
 }
 
@@ -19,6 +21,18 @@ GenericEntity::~GenericEntity()
 void GenericEntity::Update(double _dt)
 {
 	// Does nothing here, can inherit & override or create your own version of this class :D
+	timer += _dt;
+
+	if (timer > 1.f)
+	{
+		translateDirection = translateDirection ? false : true;
+		timer = 0.f;
+	}
+
+	if (!translateDirection)
+		position = Vector3(position.x + (_dt * 10.f), position.y, position.z);
+	else
+		position = Vector3(position.x - (_dt * 10.f), position.y, position.z);
 }
 
 void GenericEntity::Render()

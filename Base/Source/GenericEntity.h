@@ -24,6 +24,10 @@ public:
 private:
 	Mesh* modelMesh;
 	ECEntityTypes entityType;
+
+	/*Demo-ing Spatial Partitioning.*/
+	float timer;
+	bool translateDirection;
 };
 
 namespace Create
