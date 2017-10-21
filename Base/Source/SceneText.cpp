@@ -266,6 +266,12 @@ void SceneText::Init()
 
 	/*Create spatial partitions with ground size.*/
 	CSpatialPartitionManager::GetInstance()->Init(10, static_cast<unsigned>(groundEntity->GetScale().x), playerInfo);
+	/*Set partition infomation that is related to player.
+	Which partition the player is on.
+	What is the minimum and maximum boundary of the partition.*/
+	playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
+	playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMinBoundary());
+	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMaxBoundary());
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -377,8 +383,16 @@ void SceneText::Update(double dt)
 	ss1 << "Player:" << playerInfo->GetPos();
 	textObj[2]->SetText(ss1.str());
 
+	/*Check which partition is the player in.*/
+	if (playerInfo->CheckBoundary(playerInfo->GetPos()))
+	{
+		playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
+		playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMinBoundary());
+		playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMaxBoundary());
+	}
+
 	std::ostringstream ss2;
-	ss2 << "Player in Partition: " << CSpatialPartitionManager::GetInstance()->GetPlayerGrid();
+	ss2 << "Player in Partition: " << playerInfo->GetPartition();
 	textObj[3]->SetText(ss2.str());
 }
 

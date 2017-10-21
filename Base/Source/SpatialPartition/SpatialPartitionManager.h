@@ -16,6 +16,7 @@ public:
 	static CSpatialPartitionManager* GetInstance(void);
 	void Init(unsigned numOfPartition, unsigned sizeOfSpace, CPlayerInfo* _player);
 	unsigned GetPlayerGrid(void);
+	CSpatialPartition* GetPartition(unsigned partitionNum);
 private:
 	typedef std::pair<std::string, CSpatialPartition*> Partition;
 	std::vector<Partition>partitionList;

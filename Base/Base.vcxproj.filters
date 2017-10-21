@@ -102,6 +102,9 @@
     <ClCompile Include="Source\SpatialPartition\SpatialPartitionManager.cpp">
       <Filter>SpatialPartition</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SpatialPartition\PartitionInfo.cpp">
+      <Filter>SpatialPartition</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -162,6 +165,9 @@
       <Filter>SpatialPartition</Filter>
     </ClInclude>
     <ClInclude Include="Source\SpatialPartition\SpatialPartitionManager.h">
+      <Filter>SpatialPartition</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SpatialPartition\PartitionInfo.h">
       <Filter>SpatialPartition</Filter>
     </ClInclude>
   </ItemGroup>

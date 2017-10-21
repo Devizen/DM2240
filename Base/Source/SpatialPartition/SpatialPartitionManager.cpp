@@ -43,12 +43,12 @@ void CSpatialPartitionManager::Init(unsigned numOfPartition, unsigned sizeOfSpac
 			partitionList.push_back(Partition(indexOfPartition, partition));
 			_position = Vector3(_position.x + gridSize, _position.y, _position.z);
 			_minBoundary = _position;
-			_maxBoundary = Vector3(_position.x + gridSize, _position.y + gridSize, _position.z + gridSize);
+			_maxBoundary = Vector3(_position.x + gridSize, _position.y + sizeOfSpace, _position.z + gridSize);
 		}
 		_position.x = startPoint.x;
 		_position.z += gridSize;
 		_minBoundary = _position;
-		_maxBoundary = Vector3(_position.x + gridSize, _position.y + gridSize, _position.z + gridSize);
+		_maxBoundary = Vector3(_position.x + gridSize, _position.y + sizeOfSpace, _position.z + gridSize);
 	}
 	std::cout << "Size of List: " << partitionList.size() << std::endl;
 	//-100, -100 : 100, 100
@@ -88,8 +88,14 @@ unsigned CSpatialPartitionManager::GetPlayerGrid(void)
 			player->GetPos() <= it->second->GetMaxBoundary())
 		{
 			grid = std::stoi(it->first);
+			std::cout << "CHECKING" << std::endl;
 			break;
 		}
 	}
 	return grid;
+}
+
+CSpatialPartition * CSpatialPartitionManager::GetPartition(unsigned partitionNum)
+{
+	return partitionList[partitionNum].second;
 }
