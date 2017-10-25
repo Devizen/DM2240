@@ -36,6 +36,8 @@ public:
 	// Set the flag to indicate if this entity has a collider class parent
 	virtual void SetCollider(const bool _value);
 
+	//Get Type, Using for Collision check
+	ECEntityTypes GetEntityType() { return entityType; }
 protected:
 	Vector3 position;
 	float rotateAngle;

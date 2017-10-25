@@ -5,7 +5,7 @@
 #include "../WeaponInfo/WeaponInfo.h"
 #include "../SpatialPartition/PartitionInfo.h"
 
-class CPlayerInfo : public CPartitionInfo
+class CPlayerInfo : public CPartitionInfo, public EntityBase
 {
 protected:
 	static CPlayerInfo *s_instance;

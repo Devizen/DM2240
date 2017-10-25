@@ -2,7 +2,9 @@
 #define MASTERENTITYMANAGER_H
 
 #include <vector>
+#include <map>
 
+class CPartitionInfo;
 class EntityBase;
 class EntityManager;
 class CMasterEntityManager
@@ -21,6 +23,7 @@ public:
 	void RenderStaticUI(void);
 
 	void AddEntity(EntityBase* _newEntity);
+	void RemoveEntity(EntityBase* _newEntity, CPartitionInfo* _partitionInfo);
 	void AddStaticEntity(EntityBase* _newEntity);
 
 	/*Setter*/
@@ -39,6 +42,12 @@ private:
 
 	/*Toggle Spatial Partitioning.*/
 	bool spatialPartitioning;
+
+	/*Check if objects belong in the correct partition base on position*/
+	void CheckPartition(EntityBase * _entity, CPartitionInfo* _partitionInfo);
+	/*Im thinking we need a master list of entities so we can easily remove our entity from its manager*/
+	//Should i use map? is it faster? im thinking its slower but im not sure
+	std::map<EntityBase*, EntityManager*> allEntities;
 protected:
 };
 
