@@ -6,7 +6,6 @@
 #include "Mtx44.h"
 #include "../Projectile/Projectile.h"
 #include "../WeaponInfo/Pistol.h"
-#include "../MasterEntityManager/MasterEntityManager.h"
 
 // Allocating and initializing CPlayerInfo's static data member.  
 // The pointer is allocated but not the object's constructor.
@@ -63,9 +62,6 @@ void CPlayerInfo::Init(void)
 	// Set the pistol as the primary weapon
 	primaryWeapon = new CPistol();
 	primaryWeapon->Init();
-
-	//Put this guy inside partion
-	//CMasterEntityManager::GetInstance()->AddEntity(this);
 }
 
 // Returns true if the player is on ground
