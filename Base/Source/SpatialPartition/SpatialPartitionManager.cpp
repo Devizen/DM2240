@@ -116,3 +116,11 @@ CSpatialPartition * CSpatialPartitionManager::GetPartition(unsigned partitionNum
 {
 	return partitionList[partitionNum].second;
 }
+
+bool CSpatialPartitionManager::IsEntityInCorrectGrid(CPartitionInfo * partitionInfo)
+{
+	CSpatialPartition* myPartition = partitionList.at(partitionInfo->GetPartition()).second;
+	return (partitionInfo->GetPosition() >= myPartition->GetMinBoundary() &&
+		partitionInfo->GetPosition() <= myPartition->GetMaxBoundary());
+	
+}

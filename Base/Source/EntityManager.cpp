@@ -79,6 +79,25 @@ bool EntityManager::RemoveEntity(EntityBase* _existingEntity)
 	return false;
 }
 
+void EntityManager::UpdateCollision()
+{
+	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); ++it)
+	{
+		if (!(*it)->HasCollider())
+			continue;
+		for (EntityList::iterator it2 = it + 1; it2 != entityList.end(); ++it2)
+		{
+			if (!(*it2)->HasCollider())
+				continue;
+
+			//Check if same Type
+			if ((*it)->GetEntityType() == (*it2)->GetEntityType())
+				continue;
+
+		}
+	}
+}
+
 // Constructor
 EntityManager::EntityManager()
 {
@@ -113,4 +132,12 @@ bool EntityManager::CheckAABBCollision(EntityBase *ThisEntity, EntityBase *ThatE
 bool EntityManager::CheckForCollision(void)
 {
 	return false;
+}
+
+void EntityManager::CollisionResponse(EntityBase * left, EntityBase * right)
+{
+	//Add all response here
+
+	//CPlayerInfo* player = dynamic_cast<CPlayerInfo*>(left);
+
 }

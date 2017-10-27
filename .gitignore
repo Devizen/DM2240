@@ -38,4 +38,8 @@
 *.ilk
 *.aps
 *.opendb
+*.lastbuildstate
+*.iobj
+*.suo
+*.tlog
 *.db

@@ -19,6 +19,7 @@ public:
 	void AddEntity(EntityBase* _newEntity);
 	bool RemoveEntity(EntityBase* _existingEntity);
 
+	void UpdateCollision();
 private:
 	EntityManager();
 	virtual ~EntityManager();
@@ -35,6 +36,8 @@ private:
 	/*Entity list to store entity that is in partition.*/
 	typedef std::vector<EntityBase*> EntityList;
 	EntityList entityList;
+
+	void CollisionResponse(EntityBase* left, EntityBase* right);
 };
 
 #endif // ENTITY_MANAGER_H

@@ -5,7 +5,11 @@
 #include "../WeaponInfo/WeaponInfo.h"
 #include "../SpatialPartition/SpatialPartition.h"
 
+<<<<<<< HEAD
 class CPlayerInfo : public CSpatialPartition
+=======
+class CPlayerInfo : public CPartitionInfo, public EntityBase
+>>>>>>> 39ee8cff41dcba3760d99b3916aeba7187435b80
 {
 protected:
 	static CPlayerInfo *s_instance;
