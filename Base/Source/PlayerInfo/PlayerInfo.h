@@ -4,12 +4,9 @@
 #include "../GroundEntity.h"
 #include "../WeaponInfo/WeaponInfo.h"
 #include "../SpatialPartition/SpatialPartition.h"
+#include "Collider\Collider.h"
 
-<<<<<<< HEAD
-class CPlayerInfo : public CSpatialPartition
-=======
-class CPlayerInfo : public CPartitionInfo, public EntityBase
->>>>>>> 39ee8cff41dcba3760d99b3916aeba7187435b80
+class CPlayerInfo : public CSpatialPartition, public EntityBase, public CCollider
 {
 protected:
 	static CPlayerInfo *s_instance;

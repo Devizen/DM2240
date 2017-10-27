@@ -2,6 +2,7 @@
 #include "SpatialPartition.h"
 #include "../PlayerInfo/PlayerInfo.h"
 #include <iostream>
+#include "EntityBase.h"
 
 CSpatialPartitionManager* CSpatialPartitionManager::s_instance = 0;
 
@@ -117,10 +118,10 @@ CSpatialPartition * CSpatialPartitionManager::GetPartition(unsigned partitionNum
 	return partitionList[partitionNum].second;
 }
 
-bool CSpatialPartitionManager::IsEntityInCorrectGrid(CPartitionInfo * partitionInfo)
+bool CSpatialPartitionManager::IsEntityInCorrectGrid(EntityBase * entity)
 {
-	CSpatialPartition* myPartition = partitionList.at(partitionInfo->GetPartition()).second;
-	return (partitionInfo->GetPosition() >= myPartition->GetMinBoundary() &&
-		partitionInfo->GetPosition() <= myPartition->GetMaxBoundary());
-	
+	CSpatialPartition* myPartition = dynamic_cast<CSpatialPartition*>(entity);
+	return (entity->GetPosition() >= myPartition->GetMinBoundary() &&
+		entity->GetPosition() <= myPartition->GetMaxBoundary());
+	return false;
 }

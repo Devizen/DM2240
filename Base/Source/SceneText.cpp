@@ -234,11 +234,11 @@ void SceneText::Init()
 	Which partition the player is on.
 	What is the minimum and maximum boundary of the partition.*/
 	playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
-	playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMinBoundary());
-	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMaxBoundary());
+	playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMinBoundary());
+	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMaxBoundary());
 	/*Create the same amount of entity manager for each partition.*/
 	CMasterEntityManager::GetInstance()->Init(CSpatialPartitionManager::GetInstance()->GetPartitionCount());
-	CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition());
+	CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
 
 	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
 	{
@@ -277,7 +277,13 @@ void SceneText::Init()
 		//Create::Entity("cube", position, Vector3(1.f, 1.f, 1.f));
 		///*Left bottom*/
 		//position = Vector3(position.x - gridSize, position.y, position.z);
-		Create::Entity("Chair", position, Vector3(1.f, 1.f, 1.f));
+		EntityBase* chair = Create::Entity("Chair", position, Vector3(1.f, 1.f, 1.f));
+		chair->SetEntityType(ECEntityTypes::OBJECT);
+		CMasterEntityManager::GetInstance()->AddEntity(chair);
+
+		//EntityBase* cube = Create::Entity("Cube", position, Vector3(0.8f, 0.8f, 0.8f));
+		//cube->SetEntityType(ECEntityTypes::OTHERS);
+		//CMasterEntityManager::GetInstance()->AddEntity(cube);
 	}
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
@@ -436,14 +442,15 @@ void SceneText::Update(double dt)
 	/*Check which partition is the player in.*/
 	if (playerInfo->CheckBoundary(playerInfo->GetPos()))
 	{
+		playerInfo->ClearPartition();
 		playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
-		playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMinBoundary());
-		playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMaxBoundary());
-		CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition());
+		playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMinBoundary());
+		playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMaxBoundary());
+		CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
 	}
 
 	std::ostringstream ss2;
-	ss2 << "Player in Partition:" << playerInfo->GetPartition();
+	ss2 << "Player in Partition:" << playerInfo->GetPartition().front();
 	textObj[3]->SetText(ss2.str());
 
 	std::ostringstream ss3;

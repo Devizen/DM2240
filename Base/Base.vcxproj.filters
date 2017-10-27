@@ -137,9 +137,6 @@
     <ClInclude Include="Source\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\PlayerInfo\PlayerInfo.h">
-      <Filter>PlayerInfo</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Projectile\Projectile.h">
       <Filter>Projectile</Filter>
     </ClInclude>
@@ -178,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="Source\MasterEntityManager\MasterEntityManager.h">
       <Filter>MasterEntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerInfo\PlayerInfo.h">
+      <Filter>PlayerInfo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

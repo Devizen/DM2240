@@ -38,6 +38,7 @@ public:
 
 	//Get Type, Using for Collision check
 	ECEntityTypes GetEntityType() { return entityType; }
+	void SetEntityType(ECEntityTypes type) { this->entityType = type; }
 protected:
 	Vector3 position;
 	float rotateAngle;

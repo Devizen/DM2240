@@ -18,22 +18,22 @@ void EntityManager::Update(double _dt)
 	}
 
 	// Clean up entities that are done
-	EntityList::iterator it = entityList.begin();
-	EntityList::iterator end = entityList.end();
-	while (it != end)
-	{
-		if ((*it)->IsDone())
-		{
-			// Delete if done
-			delete *it;
-			it = entityList.erase(it);
-		}
-		else
-		{
-			// Move on otherwise
-			++it;
-		}
-	}
+	//EntityList::iterator it = entityList.begin();
+	//EntityList::iterator end = entityList.end();
+	//while (it != end)
+	//{
+	//	if ((*it)->IsDone())
+	//	{
+	//		// Delete if done
+	//		delete *it;
+	//		it = entityList.erase(it);
+	//	}
+	//	else
+	//	{
+	//		// Move on otherwise
+	//		++it;
+	//	}
+	//}
 }
 
 // Render all entities
@@ -71,7 +71,7 @@ bool EntityManager::RemoveEntity(EntityBase* _existingEntity)
 	// Delete the entity if found
 	if (findIter != entityList.end())
 	{
-		delete *findIter;
+		//delete *findIter;
 		findIter = entityList.erase(findIter);
 		return true;	
 	}
@@ -94,6 +94,7 @@ void EntityManager::UpdateCollision()
 			if ((*it)->GetEntityType() == (*it2)->GetEntityType())
 				continue;
 
+			
 		}
 	}
 }
@@ -139,5 +140,6 @@ void EntityManager::CollisionResponse(EntityBase * left, EntityBase * right)
 	//Add all response here
 
 	//CPlayerInfo* player = dynamic_cast<CPlayerInfo*>(left);
+
 
 }
