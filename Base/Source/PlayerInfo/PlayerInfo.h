@@ -3,9 +3,9 @@
 #include "../FPSCamera.h"
 #include "../GroundEntity.h"
 #include "../WeaponInfo/WeaponInfo.h"
-#include "../SpatialPartition/PartitionInfo.h"
+#include "../SpatialPartition/SpatialPartition.h"
 
-class CPlayerInfo : public CPartitionInfo
+class CPlayerInfo : public CSpatialPartition
 {
 protected:
 	static CPlayerInfo *s_instance;
