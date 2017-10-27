@@ -30,9 +30,9 @@ void GenericEntity::Update(double _dt)
 	}
 
 	if (!translateDirection)
-		position = Vector3(position.x + (_dt * 10.f), position.y, position.z);
+		position = Vector3(position.x, position.y + (_dt * 10.f), position.z);
 	else
-		position = Vector3(position.x - (_dt * 10.f), position.y, position.z);
+		position = Vector3(position.x, position.y - (_dt * 10.f), position.z);
 }
 
 void GenericEntity::Render()

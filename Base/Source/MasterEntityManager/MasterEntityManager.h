@@ -28,6 +28,7 @@ public:
 
 	/*Setter*/
 	void SetPartitionNum(unsigned _partitionNum) { partitionNum = _partitionNum; }
+	/*Turn Spatial Partitioning on and off.*/
 	void SetToggle(void) { spatialPartitioning = spatialPartitioning ? false : true; }
 
 	/*Getter*/

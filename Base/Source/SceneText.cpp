@@ -196,9 +196,9 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
 	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
 	MeshBuilder::GetInstance()->GenerateCone("cone", Color(0.5f, 1, 0.3f), 36, 10.f, 10.f);
-	MeshBuilder::GetInstance()->GenerateCube("cube", Color(1.0f, 1.0f, 0.0f), 1.0f);
 	MeshBuilder::GetInstance()->GetMesh("cone")->material.kDiffuse.Set(0.99f, 0.99f, 0.99f);
 	MeshBuilder::GetInstance()->GetMesh("cone")->material.kSpecular.Set(0.f, 0.f, 0.f);
+	MeshBuilder::GetInstance()->GenerateCube("cube", Color(1.0f, 1.0f, 1.0f), 1.0f);
 	MeshBuilder::GetInstance()->GenerateQuad("GRASS_DARKGREEN", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("GRASS_DARKGREEN")->textureID[0] = LoadTGA("Image//grass_darkgreen.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("GEO_GRASS_LIGHTGREEN", Color(1, 1, 1), 1.f);
@@ -225,8 +225,8 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[1] = LoadTGA("Image//WORLD//W_SNOW.tga");
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[2] = LoadTGA("Image//WORLD//W_WATER.tga");
 
-	const unsigned numOfPartition = 10;
-	const float groundScale(200.f);
+	const unsigned numOfPartition = 5;
+	const float groundScale(400.f);
 
 	/*Create spatial partitions with ground size.*/
 	CSpatialPartitionManager::GetInstance()->Init(numOfPartition, static_cast<unsigned>(groundScale), playerInfo);
@@ -242,6 +242,28 @@ void SceneText::Init()
 
 	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
 	{
+		//Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
+		//float gridSize = groundScale / static_cast<float>(numOfPartition);
+		//gridSize -= 2.f;
+		//position.x += 1.f;
+		//position.z += 1.f;
+
+		///*Left top*/
+		//Create::Entity("cube", position, Vector3(1.f, gridSize, 1.f));
+		///*Right top*/
+		//position = Vector3(position.x + gridSize, position.y, position.z);
+		//Create::Entity("cube", position, Vector3(1.f, gridSize, 1.f));
+		///*Right bottom*/
+		//position = Vector3(position.x, position.y, position.z + gridSize);
+		//Create::Entity("cube", position, Vector3(1.f, gridSize, 1.f));
+		///*Left bottom*/
+		//position = Vector3(position.x - gridSize, position.y, position.z);
+		//Create::Entity("cube", position, Vector3(1.f, gridSize, 1.f));
+		/*
+		10, 10
+		9, 9
+		*/
+
 		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
 		const float gridSize = groundScale / static_cast<float>(numOfPartition);
 		position = Vector3(position.x + (gridSize / 2.f), position.y, position.z + (gridSize / 2.f));
@@ -255,7 +277,7 @@ void SceneText::Init()
 		//Create::Entity("cube", position, Vector3(1.f, 1.f, 1.f));
 		///*Left bottom*/
 		//position = Vector3(position.x - gridSize, position.y, position.z);
-		Create::Entity("cube", position, Vector3(1.f, gridSize, 1.f));
+		Create::Entity("Chair", position, Vector3(1.f, 1.f, 1.f));
 	}
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
