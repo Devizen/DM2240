@@ -42,3 +42,6 @@
 *.lastbuildstate
 *.db
 *.iobj
+.vs/NYP_Framework/v14/.suo
+NYP_Framework.VC.db
+*.db
