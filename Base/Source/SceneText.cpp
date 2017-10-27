@@ -536,7 +536,8 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 	CMasterEntityManager::GetInstance()->Render();
 	CMasterEntityManager::GetInstance()->RenderStatic();
-	RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 1, 1));
+	RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
+	RenderHelper::DrawLine(Vector3(-10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
