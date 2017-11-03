@@ -2,6 +2,8 @@
 #define ENTITY_BASE_H
 
 #include "Vector3.h"
+
+enum class ECLevelOfDetail;
 enum class ECEntityTypes;
 
 class EntityBase
@@ -36,14 +38,25 @@ public:
 	// Set the flag to indicate if this entity has a collider class parent
 	virtual void SetCollider(const bool _value);
 
+	/*Entity types.*/
+	/*Set entity type.*/
+	virtual void SetEntityType(ECEntityTypes _entityType) { entityType = _entityType; }
 	//Get Type, Using for Collision check
 	ECEntityTypes GetEntityType() { return entityType; }
+
+	/*Level of Detail*/
+	/*Set level of detail. To be used in conjunction with distance to player.*/
+	virtual void SetLevelOfDetail(ECLevelOfDetail _levelOfDetail) { levelOfDetail = _levelOfDetail; }
+	/*Get level of detail. To determine what type of object quality should be rendered.*/
+	ECLevelOfDetail GetLevelOfDetail(void) { return levelOfDetail; }
 protected:
 	Vector3 position;
 	float rotateAngle;
 	Vector3 rotateAxis;
 	Vector3 scale;
 	ECEntityTypes entityType;
+	/*Initialise levelOfDetail to low quality.*/
+	ECLevelOfDetail levelOfDetail;
 
 	bool isDone;
 	bool m_bCollider;

@@ -3,13 +3,9 @@
 #include "../FPSCamera.h"
 #include "../GroundEntity.h"
 #include "../WeaponInfo/WeaponInfo.h"
-#include "../SpatialPartition/SpatialPartition.h"
 
-<<<<<<< HEAD
-class CPlayerInfo : public CSpatialPartition
-=======
-class CPlayerInfo : public CPartitionInfo, public EntityBase
->>>>>>> 39ee8cff41dcba3760d99b3916aeba7187435b80
+class CSpatialPartition;
+class CPlayerInfo
 {
 protected:
 	static CPlayerInfo *s_instance;
@@ -99,6 +95,10 @@ public:
 	void AttachCamera(FPSCamera* _cameraPtr);
 	void DetachCamera();
 
+	/*Set updated spatial partition object.*/
+	void SetSpatialPartition(CSpatialPartition* _spatitionPartition) { spatialPartition = _spatitionPartition; }
+	/*Get the spatial partition object to optimise collision check.*/
+	CSpatialPartition* GetSpatialPartition(void) { return spatialPartition; }
 private:
 	Vector3 defaultPosition, defaultTarget, defaultUp;
 	Vector3 position, target, up;
@@ -120,4 +120,7 @@ private:
 
 	CWeaponInfo* primaryWeapon;
 	CWeaponInfo* secondaryWeapon;
+
+	/*Spatial Partitioning Info.*/
+	CSpatialPartition* spatialPartition;
 };

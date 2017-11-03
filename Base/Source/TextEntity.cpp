@@ -60,7 +60,8 @@ TextEntity* Create::Text2DObject(const std::string& _meshName, const Vector3& _p
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetTextRenderMode(TextEntity::MODE_2D);
-	CMasterEntityManager::GetInstance()->AddStaticEntity(result);
+	//CMasterEntityManager::GetInstance()->AddStaticEntity(result);
+	EntityManager::GetInstance()->AddEntity(result);
 	return result;
 }
 
@@ -74,6 +75,7 @@ TextEntity* Create::Text3DObject(const std::string& _meshName, const Vector3& _p
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetTextRenderMode(TextEntity::MODE_3D);
-	CMasterEntityManager::GetInstance()->AddEntity(result);
+	//CMasterEntityManager::GetInstance()->AddEntity(result);
+	EntityManager::GetInstance()->AddEntity(result);
 	return result;
 }

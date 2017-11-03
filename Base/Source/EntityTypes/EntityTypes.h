@@ -4,6 +4,7 @@
 enum class ECEntityTypes
 {
 	TOP = 0,
+	STATIC,
 	OBJECT,
 	TERRAIN,
 	OTHERS,

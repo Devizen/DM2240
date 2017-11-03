@@ -225,20 +225,26 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[1] = LoadTGA("Image//WORLD//W_SNOW.tga");
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[2] = LoadTGA("Image//WORLD//W_WATER.tga");
 
-	const unsigned numOfPartition = 5;
+	/*Number of partitions for each X-axis and Z-axis.*/
+	const unsigned numOfPartitionXZ = 5;
 	const float groundScale(400.f);
 
 	/*Create spatial partitions with ground size.*/
-	CSpatialPartitionManager::GetInstance()->Init(numOfPartition, static_cast<unsigned>(groundScale), playerInfo);
+	CSpatialPartitionManager::GetInstance()->Init(numOfPartitionXZ, static_cast<unsigned>(groundScale), playerInfo);
+
+	/*------------------------------------------------OLD CODE------------------------------------------------*/
 	/*Set partition infomation that is related to player.
 	Which partition the player is on.
 	What is the minimum and maximum boundary of the partition.*/
-	playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
-	playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMinBoundary());
-	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMaxBoundary());
+	//playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
+	//playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMinBoundary());
+	//playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMaxBoundary());
 	/*Create the same amount of entity manager for each partition.*/
-	CMasterEntityManager::GetInstance()->Init(CSpatialPartitionManager::GetInstance()->GetPartitionCount());
-	CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition());
+	//CMasterEntityManager::GetInstance()->Init(CSpatialPartitionManager::GetInstance()->GetPartitionCount());
+	//CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition());
+	/*------------------------------------------------OLD CODE------------------------------------------------*/
+
+	playerInfo->SetSpatialPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(playerInfo->GetPos()));
 
 	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
 	{
@@ -264,9 +270,9 @@ void SceneText::Init()
 		9, 9
 		*/
 
-		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
-		const float gridSize = groundScale / static_cast<float>(numOfPartition);
-		position = Vector3(position.x + (gridSize / 2.f), position.y, position.z + (gridSize / 2.f));
+		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();/*
+		const float gridSize = groundScale / static_cast<float>(numOfPartitionXZ);
+		position = Vector3(position.x + (gridSize / 2.f), position.y, position.z + (gridSize / 2.f));*/
 		///*Left top*/
 		//Create::Entity("cube", position, Vector3(1.f, 1.f, 1.f));
 		///*Right top*/
@@ -278,6 +284,7 @@ void SceneText::Init()
 		///*Left bottom*/
 		//position = Vector3(position.x - gridSize, position.y, position.z);
 		Create::Entity("Chair", position, Vector3(1.f, 1.f, 1.f));
+
 	}
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
@@ -286,10 +293,11 @@ void SceneText::Init()
 	groundEntity->SetPosition(Vector3(0, -10, 0));
 	groundEntity->SetScale(Vector3(groundScale, groundScale, groundScale));
 	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
+	groundEntity->SetEntityType(ECEntityTypes::STATIC);
 	playerInfo->SetTerrain(groundEntity);
 
 	GenericEntity* terrain = Create::Entity("TERRAIN", Vector3(0.f, -11.f, 0.f));
-	terrain->SetEntityType(ECEntityTypes::TERRAIN);
+	terrain->SetEntityType(ECEntityTypes::STATIC);
 	terrain->SetScale(Vector3(2000.f, 350.f, 2000.f));
 
 	/*Shadow Quad.*/
@@ -320,6 +328,7 @@ void SceneText::Init()
 	SkyBoxEntity* theSkyBox = Create::SkyBox("SKYBOX_FRONT", "SKYBOX_BACK",
 											 "SKYBOX_LEFT", "SKYBOX_RIGHT",
 											 "SKYBOX_TOP", "SKYBOX_BOTTOM");
+	theSkyBox->SetEntityType(ECEntityTypes::STATIC);
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -329,6 +338,7 @@ void SceneText::Init()
 	for (int i = 0; i < 5; ++i)
 	{
 		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,0.0f,0.0f));
+		textObj[i]->SetEntityType(ECEntityTypes::STATIC);
 	}
 	textObj[0]->SetText("HELLO WORLD");
 }
@@ -352,7 +362,8 @@ void SceneText::Update(double dt)
 
 	lights[0]->position.Set(horizontal, vertical, frontback);
 	// Update our entities
-	CMasterEntityManager::GetInstance()->Update(dt);
+	//CMasterEntityManager::GetInstance()->Update(dt);
+	EntityManager::GetInstance()->Update(dt);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
 	if(KeyboardController::GetInstance()->IsKeyDown('1'))
@@ -433,17 +444,21 @@ void SceneText::Update(double dt)
 	ss1 << "Player:" << playerInfo->GetPos();
 	textObj[2]->SetText(ss1.str());
 
+	/*------------------------------------------------Old Code------------------------------------------------*/
 	/*Check which partition is the player in.*/
-	if (playerInfo->CheckBoundary(playerInfo->GetPos()))
-	{
-		playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
-		playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMinBoundary());
-		playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMaxBoundary());
-		CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition());
-	}
+	//if (playerInfo->CheckBoundary(playerInfo->GetPos()))
+	//{
+	//	playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
+	//	playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMinBoundary());
+	//	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition())->GetMaxBoundary());
+	//	CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition());
+	//}
+	/*------------------------------------------------Old Code------------------------------------------------*/
+	if (playerInfo->GetSpatialPartition()->CheckBoundary(playerInfo->GetPos()))
+		playerInfo->SetSpatialPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(playerInfo->GetPos()));
 
 	std::ostringstream ss2;
-	ss2 << "Player in Partition:" << playerInfo->GetPartition();
+	ss2 << "Player in Partition:" << playerInfo->GetSpatialPartition()->GetIndex();
 	textObj[3]->SetText(ss2.str());
 
 	std::ostringstream ss3;
@@ -502,7 +517,8 @@ void SceneText::RenderPassGPass(void)
 	DepthFBO::GetInstance()->m_lightDepthView.SetToLookAt(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z, 0, 0, 0, 0, 1, 0);
 
 	RenderWorld();
-	CMasterEntityManager::GetInstance()->Render();
+	//CMasterEntityManager::GetInstance()->Render();
+	EntityManager::GetInstance()->Render();
 }
 
 void SceneText::RenderPassMain(void)
@@ -527,8 +543,9 @@ void SceneText::RenderPassMain(void)
 	// Setup 3D pipeline then render 3D
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
-	CMasterEntityManager::GetInstance()->Render();
-	CMasterEntityManager::GetInstance()->RenderStatic();
+	//CMasterEntityManager::GetInstance()->Render();
+	//CMasterEntityManager::GetInstance()->RenderStatic();
+	EntityManager::GetInstance()->Render();
 	RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 1, 1));
 
 	// Setup 2D pipeline then render 2D
@@ -536,8 +553,9 @@ void SceneText::RenderPassMain(void)
 	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	GraphicsManager::GetInstance()->DetachCamera();
-	CMasterEntityManager::GetInstance()->RenderUI();
-	CMasterEntityManager::GetInstance()->RenderStaticUI();
+	//CMasterEntityManager::GetInstance()->RenderUI();
+	//CMasterEntityManager::GetInstance()->RenderStaticUI();
+	EntityManager::GetInstance()->RenderUI();
 }
 
 void SceneText::RenderWorld(void)
