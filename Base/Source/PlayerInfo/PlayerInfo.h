@@ -117,6 +117,8 @@ private:
 	bool m_bFallDownwards;
 	double m_dFallAcceleration;
 
+	double m_dElapsedTime;
+
 	FPSCamera* attachedCamera;
 
 	CWeaponInfo* primaryWeapon;

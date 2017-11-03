@@ -114,7 +114,7 @@ void CPlayerInfo::SetToJumpUpwards(bool isOnJumpUpwards)
 	{
 		m_bJumpUpwards = true;
 		m_bFallDownwards = false;
-		m_dJumpSpeed = 40.0;
+		m_dJumpSpeed = 15.0;
 	}
 }
 
@@ -211,6 +211,31 @@ double CPlayerInfo::GetJumpAcceleration(void) const
 // Update Jump Upwards
 void CPlayerInfo::UpdateJumpUpwards(double dt)
 {
+	//if (m_bJumpUpwards == false)
+	//	return;
+
+	//// Update the jump's elapsed time
+	//m_dElapsedTime += dt;
+
+	//// Update position and target y values
+	//// Use SUVAT equation to update the change in position and target
+	//// s = u * t + 0.5 * a * t ^ 2
+	//position.y += (float)(m_dJumpSpeed * m_dElapsedTime + 0.5 * m_dJumpAcceleration * m_dElapsedTime * m_dElapsedTime);
+	//target.y += (float)(m_dJumpSpeed*m_dElapsedTime + 0.5 * m_dJumpAcceleration * m_dElapsedTime * m_dElapsedTime);
+	//// Use this equation to calculate final velocity, v
+	//// SUVAT: v = u + a * t;
+	//// v is m_dJumpSpeed AFTER updating using SUVAT where u is the initial speed and is equal to m_dJumpSpeed
+	//m_dJumpSpeed = m_dJumpSpeed + m_dJumpAcceleration * m_dElapsedTime;
+	//// Check if the jump speed is less than zero, then it should be falling
+	//if (m_dJumpSpeed < 0.0)
+	//{
+	//	m_dJumpSpeed = 0.0;
+	//	m_bJumpUpwards = false;
+	//	m_dFallSpeed = 0.0;
+	//	m_bFallDownwards = true;
+	//	m_dElapsedTime = 0.0;
+	//}
+
 	if (m_bJumpUpwards == false)
 		return;
 

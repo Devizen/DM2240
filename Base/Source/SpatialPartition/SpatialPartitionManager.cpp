@@ -91,7 +91,6 @@ CSpatialPartition* CSpatialPartitionManager::UpdateGridInfo(Vector3 _position)
 			return partitionList[i];
 	}
 	return nullptr;
-	//return grid;
 }
 
 //unsigned CSpatialPartitionManager::GetEntityGrid(Vector3 _position)
