@@ -245,6 +245,14 @@ void SceneText::Init()
 	/*------------------------------------------------OLD CODE------------------------------------------------*/
 
 	playerInfo->SetSpatialPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(playerInfo->GetPos()));
+	//playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
+	/*playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMinBoundary());
+	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMaxBoundary());*/
+
+
+	/*Create the same amount of entity manager for each partition.*/
+	CMasterEntityManager::GetInstance()->Init(CSpatialPartitionManager::GetInstance()->GetPartitionCount());
+	//CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
 
 	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
 	{
@@ -285,6 +293,13 @@ void SceneText::Init()
 		//position = Vector3(position.x - gridSize, position.y, position.z);
 		Create::Entity("Chair", position, Vector3(1.f, 1.f, 1.f));
 
+		EntityBase* chair = Create::Entity("Chair", position, Vector3(1.f, 1.f, 1.f));
+		chair->SetEntityType(ECEntityTypes::OBJECT);
+		CMasterEntityManager::GetInstance()->AddEntity(chair);
+
+		//EntityBase* cube = Create::Entity("Cube", position, Vector3(0.8f, 0.8f, 0.8f));
+		//cube->SetEntityType(ECEntityTypes::OTHERS);
+		//CMasterEntityManager::GetInstance()->AddEntity(cube);
 	}
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
@@ -457,14 +472,25 @@ void SceneText::Update(double dt)
 	if (playerInfo->GetSpatialPartition()->CheckBoundary(playerInfo->GetPos()))
 		playerInfo->SetSpatialPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(playerInfo->GetPos()));
 
+	//std::ostringstream ss2;
+	//ss2 << "Player in Partition:" << playerInfo->GetSpatialPartition()->GetIndex();
+	//if (playerInfo->CheckBoundary(playerInfo->GetPos()))
+	//{
+	//	playerInfo->ClearPartition();
+	//	playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
+	//	playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMinBoundary());
+	//	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMaxBoundary());
+	//	CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
+	//}
+
 	std::ostringstream ss2;
 	ss2 << "Player in Partition:" << playerInfo->GetSpatialPartition()->GetIndex();
 	textObj[3]->SetText(ss2.str());
 
-	std::ostringstream ss3;
-	string toggle = CMasterEntityManager::GetInstance()->GetToggle() ? "ON" : "OFF";
-	ss3 << "Spatial Partition [Numpad 5]:" << toggle;
-	textObj[4]->SetText(ss3.str());
+	//std::ostringstream ss3;
+	//string toggle = CMasterEntityManager::GetInstance()->GetToggle() ? "ON" : "OFF";
+	//ss3 << "Spatial Partition [Numpad 5]:" << toggle;
+	//textObj[4]->SetText(ss3.str());
 }
 
 void SceneText::Render()
@@ -546,7 +572,8 @@ void SceneText::RenderPassMain(void)
 	//CMasterEntityManager::GetInstance()->Render();
 	//CMasterEntityManager::GetInstance()->RenderStatic();
 	EntityManager::GetInstance()->Render();
-	RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 1, 1));
+	RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
+	RenderHelper::DrawLine(Vector3(-10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;

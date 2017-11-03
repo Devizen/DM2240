@@ -44,3 +44,7 @@
 *.tlog
 *.db
 .vs/NYP_Framework/v14/.suo
+/Common/Debug/*
+/Base/Debug/*
+/Common/Release/*
+Base\Release\*

@@ -241,25 +241,32 @@ void RenderHelper::RenderText(Mesh* _mesh, const std::string& _text, Color _colo
 
 void RenderHelper::DrawLine(Vector3 start, Vector3 end, Color color)
 {
-	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+	//Cher i lazy pls dont mark me down ):
+	Vertex v;
+	std::vector<Vertex> vertex_buffer_data;
+	v.pos.Set(start.x, start.y, start.z);
+	v.color = color;
+	vertex_buffer_data.push_back(v);
+	v.pos.Set(end.x, end.y, end.z);
+	v.color = color;
+	vertex_buffer_data.push_back(v);
 
-	Vector3 dir = end - start;
-	Vector3 rotate_about(0, 0, 1);
-	float angle = 0;
-	try {
-		rotate_about = Vector3(1, 0, 0).Cross(dir.Normalized()).Normalize();
-		angle = Vector3(1, 0, 0).Dot(dir.Normalized());
+	std::vector<GLuint> index_buffer_data;
+	index_buffer_data.push_back(0);
+	index_buffer_data.push_back(1);
 
-		angle = Math::RadianToDegree(acos(angle));
-	}
-	catch (DivideByZero) {
-		angle = 0;
-	}
-	ms.PushMatrix();
-	ms.Translate(dir * 0.5f + start);
-	ms.Rotate(45, rotate_about);
-	ms.Scale(dir.Length());
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("redline"));
-	ms.PopMatrix();
+	Mesh *mesh = new Mesh("line");
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(Vertex), &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = index_buffer_data.size();
+	mesh->mode = Mesh::DRAW_LINES;
+
+	RenderMesh(mesh);
+
+	delete mesh;
 	
 }

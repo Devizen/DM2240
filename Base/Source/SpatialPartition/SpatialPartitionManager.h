@@ -8,6 +8,7 @@
 #include "Vector3.h"
 class CSpatialPartition;
 class CPlayerInfo;
+class EntityBase;
 class CSpatialPartitionManager
 {
 	static CSpatialPartitionManager* s_instance;
@@ -27,6 +28,7 @@ public:
 	CSpatialPartition* GetPartition(unsigned partitionNum) { return partitionList[partitionNum]; }
 	/*Get the total amount of partition(s).*/
 	size_t GetPartitionCount(void) { return partitionList.size(); }
+	bool IsEntityInCorrectGrid(EntityBase* entity);
 private:
 	typedef std::vector<CSpatialPartition*> Partition;
 	/*A vector of CSpatialPartition objects.*/

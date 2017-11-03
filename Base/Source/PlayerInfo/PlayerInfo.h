@@ -3,9 +3,10 @@
 #include "../FPSCamera.h"
 #include "../GroundEntity.h"
 #include "../WeaponInfo/WeaponInfo.h"
+#include "../SpatialPartition/SpatialPartition.h"
+#include "Collider\Collider.h"
 
-class CSpatialPartition;
-class CPlayerInfo
+class CPlayerInfo : public CSpatialPartition, public EntityBase, public CCollider
 {
 protected:
 	static CPlayerInfo *s_instance;

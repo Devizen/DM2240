@@ -38,6 +38,7 @@
   <ItemGroup>
     <ClInclude Include="Source\CameraBase.h" />
     <ClInclude Include="Source\Collider\Collider.h" />
+    <ClInclude Include="Source\Collider\LineCollider.h" />
     <ClInclude Include="Source\EntityBase.h" />
     <ClInclude Include="Source\GraphicsManager.h" />
     <ClInclude Include="Source\KeyboardController.h" />
@@ -53,6 +54,7 @@
     <ClInclude Include="Source\MouseController.h" />
     <ClInclude Include="Source\Mtx44.h" />
     <ClInclude Include="Source\MyMath.h" />
+    <ClInclude Include="Source\MyTimer.h" />
     <ClInclude Include="Source\RenderHelper.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneManager.h" />

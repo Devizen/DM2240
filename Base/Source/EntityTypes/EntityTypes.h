@@ -8,7 +8,9 @@ enum class ECEntityTypes
 	OBJECT,
 	TERRAIN,
 	OTHERS,
-	BOTTOM
+	BOTTOM,
+
+	TYPE_COUNT
 };
 
 /*Increment*/
@@ -17,5 +19,7 @@ ECEntityTypes operator++(ECEntityTypes &_option, int);
 /*Decrement*/
 ECEntityTypes& operator--(ECEntityTypes &_option);
 ECEntityTypes operator--(ECEntityTypes &_option, int);
+
+
 
 #endif

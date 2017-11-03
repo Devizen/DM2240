@@ -110,12 +110,12 @@ void CProjectile::Update(double dt)
 		return;
 
 	// Update TimeLife of projectile. Set to inactive if too long
-	m_fLifetime -= (float)dt;
-	if (m_fLifetime < 0.0f)
+	//m_fLifetime -= (float)dt;
+	//if (m_fLifetime < 0.0f)
 	{
-		SetStatus(false);
-		SetIsDone(true);	// This method is to inform the EntityManager that it should remove this instance
-		return;
+		//SetStatus(false);
+		//SetIsDone(true);	// This method is to inform the EntityManager that it should remove this instance
+		//return;
 	}
 
 	// Update Position
@@ -128,11 +128,11 @@ void CProjectile::Update(double dt)
 // Render this projectile
 void CProjectile::Render(void)
 {
-	if (m_bStatus == false)
-		return;
+	//if (m_bStatus == false)
+	//	return;
 
-	if (m_fLifetime < 0.0f)
-		return;
+	//if (m_fLifetime < 0.0f)
+	//	return;
 
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	modelStack.PushMatrix();
@@ -140,6 +140,8 @@ void CProjectile::Render(void)
 	//modelStack.Scale(scale.x, scale.y, scale.z);
 	RenderHelper::RenderMesh(modelMesh);
 	modelStack.PopMatrix();
+
+	std::cout << position << std::endl;
 }
 
 // Create a projectile and add it into EntityManager
@@ -159,6 +161,7 @@ CProjectile* Create::Projectile(const std::string& _meshName,
 	result->SetStatus(true);
 	result->SetCollider(true);
 	result->SetSource(_source);
+	result->SetEntityType(ECEntityTypes::OTHERS);
 	CMasterEntityManager::GetInstance()->AddEntity(result);
 
 	return result;

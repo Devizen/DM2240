@@ -63,6 +63,10 @@ void CPlayerInfo::Init(void)
 	// Set the pistol as the primary weapon
 	primaryWeapon = new CPistol();
 	primaryWeapon->Init();
+
+	// Set Collider
+	this->minAABB.Set(-0.5f, 0);
+	this->maxAABB.Set(0.5f, 2);
 }
 
 // Returns true if the player is on ground
