@@ -43,3 +43,7 @@
 *.suo
 *.tlog
 *.db
+Common/Debug
+Base/Debug
+Common/Release
+Base/Release
