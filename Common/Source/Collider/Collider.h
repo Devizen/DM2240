@@ -18,8 +18,10 @@ public:
 	// Get the minAABB
 	virtual Vector3 GetMinAABB(void);
 
+	Vector3 corners[8];
 protected:
 	// Vector3 variables to store coordinates of the AABB bounding box of an object
 	Vector3 maxAABB;
 	Vector3 minAABB;
+
 };

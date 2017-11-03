@@ -172,5 +172,11 @@
     <ClInclude Include="Source\Manager\CollisionManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Source\MyTimer.h">
+      <Filter>Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Collider\LineCollider.h">
+      <Filter>Collider</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
