@@ -140,8 +140,6 @@ void CProjectile::Render(void)
 	//modelStack.Scale(scale.x, scale.y, scale.z);
 	RenderHelper::RenderMesh(modelMesh);
 	modelStack.PopMatrix();
-
-	std::cout << position << std::endl;
 }
 
 // Create a projectile and add it into EntityManager
@@ -162,7 +160,7 @@ CProjectile* Create::Projectile(const std::string& _meshName,
 	result->SetCollider(true);
 	result->SetSource(_source);
 	result->SetEntityType(ECEntityTypes::OTHERS);
-	CMasterEntityManager::GetInstance()->AddEntity(result);
+	EntityManager::GetInstance()->AddEntity(result);
 
 	return result;
 }
