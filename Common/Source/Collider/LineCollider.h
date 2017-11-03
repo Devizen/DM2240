@@ -6,19 +6,27 @@
 class EntityBase;
 class LineCollider : public CCollider
 {
-	MyTimer duration;
-	std::vector<EntityBase*> collidedEntity;
 	Vector3 pos;
 	Vector3 dir;
+	//end range
 	float range;
+	float thickness;
+	//move speed;
+	float speed;
 public:
-	void Init(float duration, Vector3 pos, Vector3 dir, float range = FLT_MAX)
+	void Init(Vector3 pos, Vector3 dir, float speed = 1.0f, float range = FLT_MAX, float thickness = 1.0f)
 	{
-		this->duration.set_duration(duration);
-		this->duration.reset_timer();
 		this->pos = pos;
 		this->dir = dir;
 		this->range = range;
-		this->collidedEntity.clear();
+		this->thickness = thickness;
+		this->speed = speed;
 	}
+
+	Vector3 GetPos() { return pos; }
+	Vector3 GetDir() { return dir; }
+	float GetRange() { return range; }
+	float GetThickness() { return thickness; }
+	float GetSpeed() { return speed; }
+	
 };

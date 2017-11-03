@@ -1,9 +1,10 @@
 #include "Collider.h"
 
 
-CCollider::CCollider()
+CCollider::CCollider(EntityBase* owner)
 	: maxAABB(Vector3( 0, 0, 0))
 	, minAABB(Vector3( 0, 0, 0))
+	, owner(owner)
 {
 }
 

@@ -37,6 +37,8 @@ public:
 	virtual bool HasCollider(void) const;
 	// Set the flag to indicate if this entity has a collider class parent
 	virtual void SetCollider(const bool _value);
+	// Response
+	virtual void CollisionResponse(EntityBase* other) {}
 
 	/*Entity types.*/
 	/*Set entity type.*/

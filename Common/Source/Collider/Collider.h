@@ -1,10 +1,11 @@
 #pragma once
 #include "../Vector3.h"
-
+class EntityBase;
 class CCollider
 {
+	EntityBase* owner;
 public:
-	CCollider();
+	CCollider(EntityBase* owner = nullptr);
 	virtual ~CCollider();
 
 	// Set the maxAABB and minAABB
@@ -17,6 +18,8 @@ public:
 	virtual void SetMinAABB(Vector3 minAABB);
 	// Get the minAABB
 	virtual Vector3 GetMinAABB(void);
+
+	EntityBase* GetOwner() { return owner; }
 
 	Vector3 corners[8];
 protected:
