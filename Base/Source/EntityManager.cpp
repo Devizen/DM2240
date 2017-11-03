@@ -5,8 +5,23 @@
 /*Spatial Partition Manager for checking which entityList to push entity to.*/
 #include "SpatialPartition\SpatialPartitionManager.h"
 
+#include "EntityTypes\EntityTypes.h"
+
+#include "PlayerInfo\PlayerInfo.h"
+
+#include "LevelOfDetail\LevelOfDetail.h"
+
 #include <iostream>
 using namespace std;
+
+EntityManager* EntityManager::s_instance = 0;
+
+EntityManager * EntityManager::GetInstance(void)
+{
+	if (s_instance == nullptr)
+		s_instance = new EntityManager();
+	return s_instance;
+}
 
 // Update all entities
 void EntityManager::Update(double _dt)
@@ -14,7 +29,18 @@ void EntityManager::Update(double _dt)
 	// Update all entities
 	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
-		(*it)->Update(_dt);
+		if ((*it)->GetEntityType() != ECEntityTypes::STATIC)
+		{
+			if (((*it)->GetPosition() - CSpatialPartitionManager::GetInstance()->GetPlayer()->GetPos()).LengthSquared() > 200.f * 200.f)
+				(*it)->SetLevelOfDetail(ECLevelOfDetail::LOW);
+			else if (((*it)->GetPosition() - CSpatialPartitionManager::GetInstance()->GetPlayer()->GetPos()).LengthSquared() > 100.f * 100.f &&
+				((*it)->GetPosition() - CSpatialPartitionManager::GetInstance()->GetPlayer()->GetPos()).LengthSquared() <= 200.f * 200.f)
+				(*it)->SetLevelOfDetail(ECLevelOfDetail::NORMAL);
+			else
+				(*it)->SetLevelOfDetail(ECLevelOfDetail::HIGH);
+
+			(*it)->Update(_dt);
+		}
 	}
 
 	// Clean up entities that are done

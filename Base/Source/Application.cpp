@@ -119,8 +119,10 @@ void Application::Run()
 	{
 		glfwPollEvents();
 		UpdateInput();
-		
-		SceneManager::GetInstance()->Update(m_timer.getElapsedTime());
+
+		double elapsedTime = m_timer.getElapsedTime();
+		elapsedTime = elapsedTime > 0.16 ? 0.16 : elapsedTime;
+		SceneManager::GetInstance()->Update(elapsedTime);
 		SceneManager::GetInstance()->Render();
 
 		//Swap buffers

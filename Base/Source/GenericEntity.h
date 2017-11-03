@@ -19,12 +19,8 @@ public:
 
 	// Set the maxAABB and minAABB
 	void SetAABB(Vector3 maxAABB, Vector3 minAABB);
-	/*Set entity type.*/
-	void SetEntityType(ECEntityTypes _entityType);
 private:
 	Mesh* modelMesh;
-	ECEntityTypes entityType;
-
 	/*Demo-ing Spatial Partitioning.*/
 	float timer;
 	bool translateDirection;

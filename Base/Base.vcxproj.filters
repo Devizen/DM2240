@@ -40,6 +40,12 @@
     <Filter Include="MasterEntityManager">
       <UniqueIdentifier>{3600928f-28d2-4234-88c7-ba4469867120}</UniqueIdentifier>
     </Filter>
+    <Filter Include="QuadTree">
+      <UniqueIdentifier>{33bc140b-c158-4dea-a4ba-d4d8c1942b5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelOfDetail">
+      <UniqueIdentifier>{bacd7abd-cc70-4537-be6b-d393249e9b9c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -105,11 +111,14 @@
     <ClCompile Include="Source\SpatialPartition\SpatialPartitionManager.cpp">
       <Filter>SpatialPartition</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SpatialPartition\PartitionInfo.cpp">
-      <Filter>SpatialPartition</Filter>
-    </ClCompile>
     <ClCompile Include="Source\MasterEntityManager\MasterEntityManager.cpp">
       <Filter>MasterEntityManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\QuadTree\QuadTree.cpp">
+      <Filter>QuadTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LevelOfDetail\LevelOfDetail.cpp">
+      <Filter>LevelOfDetail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,11 +179,14 @@
     <ClInclude Include="Source\SpatialPartition\SpatialPartitionManager.h">
       <Filter>SpatialPartition</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SpatialPartition\PartitionInfo.h">
-      <Filter>SpatialPartition</Filter>
-    </ClInclude>
     <ClInclude Include="Source\MasterEntityManager\MasterEntityManager.h">
       <Filter>MasterEntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\QuadTree\QuadTree.h">
+      <Filter>QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LevelOfDetail\LevelOfDetail.h">
+      <Filter>LevelOfDetail</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerInfo\PlayerInfo.h">
       <Filter>PlayerInfo</Filter>

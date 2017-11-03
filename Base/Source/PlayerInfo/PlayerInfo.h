@@ -96,6 +96,10 @@ public:
 	void AttachCamera(FPSCamera* _cameraPtr);
 	void DetachCamera();
 
+	/*Set updated spatial partition object.*/
+	void SetSpatialPartition(CSpatialPartition* _spatitionPartition) { spatialPartition = _spatitionPartition; }
+	/*Get the spatial partition object to optimise collision check.*/
+	CSpatialPartition* GetSpatialPartition(void) { return spatialPartition; }
 private:
 	Vector3 defaultPosition, defaultTarget, defaultUp;
 	Vector3 position, target, up;
@@ -117,4 +121,7 @@ private:
 
 	CWeaponInfo* primaryWeapon;
 	CWeaponInfo* secondaryWeapon;
+
+	/*Spatial Partitioning Info.*/
+	CSpatialPartition* spatialPartition;
 };

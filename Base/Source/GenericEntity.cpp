@@ -6,9 +6,9 @@
 /*For categorising entity types.*/
 #include "EntityTypes\EntityTypes.h"
 #include "MasterEntityManager\MasterEntityManager.h"
+#include "LevelOfDetail\LevelOfDetail.h"
 GenericEntity::GenericEntity(Mesh* _modelMesh)
 	: modelMesh(_modelMesh)
-	, entityType(ECEntityTypes::OTHERS)
 	, timer(0.f)
 	, translateDirection(false)
 {
@@ -38,30 +38,19 @@ void GenericEntity::Update(double _dt)
 void GenericEntity::Render()
 {
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-	switch (entityType)
-	{
-	case ECEntityTypes::OTHERS:
-		modelStack.PushMatrix();
-		modelStack.Translate(position.x, position.y, position.z);
-		/*Only rotate the modelStack when there is axis selected.*/
-		if (rotateAxis.LengthSquared() != 0.f)
-			modelStack.Rotate(rotateAngle, rotateAxis.x, rotateAxis.y, rotateAxis.z);
-		modelStack.Scale(scale.x, scale.y, scale.z);
+	modelStack.PushMatrix();
+	modelStack.Translate(position.x, position.y, position.z);
+	/*Only rotate the modelStack when there is axis selected.*/
+	if (rotateAxis.LengthSquared() != 0.f)
+		modelStack.Rotate(rotateAngle, rotateAxis.x, rotateAxis.y, rotateAxis.z);
+	modelStack.Scale(scale.x, scale.y, scale.z);
+	if (levelOfDetail == ECLevelOfDetail::HIGH)
 		RenderHelper::RenderMeshWithLight(modelMesh);
-		modelStack.PopMatrix();
-		break;
-	case ECEntityTypes::TERRAIN:
-		MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-		modelStack.PushMatrix();
-		modelStack.Translate(position.x, position.y, position.z);
-		/*Only rotate the modelStack when there is axis selected.*/
-		if (rotateAxis.LengthSquared() != 0.f)
-			modelStack.Rotate(rotateAngle, rotateAxis.x, rotateAxis.y, rotateAxis.z);
-		modelStack.Scale(scale.x, scale.y, scale.z);
-		RenderHelper::RenderMeshWithLight(modelMesh);
-		modelStack.PopMatrix();
-		break;
-	}
+	else if (levelOfDetail == ECLevelOfDetail::NORMAL)
+		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("sphere"));
+	else if (levelOfDetail == ECLevelOfDetail::LOW)
+		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("cube"));
+	modelStack.PopMatrix();
 }
 
 // Set the maxAABB and minAABB
@@ -69,11 +58,6 @@ void GenericEntity::SetAABB(Vector3 maxAABB, Vector3 minAABB)
 {
 	this->maxAABB = maxAABB;
 	this->minAABB = minAABB;
-}
-
-void GenericEntity::SetEntityType(ECEntityTypes _entityType)
-{
-	entityType = _entityType;
 }
 
 GenericEntity* Create::Entity(	const std::string& _meshName, 
@@ -88,9 +72,10 @@ GenericEntity* Create::Entity(	const std::string& _meshName,
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetCollider(false);
-	if (_meshName == "TERRAIN")
-		CMasterEntityManager::GetInstance()->AddStaticEntity(result);
-	else
-		CMasterEntityManager::GetInstance()->AddEntity(result);
+	//if (_meshName == "TERRAIN")
+	//	CMasterEntityManager::GetInstance()->AddStaticEntity(result);
+	//else
+	//	CMasterEntityManager::GetInstance()->AddEntity(result);
+	EntityManager::GetInstance()->AddEntity(result);
 	return result;
 }

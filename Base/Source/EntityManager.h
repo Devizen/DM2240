@@ -6,12 +6,13 @@
 #include "Vector3.h"
 
 class EntityBase;
-class CMasterEntityManager;
 
 class EntityManager
 {
-	friend CMasterEntityManager;
+	static EntityManager* s_instance;
 public:
+	static EntityManager* GetInstance(void);
+
 	void Update(double _dt);
 	void Render();
 	void RenderUI();

@@ -1,7 +1,8 @@
 #include "MasterEntityManager.h"
 #include "EntityBase.h"
 #include "../EntityManager.h"
-#include "../SpatialPartition/SpatialPartitionManager.h"
+#include "../SpatialPartition/SpatialPartitionManager.h"]
+//#include "../SpatialPartition/PartitionInfo.h"
 #include "../SpatialPartition/SpatialPartition.h"
 
 CMasterEntityManager* CMasterEntityManager::s_instance = 0;
@@ -95,20 +96,25 @@ void CMasterEntityManager::RenderStaticUI(void)
 
 void CMasterEntityManager::AddEntity(EntityBase * _newEntity)
 {
-	int index = CSpatialPartitionManager::GetInstance()->GetEntityGrid(_newEntity->GetPosition());
-	masterList[index]->AddEntity(_newEntity);
-	CSpatialPartition* spatialPartition = dynamic_cast<CSpatialPartition*>(_newEntity);
-	if (spatialPartition == nullptr)
-		return;
-	spatialPartition->SetPartition(index);
-	spatialPartition->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(index)->GetMinBoundary());
-	spatialPartition->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(index)->GetMaxBoundary());
-	//Put entity inside masterEntity List according to type
-	allEntities[(unsigned int)(_newEntity->GetEntityType())].push_back(_newEntity);
+
+	//masterList[CSpatialPartitionManager::GetInstance()->GetEntityGrid(_newEntity->GetPosition())]->AddEntity(_newEntity);
+
+	//int index = CSpatialPartitionManager::GetInstance()->GetEntityGrid(_newEntity->GetPosition());
+	//masterList[index]->AddEntity(_newEntity);
+	//CSpatialPartition* spatialPartition = dynamic_cast<CSpatialPartition*>(_newEntity);
+	//if (spatialPartition == nullptr)
+	//	return;
+	//spatialPartition->SetPartition(index);
+	//spatialPartition->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(index)->GetMinBoundary());
+	//spatialPartition->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(index)->GetMaxBoundary());
+	////Put entity inside masterEntity List according to type
+	//allEntities[(unsigned int)(_newEntity->GetEntityType())].push_back(_newEntity);
 }
 
 void CMasterEntityManager::RemoveEntity(EntityBase* _newEntity)
 {
+	//masterList[_partitionInfo->GetPartition()]->RemoveEntity(_newEntity);
+
 	CSpatialPartition* spatialPartition = dynamic_cast<CSpatialPartition*>(_newEntity);
 	if (spatialPartition == nullptr)
 		return;
@@ -128,6 +134,12 @@ void CMasterEntityManager::AddStaticEntity(EntityBase * _newEntity)
 
 void CMasterEntityManager::CheckPartition(EntityBase * _entity)
 {
+	//if (!CSpatialPartitionManager::GetInstance()->IsEntityInCorrectGrid(_partitionInfo))
+	//{
+	//	this->RemoveEntity(_entity, _partitionInfo);
+	//	this->AddEntity(_entity);
+	//}
+
 	CSpatialPartition* spatialPartition = dynamic_cast<CSpatialPartition*>(_entity);
 	if (spatialPartition == nullptr)
 		return;
@@ -142,10 +154,10 @@ void CMasterEntityManager::CheckPartition(EntityBase * _entity)
 
 void CMasterEntityManager::Init(size_t numOfEntityManager)
 {
-	for (size_t i = 0; i != numOfEntityManager; ++i)
-	{
-		EntityManager* manager = new EntityManager();
-		masterList.push_back(manager);
-	}
-	staticList = new EntityManager();
+	//for (size_t i = 0; i != numOfEntityManager; ++i)
+	//{
+	//	EntityManager* manager = new EntityManager();
+	//	masterList.push_back(manager);
+	//}
+	//staticList = new EntityManager();
 }
