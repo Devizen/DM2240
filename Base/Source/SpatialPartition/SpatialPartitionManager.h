@@ -17,7 +17,7 @@ public:
 	~CSpatialPartitionManager(void);
 	static CSpatialPartitionManager* GetInstance(void);
 	/*Initialise square grid system by using row (numOfPartition) * column (numofPartition) and size of the ground.*/
-	void Init(unsigned numOfPartition, unsigned sizeOfSpace, CPlayerInfo* _player);
+	void Init(unsigned _numOfPartition, unsigned _sizeOfSpace, CPlayerInfo* _player);
 	
 	/*Get player object for calculation of distance.*/
 	CPlayerInfo* GetPlayer(void) { return player; }
@@ -29,12 +29,17 @@ public:
 	/*Get the total amount of partition(s).*/
 	size_t GetPartitionCount(void) { return partitionList.size(); }
 	bool IsEntityInCorrectGrid(EntityBase* entity);
+
+	/*Get Grid Length.*/
+	float GetGridLength(void) { return gridSize; }
 private:
 	typedef std::vector<CSpatialPartition*> Partition;
 	/*A vector of CSpatialPartition objects.*/
 	Partition partitionList;
 	/*Player object.*/
 	CPlayerInfo* player;
+	/*Grid size for length and width.*/
+	float gridSize;
 protected:
 };
 

@@ -23,8 +23,12 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\PlayerInfo\PlayerInfo.cpp" />
+    <ClCompile Include="Source\Projectile\Laser\Laser.cpp" />
     <ClCompile Include="Source\Projectile\Projectile.cpp" />
     <ClCompile Include="Source\QuadTree\QuadTree.cpp" />
+    <ClCompile Include="Source\SceneGraph\SceneGraph.cpp" />
+    <ClCompile Include="Source\SceneGraph\SceneNode.cpp" />
+    <ClCompile Include="Source\SceneGraph\Transform.cpp" />
     <ClCompile Include="Source\SceneText.cpp" />
     <ClCompile Include="Source\SkyBox\SkyBoxEntity.cpp" />
     <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp" />
@@ -47,8 +51,12 @@
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\PlayerInfo\PlayerInfo.h" />
+    <ClInclude Include="Source\Projectile\Laser\Laser.h" />
     <ClInclude Include="Source\Projectile\Projectile.h" />
     <ClInclude Include="Source\QuadTree\QuadTree.h" />
+    <ClInclude Include="Source\SceneGraph\SceneGraph.h" />
+    <ClInclude Include="Source\SceneGraph\SceneNode.h" />
+    <ClInclude Include="Source\SceneGraph\Transform.h" />
     <ClInclude Include="Source\SceneText.h" />
     <ClInclude Include="Source\SkyBox\SkyBoxEntity.h" />
     <ClInclude Include="Source\SpatialPartition\SpatialPartition.h" />

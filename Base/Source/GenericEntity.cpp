@@ -47,9 +47,9 @@ void GenericEntity::Render()
 	if (levelOfDetail == ECLevelOfDetail::HIGH)
 		RenderHelper::RenderMeshWithLight(modelMesh);
 	else if (levelOfDetail == ECLevelOfDetail::NORMAL)
-		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("sphere"));
+		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("BLUESPHERE"));
 	else if (levelOfDetail == ECLevelOfDetail::LOW)
-		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("cube"));
+		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("REDSPHERE"));
 	modelStack.PopMatrix();
 }
 
