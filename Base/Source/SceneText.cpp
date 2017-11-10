@@ -211,7 +211,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("W_GRASS", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("W_GRASS")->textureID[0] = LoadTGA("Image//WORLD//W_GRASS.tga");
 	/*Generate Ray.*/
-	MeshBuilder::GetInstance()->GenerateRay("RAY", 100.f);
+	MeshBuilder::GetInstance()->GenerateRay("RAY", 1.f);
 
 	/*Combination Ground Tile.*/
 	MeshBuilder::GetInstance()->GenerateQuad("COMGROUND", Color(1, 1, 1), 1.f);

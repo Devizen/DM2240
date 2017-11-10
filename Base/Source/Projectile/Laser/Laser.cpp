@@ -63,6 +63,8 @@ void CLaser::CalculateAngles(void)
 // Update the status of this projectile
 void CLaser::Update(double dt)
 {
+	CProjectile::Update(dt);
+
 	if (m_bStatus == false)
 		return;
 
@@ -76,9 +78,11 @@ void CLaser::Update(double dt)
 	}
 
 	// Update Position
-	position.Set(	position.x + (float)(theDirection.x * dt * m_fSpeed),
-					position.y + (float)(theDirection.y * dt * m_fSpeed),
-					position.z + (float)(theDirection.z * dt * m_fSpeed));
+	//position.Set(	position.x + (float)(theDirection.x * dt * m_fSpeed),
+	//				position.y + (float)(theDirection.y * dt * m_fSpeed),
+	//				position.z + (float)(theDirection.z * dt * m_fSpeed));
+
+
 }
 
 
@@ -132,6 +136,7 @@ CLaser* Create::Laser(const std::string& _meshName,
 	result->SetStatus(true);
 	result->SetCollider(true);
 	result->SetSource(_source);
+	
 	EntityManager::GetInstance()->AddEntity(result);
 
 	Vector3 base = Vector3(1.0f, 0.0f, 0.0f);
