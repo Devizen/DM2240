@@ -43,6 +43,12 @@
     <Filter Include="LevelOfDetail">
       <UniqueIdentifier>{bacd7abd-cc70-4537-be6b-d393249e9b9c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SceneGraph">
+      <UniqueIdentifier>{9e3d36d3-b965-4f0a-92d8-5ff09dd7e0f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Projectile\Laser">
+      <UniqueIdentifier>{12df8daa-45ab-4733-9c9b-f1a97ea92157}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -114,6 +120,18 @@
     <ClCompile Include="Source\LevelOfDetail\LevelOfDetail.cpp">
       <Filter>LevelOfDetail</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SceneGraph\SceneGraph.cpp">
+      <Filter>SceneGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneGraph\SceneNode.cpp">
+      <Filter>SceneGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneGraph\Transform.cpp">
+      <Filter>SceneGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Projectile\Laser\Laser.cpp">
+      <Filter>Projectile\Laser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -181,6 +199,18 @@
     </ClInclude>
     <ClInclude Include="Source\LevelOfDetail\LevelOfDetail.h">
       <Filter>LevelOfDetail</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneGraph\SceneGraph.h">
+      <Filter>SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneGraph\SceneNode.h">
+      <Filter>SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneGraph\Transform.h">
+      <Filter>SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Projectile\Laser\Laser.h">
+      <Filter>Projectile\Laser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
