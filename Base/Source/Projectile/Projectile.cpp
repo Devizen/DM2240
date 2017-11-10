@@ -159,6 +159,8 @@ void CProjectile::Render(void)
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	modelStack.PushMatrix();
 	modelStack.Translate(position.x, position.y, position.z);
+	if (!rotateAxis.IsZero())
+		modelStack.Rotate(rotateAngle, rotateAxis.x, rotateAxis.y, rotateAxis.z);
 	//modelStack.Scale(scale.x, scale.y, scale.z);
 	RenderHelper::RenderMesh(modelMesh);
 	modelStack.PopMatrix();
@@ -183,6 +185,8 @@ CProjectile* Create::Projectile(const std::string& _meshName,
 	result->SetCollider(true);
 	result->SetSource(_source);
 	result->SetEntityType(ECEntityTypes::OTHERS);
+	//result->SetRotateAngle(90.f);
+	//result->SetRotateAxis(Vector3(1.f, 0.f, 0.f));
 	EntityManager::GetInstance()->AddEntity(result);
 	result->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(_position)->GetIndex());
 	CollisionManager::GetInstance()->AddCollider(result->collider, result->GetPartitionPtr());

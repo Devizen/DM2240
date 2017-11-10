@@ -36,6 +36,8 @@
 
 #include "Manager\CollisionManager.h"
 
+/*Scene Graph.*/
+#include "SceneGraph\SceneGraph.h"
 #include <iostream>
 using namespace std;
 
@@ -52,6 +54,7 @@ SceneText::SceneText(SceneManager* _sceneMgr)
 
 SceneText::~SceneText()
 {
+	CSceneGraph::GetInstance()->Destroy();
 }
 
 void SceneText::Init()
@@ -207,6 +210,18 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("GEO_GRASS_LIGHTGREEN")->textureID[0] = LoadTGA("Image//grass_lightgreen.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("W_GRASS", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("W_GRASS")->textureID[0] = LoadTGA("Image//WORLD//W_GRASS.tga");
+	/*Generate Ray.*/
+	MeshBuilder::GetInstance()->GenerateRay("RAY", 100.f);
+
+	/*Combination Ground Tile.*/
+	MeshBuilder::GetInstance()->GenerateQuad("COMGROUND", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("COMGROUND")->textureID[0] = LoadTGA("Image//WORLD//W_GRASS.tga");
+	MeshBuilder::GetInstance()->GetMesh("COMGROUND")->textureID[1] = LoadTGA("Image//WORLD//W_SNOW.tga");
+
+	/*3 different spheres to show Level of Detail.*/
+	MeshBuilder::GetInstance()->GenerateSphere("GREENSPHERE", Color(0, 1, 0), 18, 36, 5.f);
+	MeshBuilder::GetInstance()->GenerateSphere("BLUESPHERE", Color(0, 0, 1), 18, 36, 5.f);
+	MeshBuilder::GetInstance()->GenerateSphere("REDSPHERE", Color(1, 0, 0), 18, 36, 5.f);
 
 	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_FRONT", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BACK", Color(1, 1, 1), 1.f);
@@ -248,7 +263,7 @@ void SceneText::Init()
 	{
 		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
 		position.y += 10.f;
-		EntityBase* chair = Create::Entity("Chair", position, Vector3(1.f, 1.f, 1.f));
+		EntityBase* chair = Create::Entity("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
 		chair->SetEntityType(ECEntityTypes::OBJECT);
 
 		chair->collider = new CCollider(chair);
@@ -261,7 +276,7 @@ void SceneText::Init()
 	}
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
-	groundEntity = Create::Ground("W_GRASS", "W_GRASS");
+	groundEntity = Create::Ground("COMGROUND", "COMGROUND");
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, -10, 0));
 	groundEntity->SetScale(Vector3(groundScale, groundScale, groundScale));
@@ -293,7 +308,17 @@ void SceneText::Init()
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
 	GenericEntity* aCube = Create::Entity("cube", Vector3(-20.0f, 0.0f, -20.0f));
+	GenericEntity* bCube = Create::Entity("cube", Vector3(-40.0f, 0.0f, -40.0f));
 
+	/*Create the root node.*/
+	CSceneNode* theNode = CSceneGraph::GetInstance()->AddNode(aCube);
+	if (theNode == nullptr)
+		std::cout << "FAILED TO ADD NODE" << std::endl;
+	/*Add another node to the root node.*/
+	CSceneNode* anotherNode = theNode->AddChild(aCube);
+	if (theNode == nullptr)
+		std::cout << "FAILED TO ADD NODE" << std::endl;
+	theNode->PrintSelf();
 
 //	Create::Text3DObject("text", Vector3(0.0f, 0.0f, 0.0f), "DM2210", Vector3(10.0f, 10.0f, 10.0f), Color(0, 1, 1));
 	Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));

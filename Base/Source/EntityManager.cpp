@@ -29,12 +29,15 @@ void EntityManager::Update(double _dt)
 	// Update all entities
 	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
+		CSpatialPartitionManager* spManager = CSpatialPartitionManager::GetInstance();
+		CPlayerInfo* player = spManager->GetPlayer();
+		float gridSize = spManager->GetGridLength() * spManager->GetGridLength();
 		if ((*it)->GetEntityType() != ECEntityTypes::STATIC)
 		{
-			if (((*it)->GetPosition() - CSpatialPartitionManager::GetInstance()->GetPlayer()->GetPos()).LengthSquared() > 200.f * 200.f)
+			if (((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 3.f)
 				(*it)->SetLevelOfDetail(ECLevelOfDetail::LOW);
-			else if (((*it)->GetPosition() - CSpatialPartitionManager::GetInstance()->GetPlayer()->GetPos()).LengthSquared() > 100.f * 100.f &&
-				((*it)->GetPosition() - CSpatialPartitionManager::GetInstance()->GetPlayer()->GetPos()).LengthSquared() <= 200.f * 200.f)
+			else if (((*it)->GetPosition() - player->GetPos()).LengthSquared() < gridSize * 3.f && 
+				((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 2.f)
 				(*it)->SetLevelOfDetail(ECLevelOfDetail::NORMAL);
 			else
 				(*it)->SetLevelOfDetail(ECLevelOfDetail::HIGH);
