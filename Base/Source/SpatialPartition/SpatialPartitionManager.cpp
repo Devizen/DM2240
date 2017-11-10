@@ -6,7 +6,7 @@
 
 CSpatialPartitionManager* CSpatialPartitionManager::s_instance = 0;
 
-CSpatialPartitionManager::CSpatialPartitionManager(void)
+CSpatialPartitionManager::CSpatialPartitionManager(void) : toggle(true)
 {
 }
 

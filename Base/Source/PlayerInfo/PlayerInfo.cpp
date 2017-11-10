@@ -65,8 +65,11 @@ void CPlayerInfo::Init(void)
 	primaryWeapon->Init();
 
 	// Set Collider
-	this->minAABB.Set(-0.5f, 0);
-	this->maxAABB.Set(0.5f, 2);
+	this->collider = new CCollider(this);
+	this->collider->SetMinAABB(Vector3(-0.5f, 0));
+	this->collider->SetMaxAABB(Vector3(0.5f, 2));
+	//this->minAABB.Set(-0.5f, 0);
+	//this->maxAABB.Set(0.5f, 2);
 }
 
 // Returns true if the player is on ground

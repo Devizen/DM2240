@@ -34,6 +34,8 @@
 #include "SpatialPartition\SpatialPartitionManager.h"
 #include "MasterEntityManager\MasterEntityManager.h"
 
+#include "Manager\CollisionManager.h"
+
 #include <iostream>
 using namespace std;
 
@@ -245,8 +247,16 @@ void SceneText::Init()
 	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
 	{
 		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
+		position.y += 10.f;
 		EntityBase* chair = Create::Entity("Chair", position, Vector3(1.f, 1.f, 1.f));
 		chair->SetEntityType(ECEntityTypes::OBJECT);
+
+		chair->collider = new CCollider(chair);
+		chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
+		chair->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + position);
+		chair->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
+		CollisionManager::GetInstance()->AddCollider(chair->collider, chair->GetPartitionPtr());
+
 		//CMasterEntityManager::GetInstance()->AddEntity(chair);
 	}
 
@@ -382,10 +392,19 @@ void SceneText::Update(double dt)
 	{
 		cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
 	}
+
+	if (KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN))
+	{
+		CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true);
+	}
 	// <THERE>
 
 	// Update the player position and other details based on keyboard and mouse inputs
 	playerInfo->Update(dt);
+
+	//Collision Updates
+	CollisionManager::GetInstance()->Update(dt);
+
 
 	//camera.Update(dt); // Can put the camera into an entity rather than here (Then we don't have to write this)
 
@@ -504,8 +523,14 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 	EntityManager::GetInstance()->Render();
-	RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
-	RenderHelper::DrawLine(Vector3(-10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
+	//RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
+	//RenderHelper::DrawLine(Vector3(-10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
+	for (int i = 0; i < CollisionManager::GetInstance()->posColliderChecks.size(); ++i)
+	{
+		std::pair<Vector3, Vector3> &p = CollisionManager::GetInstance()->posColliderChecks[i];
+		RenderHelper::DrawLine(p.first, p.second, Color(0, 1, 0));
+	}
+	CollisionManager::GetInstance()->posColliderChecks.clear();
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;

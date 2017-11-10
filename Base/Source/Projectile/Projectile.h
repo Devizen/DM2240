@@ -7,7 +7,7 @@
 class Mesh;
 class CPlayerInfo;
 
-class CProjectile : public EntityBase, public CCollider, public CSpatialPartition
+class CProjectile : public EntityBase//, public CSpatialPartition //, public CCollider
 {
 public:
 	CProjectile(void);
@@ -43,6 +43,11 @@ public:
 	virtual void Update(double dt = 0.0333f);
 	// Render this projectile
 	virtual void Render(void);
+
+	virtual void CollisionResponse(EntityBase* other) { 
+		std::cout << "BOOM : " << other << std::endl;
+		isDone = true;
+	}
 protected:
 	// The model mesh for this projectile
 	Mesh* modelMesh;

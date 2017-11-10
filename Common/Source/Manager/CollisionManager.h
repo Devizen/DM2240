@@ -5,6 +5,8 @@
 
 #include <set>
 #include <map>
+#include <list>
+#include <unordered_map>
 #include "../Vector3.h"
 
 class CCollider;
@@ -16,14 +18,18 @@ class CollisionManager : public Singleton<CollisionManager>
 	
 	std::map<int, std::set<CCollider*>> colliders;
 
+	typedef std::unordered_map<CCollider*, std::list<unsigned int>*> CMasterMap;
+	CMasterMap colliderMap;
 public:
-	void update(double dt);
-	void add_collider(CCollider* collidable, int partition);
-	void remove_collider(CCollider* collidable, int partition);
+	void Update(double dt);
+	void AddCollider(CCollider* collidable, int partition);
+	void RemoveCollider(CCollider* collidable, int partition);
+	void AddCollider(CCollider* collidable, std::list<unsigned int>* partition);
+	void RemoveCollider(CCollider* collidable);
 	void CheckCollision(CCollider* left, CCollider* right, double dt);
-	//void add_ground(Collidable* ground);
-	//Collidable* get_ground();
-	//void CollisionResponse(EntityBase* left, EntityBase* right);
+
+	std::vector<std::pair<Vector3, Vector3>> posColliderChecks;
+
 protected:
 	CollisionManager();
 	virtual ~CollisionManager();

@@ -43,6 +43,21 @@ void EntityManager::Update(double _dt)
 		}
 	}
 
+
+	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); )
+	{
+		
+		if (CSpatialPartitionManager::GetInstance()->UpdateGridInfo((*it)->GetPosition()) == nullptr 
+			|| (*it)->IsDone())
+		{
+			delete (*it);
+			it = entityList.erase(it);
+		}
+		else
+			++it;
+		
+	}
+
 	// Clean up entities that are done
 	//EntityList::iterator it = entityList.begin();
 	//EntityList::iterator end = entityList.end();

@@ -2,11 +2,12 @@
 #define ENTITY_BASE_H
 
 #include "Vector3.h"
+#include "../../Base/Source/SpatialPartition/SpatialPartition.h"
 
 enum class ECLevelOfDetail;
 enum class ECEntityTypes;
-
-class EntityBase
+class CCollider;
+class EntityBase : public CSpatialPartition
 {
 public:
 	EntityBase();
@@ -51,6 +52,10 @@ public:
 	virtual void SetLevelOfDetail(ECLevelOfDetail _levelOfDetail) { levelOfDetail = _levelOfDetail; }
 	/*Get level of detail. To determine what type of object quality should be rendered.*/
 	ECLevelOfDetail GetLevelOfDetail(void) { return levelOfDetail; }
+
+	//Collision
+	CCollider* collider;
+
 protected:
 	Vector3 position;
 	float rotateAngle;

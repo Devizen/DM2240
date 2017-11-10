@@ -1,6 +1,7 @@
 #include "EntityBase.h"
 /*Categorise entities.*/
 #include "EntityTypes\EntityTypes.h"
+#include "Manager\CollisionManager.h"
 
 EntityBase::EntityBase() 
 	: position(0.0f, 0.0f, 0.0f)
@@ -10,11 +11,17 @@ EntityBase::EntityBase()
 	, isDone(false)
 	, m_bCollider(false)
 	, entityType(ECEntityTypes::OTHERS)
+	, collider(nullptr)
 {
 }
 
 EntityBase::~EntityBase()
 {
+	if (this->collider)
+	{
+		CollisionManager::GetInstance()->RemoveCollider(this->collider);
+		delete this->collider;
+	}
 }
 
 void EntityBase::Update(double _dt)

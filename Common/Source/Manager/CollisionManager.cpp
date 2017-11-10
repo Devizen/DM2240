@@ -4,6 +4,7 @@
 //#include "MyDebugger.h"
 #include "../Collider/LineCollider.h"
 #include "../EntityBase.h"
+#include "SpatialPartition\SpatialPartitionManager.h"
 
 CollisionManager::CollisionManager()
 {
@@ -13,40 +14,88 @@ CollisionManager::~CollisionManager() {
 
 }
 
-void CollisionManager::update(double dt)
+void CollisionManager::Update(double dt)
 {
-	for (std::map<int, std::set<CCollider*>>::iterator partitionIter = colliders.begin(); partitionIter != colliders.end(); ++partitionIter)
+	if (CSpatialPartitionManager::GetInstance()->toggle)
 	{
-		for (std::set<CCollider*>::iterator first_iter = (partitionIter->second).begin();
-			first_iter != (partitionIter->second).end(); ++first_iter)
+		//build up colliders
+		for (CMasterMap::iterator it = colliderMap.begin(); it != colliderMap.end(); ++it) {
+			for (unsigned int i : *(it->second))
+				colliders[i].insert(it->first);
+		}
+
+		for (std::map<int, std::set<CCollider*>>::iterator partitionIter = colliders.begin(); partitionIter != colliders.end(); ++partitionIter)
 		{
-
-			std::set<CCollider*>::iterator second_iter = first_iter;
-			for (std::advance(second_iter, 1); second_iter != (partitionIter->second).end(); ++second_iter)
+			for (std::set<CCollider*>::iterator first_iter = (partitionIter->second).begin();
+				first_iter != (partitionIter->second).end(); ++first_iter)
 			{
-				//check collision
-				//response is activated inside the function if true
-				this->CheckCollision((*first_iter), (*second_iter), dt);
 
-				//MyDebugger::GetInstance()->watch_this_info("first col", &(*first_iter));
-				//MyDebugger::GetInstance()->watch_this_info("second col", &(*second_iter));
+				std::set<CCollider*>::iterator second_iter = first_iter;
+				for (std::advance(second_iter, 1); second_iter != (partitionIter->second).end(); ++second_iter)
+				{
+					//check collision
+					//response is activated inside the function if true
+					if ((*first_iter)->GetOwner()->GetEntityType() == (*second_iter)->GetOwner()->GetEntityType())
+						continue;
+
+					this->CheckCollision((*first_iter), (*second_iter), dt);
+
+					posColliderChecks.push_back(std::make_pair((*first_iter)->GetOwner()->GetPosition(),
+						(*second_iter)->GetOwner()->GetPosition()));
+					//MyDebugger::GetInstance()->watch_this_info("first col", &(*first_iter));
+					//MyDebugger::GetInstance()->watch_this_info("second col", &(*second_iter));
+				}
+			}
+		}
+
+		colliders.clear();
+	}
+	else
+	{
+		for (CMasterMap::iterator it = colliderMap.begin(); it != colliderMap.end(); ++it) {
+
+			for (CMasterMap::iterator it2 = std::next(it, 1); it2 != colliderMap.end(); ++it2) {
+
+				if ((*it).first->GetOwner()->GetEntityType() == (*it2).first->GetOwner()->GetEntityType())
+					continue;
+
+				this->CheckCollision((*it).first, (*it2).first, dt);
+
+				posColliderChecks.push_back(std::make_pair((*it).first->GetOwner()->GetPosition(),
+					(*it2).first->GetOwner()->GetPosition()));
 			}
 		}
 	}
-
 	
 
 	//MyDebugger::GetInstance()->watch_this_info("COLLISION SIZE", colliders.size());
 }
 
-void CollisionManager::add_collider(CCollider* collidable, int partition)
+void CollisionManager::AddCollider(CCollider* collidable, int partition)
 {
 	this->colliders[partition].insert(collidable);
+	
 }
 
-void CollisionManager::remove_collider(CCollider * collidable, int partition)
+void CollisionManager::RemoveCollider(CCollider * collidable, int partition)
 {
 	this->colliders.at(partition).erase(collidable);
+}
+
+void CollisionManager::AddCollider(CCollider * collidable, std::list<unsigned>* partition)
+{
+	//for each (int i in partition) {
+	//	this->colliders[i].insert(collidable);
+	//}
+	this->colliderMap.insert(std::make_pair(collidable, partition));
+}
+
+void CollisionManager::RemoveCollider(CCollider * collidable)
+{
+	//for each (int i in partition) {
+	//	this->colliders[i].erase(collidable);
+	//}
+	this->colliderMap.erase(collidable);
 }
 
 void CollisionManager::CheckCollision(CCollider * left, CCollider * right, double dt)
@@ -119,7 +168,7 @@ bool CollisionManager::isCollideLine_AABB(CCollider * line, CCollider * AABB, do
 		return false;
 	LineCollider& lineCollider = *linecheck;
 	Vector3 line_start(lineCollider.GetPos());
-	Vector3 line_end(lineCollider.GetDir() * lineCollider.GetSpeed() * static_cast<float>(dt));
+	Vector3 line_end(lineCollider.GetPos() - lineCollider.GetDir() * lineCollider.GetSpeed() * static_cast<float>(dt));
 	Vector3 minAABB(AABB->GetMinAABB());
 	Vector3 maxAABB(AABB->GetMaxAABB());
 	Vector3 Hit;
@@ -137,7 +186,8 @@ bool CollisionManager::isCollideLine_AABB(CCollider * line, CCollider * AABB, do
 		|| (GetIntersection(line_start.z - maxAABB.z, line_end.z -
 			maxAABB.z, line_start, line_end, Hit) && InBox(Hit, minAABB, maxAABB, 3)))
 		return true;
-	return false;
+	return false;
+
 }
 
 bool CollisionManager::GetIntersection(const float fDst1, const float fDst2, Vector3 P1, Vector3 P2, Vector3 & Hit)

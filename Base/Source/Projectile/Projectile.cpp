@@ -5,6 +5,9 @@
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
 #include "../MasterEntityManager\MasterEntityManager.h"
+#include "Collider\LineCollider.h"
+#include "Manager\CollisionManager.h"
+#include "../SpatialPartition/SpatialPartitionManager.h"
 
 CProjectile::CProjectile(void)
 	: modelMesh(NULL)
@@ -53,6 +56,10 @@ void CProjectile::Set(Vector3 theNewPosition, Vector3 theNewDirection, const flo
 	theDirection = theNewDirection;
 	this->m_fLifetime = m_fLifetime;
 	this->m_fSpeed = m_fSpeed;
+
+	LineCollider* lineCollider = new LineCollider(this);
+	lineCollider->Init(theNewPosition, theNewDirection, m_fSpeed, 1000);
+	this->collider = lineCollider;
 }
 
 // Get the direction of the projectile
@@ -122,6 +129,21 @@ void CProjectile::Update(double dt)
 	position.Set(	position.x + (float)(theDirection.x * dt * m_fSpeed),
 					position.y + (float)(theDirection.y * dt * m_fSpeed),
 					position.z + (float)(theDirection.z * dt * m_fSpeed));
+
+	//i use lifetime as distance travelled
+	//m_fLifetime += (float)dt * m_fSpeed;
+	//if(m_fLifetime > 1000)
+	//	this-
+	LineCollider* lineCollider = dynamic_cast<LineCollider*>(this->collider);
+	lineCollider->SetPos(this->position);
+
+	this->ClearPartition();
+	if (CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position))
+		this->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
+
+	std::list<unsigned> ::iterator it = (*this->GetPartitionPtr()).begin();
+	for (; it!= (*this->GetPartitionPtr()).end(); ++it)
+		std::cout << *it << std::endl;
 }
 
 
@@ -142,6 +164,7 @@ void CProjectile::Render(void)
 	modelStack.PopMatrix();
 }
 
+
 // Create a projectile and add it into EntityManager
 CProjectile* Create::Projectile(const std::string& _meshName, 
 								const Vector3& _position, 
@@ -161,6 +184,8 @@ CProjectile* Create::Projectile(const std::string& _meshName,
 	result->SetSource(_source);
 	result->SetEntityType(ECEntityTypes::OTHERS);
 	EntityManager::GetInstance()->AddEntity(result);
+	result->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(_position)->GetIndex());
+	CollisionManager::GetInstance()->AddCollider(result->collider, result->GetPartitionPtr());
 
 	return result;
 }

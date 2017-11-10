@@ -14,6 +14,7 @@ class LineCollider : public CCollider
 	//move speed;
 	float speed;
 public:
+	LineCollider(EntityBase* owner) : CCollider(owner) {}
 	void Init(Vector3 pos, Vector3 dir, float speed = 1.0f, float range = FLT_MAX, float thickness = 1.0f)
 	{
 		this->pos = pos;
@@ -21,7 +22,7 @@ public:
 		this->range = range;
 		this->thickness = thickness;
 		this->speed = speed;
-	}
+	}	
 
 	Vector3 GetPos() { return pos; }
 	Vector3 GetDir() { return dir; }
@@ -29,4 +30,5 @@ public:
 	float GetThickness() { return thickness; }
 	float GetSpeed() { return speed; }
 	
+	void SetPos(Vector3 pos) { this->pos = pos; }
 };

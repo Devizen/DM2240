@@ -21,6 +21,7 @@ public:
 	bool RemoveEntity(EntityBase* _existingEntity);
 
 	void UpdateCollision();
+
 private:
 	EntityManager();
 	virtual ~EntityManager();

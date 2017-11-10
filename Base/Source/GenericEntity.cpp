@@ -51,6 +51,18 @@ void GenericEntity::Render()
 	else if (levelOfDetail == ECLevelOfDetail::LOW)
 		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("cube"));
 	modelStack.PopMatrix();
+
+
+	//AABB
+	//if (this->collider == nullptr)
+	//	return;
+	//Vector3 min = this->collider->GetMinAABB();
+	//Vector3 max = this->collider->GetMaxAABB();
+	//Color color(1, 0, 0);
+	//RenderHelper::DrawLine(Vector3(min.x, min.y, min.z), Vector3(min.x, max.y, min.z), color);
+	//RenderHelper::DrawLine(Vector3(min.x, min.y, max.z), Vector3(min.x, max.y, max.z), color);
+	//RenderHelper::DrawLine(Vector3(max.x, min.y, max.z), Vector3(max.x, max.y, max.z), color);
+	//RenderHelper::DrawLine(Vector3(max.x, min.y, min.z), Vector3(max.x, max.y, min.z), color);
 }
 
 // Set the maxAABB and minAABB

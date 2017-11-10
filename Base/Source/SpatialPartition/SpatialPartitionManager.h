@@ -5,7 +5,7 @@
 #include <utility>
 #include <string>
 #include <vector>
-#include "Vector3.h"
+#include "../../Common/Source/Vector3.h"
 class CSpatialPartition;
 class CPlayerInfo;
 class EntityBase;
@@ -29,6 +29,8 @@ public:
 	/*Get the total amount of partition(s).*/
 	size_t GetPartitionCount(void) { return partitionList.size(); }
 	bool IsEntityInCorrectGrid(EntityBase* entity);
+
+	bool toggle;
 private:
 	typedef std::vector<CSpatialPartition*> Partition;
 	/*A vector of CSpatialPartition objects.*/

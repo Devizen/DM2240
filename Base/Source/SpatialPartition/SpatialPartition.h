@@ -32,6 +32,7 @@ public:
 	//Vector3 GetMaxBoundary(void) { return maxBoundary; }
 	/*Get the partition number the player is in.*/
 	std::list<unsigned int> GetPartition(void) { return partitionNum; }
+	std::list<unsigned int>* GetPartitionPtr(void) { return &partitionNum; }
 
 	/*Object's position should be passed in, if function returned true, proceed to run SpatialPartitionManager UpdateGridInfo().*/
 	bool CheckBoundary(Vector3 objectPosition);
