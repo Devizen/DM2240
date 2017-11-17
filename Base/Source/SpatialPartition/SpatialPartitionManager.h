@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "../../Common/Source/Vector3.h"
+#include <list>
 class CSpatialPartition;
 class CPlayerInfo;
 class EntityBase;
@@ -33,6 +34,9 @@ public:
 	bool toggle;
 	/*Get Grid Length.*/
 	float GetGridLength(void) { return gridSize; }
+
+	/*Get list of index the object is in based on object scaling*/
+	std::list <unsigned> GetPartitionIndices(Vector3 position, Vector3 scale);
 private:
 	typedef std::vector<CSpatialPartition*> Partition;
 	/*A vector of CSpatialPartition objects.*/
