@@ -19,6 +19,11 @@ public:
 
 	// Set the maxAABB and minAABB
 	void SetAABB(Vector3 maxAABB, Vector3 minAABB);
+
+	virtual void CollisionResponse(EntityBase* other) {
+		std::cout << "BOOM : " << other << std::endl;
+		isDone = true;
+	}
 private:
 	Mesh* modelMesh;
 	/*Demo-ing Spatial Partitioning.*/

@@ -143,9 +143,9 @@ void CProjectile::Update(double dt)
 	if (CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position))
 		this->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
 
-	std::list<unsigned> ::iterator it = (*this->GetPartitionPtr()).begin();
-	for (; it!= (*this->GetPartitionPtr()).end(); ++it)
-		std::cout << *it << std::endl;
+	//std::list<unsigned> ::iterator it = (*this->GetPartitionPtr()).begin();
+	//for (; it!= (*this->GetPartitionPtr()).end(); ++it)
+	//	std::cout << *it << std::endl;
 }
 
 
