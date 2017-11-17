@@ -22,7 +22,7 @@ public:
 	Vector3 GetMinBoundary(void) { return minBoundary; }
 	Vector3 GetMaxBoundary(void) { return maxBoundary; }
 	void SetPosition(Vector3 _position) { spPosition = _position; }
-	/*Set the partition number the player is in.*/
+	/*Add a new partition index.*/
 	void SetPartition(unsigned _partitionNum) { partitionNum.push_back(_partitionNum); }
 	void ClearPartition() { partitionNum.clear(); }
 

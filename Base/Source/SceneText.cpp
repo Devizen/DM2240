@@ -307,8 +307,8 @@ void SceneText::Init()
 	// Create entities into the scene
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
-	GenericEntity* aCube = Create::Entity("cube", Vector3(-20.0f, 0.0f, -20.0f));
-	GenericEntity* bCube = Create::Entity("cube", Vector3(-40.0f, 0.0f, -40.0f));
+	GenericEntity* aCube = Create::Entity("cube", Vector3(-20.0f, 0.0f, -20.0f), Vector3(5.f, 5.f, 5.f));
+	GenericEntity* bCube = Create::Entity("cube", Vector3(-40.0f, 0.0f, -40.0f), Vector3(5.f, 5.f, 5.f));
 
 	/*Create the root node.*/
 	CSceneNode* theNode = CSceneGraph::GetInstance()->AddNode(aCube);

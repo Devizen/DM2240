@@ -91,3 +91,17 @@ GenericEntity* Create::Entity(	const std::string& _meshName,
 	EntityManager::GetInstance()->AddEntity(result);
 	return result;
 }
+
+GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & const _position, const Vector3 & _scale)
+{
+	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
+	if (modelMesh == nullptr)
+		return nullptr;
+
+	GenericEntity* result = new GenericEntity(modelMesh);
+	result->SetPosition(_position);
+	result->SetScale(_scale);
+	result->SetCollider(false);
+	//EntityManager::GetInstance()->AddEntity(result);
+	return result;
+}

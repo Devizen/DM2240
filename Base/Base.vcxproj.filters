@@ -132,6 +132,9 @@
     <ClCompile Include="Source\Projectile\Laser\Laser.cpp">
       <Filter>Projectile\Laser</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SceneGraph\UpdateTransformation.cpp">
+      <Filter>SceneGraph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="Source\Projectile\Laser\Laser.h">
       <Filter>Projectile\Laser</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneGraph\UpdateTransformation.h">
+      <Filter>SceneGraph</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
