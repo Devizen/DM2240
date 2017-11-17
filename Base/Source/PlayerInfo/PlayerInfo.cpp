@@ -447,7 +447,7 @@ void CPlayerInfo::Update(double dt)
 		secondaryWeapon->Update(dt);
 
 	// if Mouse Buttons were activated, then act on them
-	if (MouseController::GetInstance()->IsButtonPressed(MouseController::LMB))
+	if (MouseController::GetInstance()->IsButtonDown(MouseController::LMB))
 	{
 		if (primaryWeapon)
 			primaryWeapon->Discharge(position, target, this);

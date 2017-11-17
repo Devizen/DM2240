@@ -2,7 +2,8 @@
 #define RENDER_HELPER_H
 
 #include "Vertex.h"
-
+#include <vector>
+#include <utility>
 class Mesh;
 
 class RenderHelper
@@ -12,6 +13,7 @@ public:
 	static void RenderMeshWithLight(Mesh* _mesh);
 	static void RenderText(Mesh* _mesh, const std::string& _text, Color _color);
 	static void DrawLine(Vector3 start, Vector3 end, Color color);
+	static void DrawLine(std::vector<std::pair<Vector3, Vector3>>& lines, Color color);
 };
 
 #endif // RENDER_HELPER_H
