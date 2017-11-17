@@ -8,7 +8,7 @@
 class Mesh;
 /*For categorising entity.*/
 enum class ECEntityTypes;
-class GenericEntity : public EntityBase, public CCollider
+class GenericEntity : public EntityBase//, public CCollider
 {
 public:
 	GenericEntity(Mesh* _modelMesh);
