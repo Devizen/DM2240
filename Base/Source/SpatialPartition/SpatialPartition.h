@@ -24,6 +24,8 @@ public:
 	void SetPosition(Vector3 _position) { spPosition = _position; }
 	/*Set the partition number the player is in.*/
 	void SetPartition(unsigned _partitionNum) { partitionNum.push_back(_partitionNum); }
+	/*Clears current partition list and reassign a new one*/
+	void SetPartition(std::list<unsigned>& _partitionList) { partitionNum.assign(_partitionList.begin(), _partitionList.end()); }
 	void ClearPartition() { partitionNum.clear(); }
 
 	/*Getters*/

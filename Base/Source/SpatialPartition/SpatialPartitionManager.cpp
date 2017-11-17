@@ -124,3 +124,20 @@ bool CSpatialPartitionManager::IsEntityInCorrectGrid(EntityBase * entity)
 		entity->GetPosition() <= myPartition->GetMaxBoundary());
 	return false;
 }
+
+std::list<unsigned> CSpatialPartitionManager::GetPartitionIndices(Vector3 position, Vector3 scale)
+{
+	std::list<unsigned> index;
+	Vector3 min = position - scale;
+	Vector3 max = position + scale;
+	for (size_t i = 0; i < partitionList.size(); ++i)
+	{
+		if (max >= partitionList[i]->GetMinBoundary() && min <= partitionList[i]->GetMaxBoundary())
+		{
+			if (std::find(index.begin(), index.end(), i) == index.end())
+				index.push_back(i);
+		}
+	}
+
+	return index;
+}
