@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "SceneGraph.h"
+#include "GraphicsManager.h"
 
 CSceneNode::CSceneNode(void)
 	: ID(-1)
@@ -315,6 +316,82 @@ int CSceneNode::GetNumOfChild(void)
 	return NumOfChild;
 }
 
+// Update the Scene Graph
+void CSceneNode::Update(void)
+{
+	// Update the Transformation between this node and its children
+	if (theUpdateTransformation)
+	{
+		ApplyTransform(GetUpdateTransform());
+	}
+
+	/*
+	Mtx44 orig = GetTransform();
+	Mtx44 update = GetUpdateTransform();
+	cout << "======================================================================" << endl;
+	cout << "Orig" << endl;
+	cout << "----------------------------------------------------------------------" << endl;
+	cout << "[\t" << orig.a[0] << "\t" << orig.a[4] << "\t" << orig.a[8] << "\t" << orig.a[12] << "\t]" << endl;
+	cout << "[\t" << orig.a[1] << "\t" << orig.a[5] << "\t" << orig.a[9] << "\t" << orig.a[13] << "\t]" << endl;
+	cout << "[\t" << orig.a[2] << "\t" << orig.a[6] << "\t" << orig.a[10] << "\t" << orig.a[14] << "\t]" << endl;
+	cout << "[\t" << orig.a[3] << "\t" << orig.a[7] << "\t" << orig.a[11] << "\t" << orig.a[15] << "\t]" << endl;
+	cout << "======================================================================" << endl;
+
+	cout << "======================================================================" << endl;
+	cout << "Update" << endl;
+	cout << "----------------------------------------------------------------------" << endl;
+	cout << "[\t" << update.a[0] << "\t" << update.a[4] << "\t" << update.a[8] << "\t" << update.a[12] << "\t]" << endl;
+	cout << "[\t" << update.a[1] << "\t" << update.a[5] << "\t" << update.a[9] << "\t" << update.a[13] << "\t]" << endl;
+	cout << "[\t" << update.a[2] << "\t" << update.a[6] << "\t" << update.a[10] << "\t" << update.a[14] << "\t]" << endl;
+	cout << "[\t" << update.a[3] << "\t" << update.a[7] << "\t" << update.a[11] << "\t" << update.a[15] << "\t]" << endl;
+	cout << "======================================================================" << endl;
+	*/
+
+	// Update the children
+	std::vector<CSceneNode*>::iterator it;
+	for (it = theChildren.begin(); it != theChildren.end(); ++it)
+	{
+		(*it)->Update();
+	}
+}
+// Render the Scene Graph
+void CSceneNode::Render(void)
+{
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+	modelStack.PushMatrix();
+
+	if (theEntity)
+	{
+		//modelStack.LoadMatrix(this->GetTransform());
+		modelStack.MultMatrix(this->GetTransform());
+
+		/*
+		Mtx44 Mtx = modelStack.Top();
+		cout << "======================================================================" << endl;
+		cout << "CSceneNode::PrintSelf" << endl;
+		cout << "----------------------------------------------------------------------" << endl;
+		cout << "[\t" << Mtx.a[0] << "\t" << Mtx.a[4] << "\t" << Mtx.a[8] << "\t" << Mtx.a[12] << "\t]" << endl;
+		cout << "[\t" << Mtx.a[1] << "\t" << Mtx.a[5] << "\t" << Mtx.a[9] << "\t" << Mtx.a[13] << "\t]" << endl;
+		cout << "[\t" << Mtx.a[2] << "\t" << Mtx.a[6] << "\t" << Mtx.a[10] << "\t" << Mtx.a[14] << "\t]" << endl;
+		cout << "[\t" << Mtx.a[3] << "\t" << Mtx.a[7] << "\t" << Mtx.a[11] << "\t" << Mtx.a[15] << "\t]" << endl;
+		cout << "======================================================================" << endl;
+		*/
+
+
+		// Render the entity
+		theEntity->Render();
+	}
+
+	// Render the children
+	std::vector<CSceneNode*>::iterator it;
+	for (it = theChildren.begin(); it != theChildren.end(); ++it)
+	{
+		(*it)->Render();
+	}
+
+	modelStack.PopMatrix();
+}
+
 // PrintSelf for debug purposes
 void CSceneNode::PrintSelf(const int numTabs)
 {
@@ -329,14 +406,15 @@ void CSceneNode::PrintSelf(const int numTabs)
 			(*it)->PrintSelf((numTabs + 1));
 			it++;
 		}
+		((CTransform*)this)->PrintSelf();
 		cout << "End of theRoot::PrintSelf()" << endl << "============================" << endl;
 	}
 	else
 	{
 		for (int i = 0; i < numTabs; i++)
 			cout << "\t";
-		cout << "CSceneNode::PrintSelf: ID=" << ID << "/theEntity=" << theEntity << 
-				"/Children=" << theChildren.size() << endl;
+		cout << "CSceneNode::PrintSelf: ID=" << ID << "/theEntity=" << theEntity <<
+			"/Children=" << theChildren.size() << endl;
 		for (int i = 0; i < numTabs; i++)
 			cout << "\t";
 		cout << "Printing out the children:" << endl;

@@ -11,6 +11,8 @@
 
 #include "LevelOfDetail\LevelOfDetail.h"
 
+#include "SceneGraph\SceneGraph.h"
+
 #include <iostream>
 using namespace std;
 
@@ -46,7 +48,7 @@ void EntityManager::Update(double _dt)
 		}
 	}
 
-
+	CSceneGraph::GetInstance()->Update();
 	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); )
 	{
 		
@@ -88,6 +90,7 @@ void EntityManager::Render()
 	{
 		(*it)->Render();
 	}
+	CSceneGraph::GetInstance()->Render();
 }
 
 // Render the UI entities

@@ -4,7 +4,6 @@
 #include "EntityBase.h"
 #include <string>
 #include "Collider/Collider.h"
-
 class Mesh;
 /*For categorising entity.*/
 enum class ECEntityTypes;

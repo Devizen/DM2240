@@ -40,6 +40,11 @@ public:
 	// Generate an ID for a Scene Node
 	int GenerateID(void);
 
+	// Update the Scene Graph
+	void Update(void);
+	// Render the Scene Graph
+	void Render(void);
+
 	// PrintSelf for debug purposes
 	void PrintSelf(void);
 

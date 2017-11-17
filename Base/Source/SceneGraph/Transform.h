@@ -32,9 +32,9 @@ public:
 	// Get the rotation from the Transformation Matrix
 	float GetRotate(const AXIS theAxis);
 	// Set the scale of the Transformation Matrix
-	void SetScale(const float sx, const float sy, const float sz);
+	void SetTScale(const float sx, const float sy, const float sz);
 	// Get the scale from the Transformation Matrix
-	void GetScale(float& x, float& y, float& z);
+	void GetTScale(float& x, float& y, float& z);
 
 	// Apply a Transformation Matrix to the Transformation Matrix here
 	void ApplyTransform(Mtx44 newMTX);

@@ -242,6 +242,8 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[1] = LoadTGA("Image//WORLD//W_SNOW.tga");
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[2] = LoadTGA("Image//WORLD//W_WATER.tga");
 
+	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
+
 	/*Number of partitions for each X-axis and Z-axis.*/
 	const unsigned numOfPartitionXZ = 5;
 	const float groundScale(400.f);
@@ -259,21 +261,21 @@ void SceneText::Init()
 	//CMasterEntityManager::GetInstance()->Init(CSpatialPartitionManager::GetInstance()->GetPartitionCount());
 	//CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
 
-	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
-	{
-		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
-		position.y += 10.f;
-		EntityBase* chair = Create::Entity("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
-		chair->SetEntityType(ECEntityTypes::OBJECT);
+	//for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
+	//{
+	//	Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
+	//	position.y += 10.f;
+	//	EntityBase* chair = Create::Entity("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
+	//	chair->SetEntityType(ECEntityTypes::OBJECT);
 
-		chair->collider = new CCollider(chair);
-		chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
-		chair->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + position);
-		chair->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
-		CollisionManager::GetInstance()->AddCollider(chair->collider, chair->GetPartitionPtr());
+	//	chair->collider = new CCollider(chair);
+	//	chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
+	//	chair->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + position);
+	//	chair->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
+	//	CollisionManager::GetInstance()->AddCollider(chair->collider, chair->GetPartitionPtr());
 
-		//CMasterEntityManager::GetInstance()->AddEntity(chair);
-	}
+	//	//CMasterEntityManager::GetInstance()->AddEntity(chair);
+	//}
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 	groundEntity = Create::Ground("COMGROUND", "COMGROUND");
@@ -308,8 +310,19 @@ void SceneText::Init()
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
 
-	GenericEntity* aCube = Create::Entity("cube", Vector3(-20.0f, 0.0f, -20.0f), Vector3(5.f, 5.f, 5.f));
-	GenericEntity* bCube = Create::Entity("cube", Vector3(-40.0f, 0.0f, -40.0f), Vector3(5.f, 5.f, 5.f));
+	GenericEntity* aCube = Create::Asset("cube", Vector3(0.f, 30.f, 0.f), Vector3(5.f, 5.f, 5.f));
+	CSceneNode* aCubeNode = CSceneGraph::GetInstance()->AddNode(aCube);
+
+	GenericEntity* bCube = Create::Asset("cubeSG", Vector3(0.f, 30.f, 0.f), Vector3(5.f, 5.f, 5.f));
+	CSceneNode* bCubeNode = aCubeNode->AddChild(bCube);
+	bCubeNode->ApplyTranslate(0.f, 1.f, 0.f);
+
+	GenericEntity* cCube = Create::Asset("cubeSG", Vector3(0.f, 30.f, 0.f), Vector3(5.f, 5.f, 5.f));
+	CSceneNode* cCubeNode = bCubeNode->AddChild(cCube);
+	cCubeNode->ApplyTranslate(0.f, 0.f, 1.f);
+
+	aCubeNode->PrintSelf();
+
 	aCube->SetEntityType(ECEntityTypes::OBJECT);
 	aCube->collider = new CCollider(aCube);
 	aCube->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + aCube->GetPosition());
@@ -325,15 +338,15 @@ void SceneText::Init()
 	bCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(bCube->GetPosition(), bCube->GetScale()));
 	CollisionManager::GetInstance()->AddCollider(bCube->collider, bCube->GetPartitionPtr());
 
-	/*Create the root node.*/
-	CSceneNode* theNode = CSceneGraph::GetInstance()->AddNode(aCube);
-	if (theNode == nullptr)
-		std::cout << "FAILED TO ADD NODE" << std::endl;
-	/*Add another node to the root node.*/
-	CSceneNode* anotherNode = theNode->AddChild(aCube);
-	if (theNode == nullptr)
-		std::cout << "FAILED TO ADD NODE" << std::endl;
-	theNode->PrintSelf();
+	///*Create the root node.*/
+	//CSceneNode* theNode = CSceneGraph::GetInstance()->AddNode(aCube);
+	//if (theNode == nullptr)
+	//	std::cout << "FAILED TO ADD NODE" << std::endl;
+	///*Add another node to the root node.*/
+	//CSceneNode* anotherNode = theNode->AddChild(aCube);
+	//if (theNode == nullptr)
+	//	std::cout << "FAILED TO ADD NODE" << std::endl;
+	//theNode->PrintSelf();
 
 //	Create::Text3DObject("text", Vector3(0.0f, 0.0f, 0.0f), "DM2210", Vector3(10.0f, 10.0f, 10.0f), Color(0, 1, 1));
 	Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));

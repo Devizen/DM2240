@@ -88,7 +88,7 @@ float CTransform::GetRotate(const AXIS theAxis)
 	return 0.0f;
 }
 // Set the scale of the Transformation Matrix
-void CTransform::SetScale(const float sx, const float sy, const float sz)
+void CTransform::SetTScale(const float sx, const float sy, const float sz)
 {
 	float scaleX = sx, scaleY = sy, scaleZ = sz;
 	if (scaleX == 0.0f)
@@ -101,7 +101,7 @@ void CTransform::SetScale(const float sx, const float sy, const float sz)
 	Mtx.SetToScale(scaleX, scaleY, scaleZ);
 }
 // Get the scale from the Transformation Matrix
-void CTransform::GetScale(float& x, float& y, float& z)
+void CTransform::GetTScale(float& x, float& y, float& z)
 {
 	x = Mtx.a[0];
 	y = Mtx.a[5];

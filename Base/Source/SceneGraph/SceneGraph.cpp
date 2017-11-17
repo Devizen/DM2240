@@ -27,16 +27,16 @@ void CSceneGraph::Destroy()
 	Singleton<CSceneGraph>::Destroy();
 }
 
-CSceneNode* CSceneGraph::GetRoot() 
-{ 
-	return theRoot; 
+CSceneNode* CSceneGraph::GetRoot()
+{
+	return theRoot;
 }
 
 // Add a Node to this Scene Graph
 CSceneNode* CSceneGraph::AddNode(EntityBase* theEntity)
 {
 	CSceneNode* aNewSceneNode = theRoot->AddChild(theEntity);
-//	aNewSceneNode->SetID(this->GenerateID());
+	//	aNewSceneNode->SetID(this->GenerateID());
 	return aNewSceneNode;
 }
 
@@ -87,6 +87,17 @@ int CSceneGraph::GenerateID(void)
 {
 	// Return the ID and increment the value by 1
 	return ID++;
+}
+
+// Update the Scene Graph
+void CSceneGraph::Update(void)
+{
+	theRoot->Update();
+}
+// Render the Scene Graph
+void CSceneGraph::Render(void)
+{
+	theRoot->Render();
 }
 
 // PrintSelf for debug purposes

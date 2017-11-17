@@ -3,11 +3,11 @@
 
 #include "Vector3.h"
 #include "../../Base/Source/SpatialPartition/SpatialPartition.h"
-
+#include "../../Base/Source/SceneGraph/SceneNode.h"
 enum class ECLevelOfDetail;
 enum class ECEntityTypes;
 class CCollider;
-class EntityBase : public CSpatialPartition
+class EntityBase : public CSpatialPartition, public CSceneNode
 {
 public:
 	EntityBase();
