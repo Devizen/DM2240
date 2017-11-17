@@ -66,11 +66,11 @@ void GenericEntity::Render()
 }
 
 // Set the maxAABB and minAABB
-void GenericEntity::SetAABB(Vector3 maxAABB, Vector3 minAABB)
-{
-	this->maxAABB = maxAABB;
-	this->minAABB = minAABB;
-}
+//void GenericEntity::SetAABB(Vector3 maxAABB, Vector3 minAABB)
+//{
+//	this->maxAABB = maxAABB;
+//	this->minAABB = minAABB;
+//}
 
 GenericEntity* Create::Entity(	const std::string& _meshName, 
 								const Vector3& _position,

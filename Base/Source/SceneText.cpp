@@ -186,6 +186,7 @@ void SceneText::Init()
 	playerInfo->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
+	//MeshBuilder::GetInstance()->GenerateLine
 	// Load all the meshes
 	MeshBuilder::GetInstance()->GenerateAxes("reference");
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
@@ -578,11 +579,12 @@ void SceneText::RenderPassMain(void)
 	EntityManager::GetInstance()->Render();
 	//RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
 	//RenderHelper::DrawLine(Vector3(-10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
-	for (int i = 0; i < CollisionManager::GetInstance()->posColliderChecks.size(); ++i)
-	{
-		std::pair<Vector3, Vector3> &p = CollisionManager::GetInstance()->posColliderChecks[i];
-		RenderHelper::DrawLine(p.first, p.second, Color(0, 1, 0));
-	}
+	//for (int i = 0; i < CollisionManager::GetInstance()->posColliderChecks.size(); ++i)
+	//{
+	//	std::pair<Vector3, Vector3> &p = CollisionManager::GetInstance()->posColliderChecks[i];
+	//	RenderHelper::DrawLine(p.first, p.second, Color(0, 1, 0));
+	//}
+	RenderHelper::DrawLine(CollisionManager::GetInstance()->posColliderChecks, Color(0, 1, 0));
 	CollisionManager::GetInstance()->posColliderChecks.clear();
 
 	// Setup 2D pipeline then render 2D
