@@ -45,11 +45,11 @@ void GenericEntity::Render()
 		modelStack.Rotate(rotateAngle, rotateAxis.x, rotateAxis.y, rotateAxis.z);
 	modelStack.Scale(scale.x, scale.y, scale.z);
 	if (levelOfDetail == ECLevelOfDetail::HIGH)
-		RenderHelper::RenderMeshWithLight(modelMesh);
+		RenderHelper::RenderMesh(modelMesh);
 	else if (levelOfDetail == ECLevelOfDetail::NORMAL)
-		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("BLUESPHERE"));
+		RenderHelper::RenderMesh(/*MeshBuilder::GetInstance()->GetMesh("BLUESPHERE")*/modelMesh);
 	else if (levelOfDetail == ECLevelOfDetail::LOW)
-		RenderHelper::RenderMeshWithLight(MeshBuilder::GetInstance()->GetMesh("REDSPHERE"));
+		RenderHelper::RenderMesh(/*MeshBuilder::GetInstance()->GetMesh("REDSPHERE")*/modelMesh);
 	modelStack.PopMatrix();
 
 

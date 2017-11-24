@@ -2,6 +2,7 @@
 /*Categorise entities.*/
 #include "EntityTypes\EntityTypes.h"
 #include "Manager\CollisionManager.h"
+#include "LevelOfDetail\LevelOfDetail.h"
 
 EntityBase::EntityBase() 
 	: position(0.0f, 0.0f, 0.0f)
@@ -12,6 +13,7 @@ EntityBase::EntityBase()
 	, m_bCollider(false)
 	, entityType(ECEntityTypes::OTHERS)
 	, collider(nullptr)
+	, levelOfDetail(ECLevelOfDetail::LOW)
 {
 }
 

@@ -311,33 +311,40 @@ void SceneText::Init()
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
 
-	GenericEntity* aCube = Create::Asset("cube", Vector3(0.f, 30.f, 0.f), Vector3(5.f, 5.f, 5.f));
+	GenericEntity* aCube = Create::Asset("cube", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f));
 	CSceneNode* aCubeNode = CSceneGraph::GetInstance()->AddNode(aCube);
 
-	GenericEntity* bCube = Create::Asset("cubeSG", Vector3(0.f, 30.f, 0.f), Vector3(5.f, 5.f, 5.f));
+	GenericEntity* bCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f));
 	CSceneNode* bCubeNode = aCubeNode->AddChild(bCube);
-	bCubeNode->ApplyTranslate(0.f, 1.f, 0.f);
+	bCubeNode->ApplyTranslate(0.f, 5.f, 0.f);
 
-	GenericEntity* cCube = Create::Asset("cubeSG", Vector3(0.f, 30.f, 0.f), Vector3(5.f, 5.f, 5.f));
+	GenericEntity* cCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f));
 	CSceneNode* cCubeNode = bCubeNode->AddChild(cCube);
-	cCubeNode->ApplyTranslate(0.f, 0.f, 1.f);
+	cCubeNode->ApplyTranslate(0.f, 5.f, 5.f);
 
 	aCubeNode->PrintSelf();
 
 	aCube->SetEntityType(ECEntityTypes::OBJECT);
 	aCube->collider = new CCollider(aCube);
-	aCube->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + aCube->GetPosition());
-	aCube->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + aCube->GetPosition());
+	aCube->collider->SetMinAABB((-aCube->GetScale() * 0.5f) + aCube->GetPosition() + aCube->GetTransform());
+	aCube->collider->SetMaxAABB((aCube->GetScale() * 0.5f) + aCube->GetPosition());
 	aCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(aCube->GetPosition(), aCube->GetScale()));
 	CollisionManager::GetInstance()->AddCollider(aCube->collider, aCube->GetPartitionPtr());
 
 	//this cube is on 4 partitions, 6,7,11,12.
 	bCube->SetEntityType(ECEntityTypes::OBJECT);
 	bCube->collider = new CCollider(bCube);
-	bCube->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + bCube->GetPosition());
-	bCube->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + bCube->GetPosition());
+	bCube->collider->SetMinAABB((-bCube->GetScale() * 0.5f) + bCube->GetPosition());
+	bCube->collider->SetMaxAABB((bCube->GetScale() * 0.5f) + bCube->GetPosition());
 	bCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(bCube->GetPosition(), bCube->GetScale()));
 	CollisionManager::GetInstance()->AddCollider(bCube->collider, bCube->GetPartitionPtr());
+
+	cCube->SetEntityType(ECEntityTypes::OBJECT);
+	cCube->collider = new CCollider(cCube);
+	cCube->collider->SetMinAABB((-cCube->GetScale() * 0.5f) + cCube->GetPosition());
+	cCube->collider->SetMaxAABB((cCube->GetScale() * 0.5f) + cCube->GetPosition());
+	cCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(cCube->GetPosition(), cCube->GetScale()));
+	CollisionManager::GetInstance()->AddCollider(cCube->collider, cCube->GetPartitionPtr());
 
 	///*Create the root node.*/
 	//CSceneNode* theNode = CSceneGraph::GetInstance()->AddNode(aCube);
