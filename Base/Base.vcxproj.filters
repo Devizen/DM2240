@@ -135,6 +135,9 @@
     <ClCompile Include="Source\SceneGraph\UpdateTransformation.cpp">
       <Filter>SceneGraph</Filter>
     </ClCompile>
+    <ClCompile Include="Source\QuadTree\QuadTreeManager.cpp">
+      <Filter>QuadTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -217,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="Source\SceneGraph\UpdateTransformation.h">
       <Filter>SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\QuadTree\QuadTreeManager.h">
+      <Filter>QuadTree</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 /*For positions.*/
 #include "Vector3.h"
 #include <list>
+#include <vector>
 
 class EntityBase;
 
@@ -12,7 +13,7 @@ class QuadTree
 public:
 	/*Only use X and Y or X and Z. 2D.
 	Width and Length of QuadTree can be calculated via _minBoundary and _maxBoundary.*/
-	QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary, unsigned _level, unsigned _maxLevel, std::list<EntityBase*>_entityList);
+	QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary, unsigned _level, unsigned _maxLevel, std::list<EntityBase*> entityList);
 	~QuadTree(void);
 
 	bool CheckGrid(std::list<Vector3>positionList);
@@ -21,7 +22,11 @@ public:
 
 	void Render(void);
 	void Update(double dt);
-
+	void DeleteChildren();
+	std::vector<QuadTree*> GetAllChildren();
+	Vector3 GetPosition();
+	Vector3 GetMinBoundary();
+	Vector3 GetMaxBoundary();
 private:
 	QuadTree* topLeft;
 	QuadTree* topRight;

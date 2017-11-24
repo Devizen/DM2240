@@ -333,3 +333,33 @@ void RenderHelper::DrawLine(std::vector<std::pair<Vector3, Vector3>>& lines, Col
 
 	delete mesh;
 }
+
+//all unqiue vertices
+void RenderHelper::DrawLine(std::vector<Vector3> vertices, Color color, int numPerSet)
+{
+
+	Vertex v;
+	std::vector<Vertex> vertex_buffer_data;
+	std::vector<GLuint> index_buffer_data;
+	int index = 0;
+	//if odd number then i crash
+	for (int i = 0; i < vertices.size(); )
+	{
+		//01 12 23 34  56 67 78 89
+		for (int j = 0; j < numPerSet; ++j)
+		{
+			v.pos.Set(vertices[i].x, vertices[i].y, vertices[i].z);
+			v.color = color;
+			vertex_buffer_data.push_back(v);
+			++i;
+		}
+
+		++i;
+		v.pos.Set(vertices[i].x, vertices[i].y, vertices[i].z);
+		v.color = color;
+		vertex_buffer_data.push_back(v);
+
+		index_buffer_data.push_back(index++);
+		index_buffer_data.push_back(index++);
+	}
+}

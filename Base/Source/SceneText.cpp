@@ -326,7 +326,7 @@ void SceneText::Init()
 
 	aCube->SetEntityType(ECEntityTypes::OBJECT);
 	aCube->collider = new CCollider(aCube);
-	aCube->collider->SetMinAABB((-aCube->GetScale() * 0.5f) + aCube->GetPosition() + aCube->GetTransform());
+	aCube->collider->SetMinAABB((-aCube->GetScale() * 0.5f) + aCube->GetPosition());
 	aCube->collider->SetMaxAABB((aCube->GetScale() * 0.5f) + aCube->GetPosition());
 	aCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(aCube->GetPosition(), aCube->GetScale()));
 	CollisionManager::GetInstance()->AddCollider(aCube->collider, aCube->GetPartitionPtr());

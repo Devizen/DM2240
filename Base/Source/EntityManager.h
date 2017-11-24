@@ -6,9 +6,10 @@
 #include "Vector3.h"
 
 class EntityBase;
-
+class QuadTreeManager;
 class EntityManager
 {
+	friend QuadTreeManager;
 	static EntityManager* s_instance;
 public:
 	static EntityManager* GetInstance(void);
@@ -22,6 +23,7 @@ public:
 
 	void UpdateCollision();
 
+	typedef std::vector<EntityBase*> EntityList;
 private:
 	EntityManager();
 	virtual ~EntityManager();
@@ -36,7 +38,7 @@ private:
 	bool CheckForCollision(void);
 
 	/*Entity list to store entity that is in partition.*/
-	typedef std::vector<EntityBase*> EntityList;
+	
 	EntityList entityList;
 
 	void CollisionResponse(EntityBase* left, EntityBase* right);
