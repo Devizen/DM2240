@@ -40,10 +40,9 @@ private:
 	/*Position of grid.*/
 	Vector3 position;
 
-	/*Width of Grid.*/
-	float width;
-	/*Length of Grid.*/
-	float length;
+	/*Size of Quad.*/
+	float quadSize;
+
 	/*For expanding range.*/
 	QuadTree* parent;
 	/*Entities that are in the quad.*/

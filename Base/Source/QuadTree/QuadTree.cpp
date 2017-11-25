@@ -11,9 +11,13 @@ QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary
 	if (level == maxLevel)
 		return;
 
-	length = _maxBoundary.x;
-	width = _maxBoundary.z;
+	/*Does not matter if we use x axis or z axis as it will always be the same value.
+	For example, minBoundary (0.f, 0.f, 0.f) and maxBoundary (400.f, 0.f, 400.f).
+	Another example, minBoundary (200.f, 0.f, 200.f) and maxBoundary (400.f, 0.f, 400.f).
+	Another another example, minBoundary (200.f, 0.f, 0.f) and maxBoundary (400.f, 0.f, 200.f).*/
+	quadSize = _maxBoundary.x - _minBoundary.x;
 	unsigned count = 0;
+
 	/*Need to check how many objects in grid.
 	For example,
 	
@@ -78,24 +82,72 @@ bool QuadTree::CheckGrid(std::list<Vector3> positionList)
 void QuadTree::Split(void)
 {
 	//aiya shouldve used a vector instead of just floats
-	float width = (this->maxBoundary.x - this->minBoundary.x);
-	float height = (this->maxBoundary.y - this->minBoundary.y);
-	float halfX = width * 0.5f + this->minBoundary.x;
-	float halfY = height * 0.5f + this->minBoundary.y;
+	/*Theory example:
+	maxBoundary = 400.f
+	minBoundary = 0.f
 
-	topLeft = new QuadTree(Vector3(halfX - width * 0.25f, halfY + height * 0.25f, 0), 
-		Vector3(minBoundary.x, halfY, 0), 
-		Vector3(halfX, maxBoundary.y, 0), level + 1, maxLevel, this->entityList);
+	width = 400.f - 0.f = 400.f
+	height = 400.f - 0.f = 400.f
+	halfX = (400.f * 0.5f) + 0.f = 200.f
+	halfY = (400.f * 0.5f) + 0.f = 200.f
 
-	topRight = new QuadTree(Vector3(halfX + width * 0.25f, halfY + height * 0.25f, 0), Vector3(halfX, halfY, 0),
-		maxBoundary, level + 1, maxLevel, this->entityList);
 
-	bottomLeft= new QuadTree(Vector3(halfX - width * 0.25f, halfY - height * 0.25f, 0), minBoundary,
-		Vector3(halfX, halfY), level + 1, maxLevel, this->entityList);
+	 400 -  -  -  -
+		 |    |   |
+	 200 |____|___|
+		 |    |   |
+		 |    |   |
+		 -  -  -  -
+		0    200   400
 
-	bottomRight = new QuadTree(Vector3(halfX + width * 0.25f, halfY - height * 0.25f, 0), Vector3(halfX, minBoundary.y, 0),
-		Vector3(maxBoundary.x, halfY), level + 1, maxLevel, this->entityList);
+	Position for topLeftX = (200.f - 400.f) * 0.25f = -50.f
+	Position for topLeftY = (200.f + 400.f) * 0.25f = 150.f
+	Min Boundary = (0.f, 200.f, 0.f)
+	Max Boundary = (200.f, 400.f, 0.f)
+	*/
+	//float width = (this->maxBoundary.x - this->minBoundary.x);
+	//float height = (this->maxBoundary.y - this->minBoundary.y);
+	//float halfX = width * 0.5f + this->minBoundary.x;
+	//float halfY = height * 0.5f + this->minBoundary.y;
+
+	//topLeft = new QuadTree(Vector3(halfX - width * 0.25f, halfY + height * 0.25f, 0),
+	//	Vector3(minBoundary.x, halfY, 0),
+	//	Vector3(halfX, maxBoundary.y, 0), level + 1, maxLevel, this->entityList);
+
+	//topRight = new QuadTree(Vector3(halfX + width * 0.25f, halfY + height * 0.25f, 0), Vector3(halfX, halfY, 0),
+	//	maxBoundary, level + 1, maxLevel, this->entityList);
+
+	//bottomLeft = new QuadTree(Vector3(halfX - width * 0.25f, halfY - height * 0.25f, 0), minBoundary,
+	//	Vector3(halfX, halfY), level + 1, maxLevel, this->entityList);
+
+	//bottomRight = new QuadTree(Vector3(halfX + width * 0.25f, halfY - height * 0.25f, 0), Vector3(halfX, minBoundary.y, 0),
+	//	Vector3(maxBoundary.x, halfY), level + 1, maxLevel, this->entityList);
+
+
+
+
+	/*FULLY OPTIMSIED FOR ALL TYPE OF QUAD SIZES.*/
+
+	/*My suggested changes, always start the quad at bottom left position, this allows us to use Position and Min Boundary as the same value.*/
+	/*I am using X and Z because we are not drawing the Quad to the sky. It is front, back, left and right.*/
+	/*I initialise the Vector3 first so that I don't have to create the memory for 2 Vector3 for Position and Min Boundary.*/
+	Vector3 _topLeft(position.x, position.y, position.z + (quadSize * 0.5f));
+	Vector3 _topRight(position.x + (quadSize * 0.5f), position.y, position.z + (quadSize * 0.5f));
+	Vector3 _bottomLeft(position.x, position.y, position.z);
+	Vector3 _bottomRight(position.x + (quadSize * 0.5f), position.y, position.z);
+
+	/*Assuming QuadTree started creating at Vector3(0.f, 0.f, 0.f) and maxBoundary (400.f, 0.f, 400.f)*/
+
+	/*topLeft will be created at (0.f, 0.f, 200.f), minBoundary = (0.f, 0.f, 200.f) and maxBoundary = (200.f, 0.f, 400.f).*/
+	topLeft = new QuadTree(_topLeft, _topLeft, Vector3(_topLeft.x + (quadSize * 0.5f), position.y, _topLeft.z + (quadSize * 0.5f)), level + 1, maxLevel, entityList);
+	/*topRight will be created at (200.f, 0.f, 200.f), minBoundary = (200.f, 0.f, 200.f) and maxBoundary = (400.f, 0.f, 400.f).*/
+	topRight = new QuadTree(_topRight, _topRight, Vector3(_topRight.x + (quadSize * 0.5f), position.y, _topRight.z + (quadSize * 0.5f)), level + 1, maxLevel, entityList);
+	/*bottomLeft will be created at (0.f, 0.f, 0.f), minBoundary = (0.f, 0.f, 0.f) and maxBoundary = (200.f, 0.f, 200.f).*/
+	bottomLeft = new QuadTree(_bottomLeft, _bottomLeft, Vector3(_bottomLeft.x + (quadSize * 0.5f), position.y, _bottomLeft.z + (quadSize * 0.5f)), level + 1, maxLevel, entityList);
+	/*bottomRight will be created at (200.f, 0.f, 0.f), minBoundary = (200.f, 0.f, 0.f) and maxBoundary = (400.f, 0.f, 200.f).*/
+	bottomRight = new QuadTree(_bottomRight, _bottomRight, Vector3(_bottomRight.x + (quadSize * 0.5f), position.y, _bottomRight.z + (quadSize * 0.5f)), level + 1, maxLevel, entityList);
 }
+
 
 void QuadTree::Render(void)
 {
