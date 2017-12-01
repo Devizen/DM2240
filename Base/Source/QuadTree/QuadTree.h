@@ -7,9 +7,10 @@
 #include <vector>
 
 class EntityBase;
-
+class QuadTreeManager;
 class QuadTree
 {
+	friend QuadTreeManager;
 public:
 	/*Only use X and Y or X and Z. 2D.
 	Width and Length of QuadTree can be calculated via _minBoundary and _maxBoundary.*/

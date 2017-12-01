@@ -33,6 +33,7 @@
 #include "SpatialPartition\SpatialPartition.h"
 #include "SpatialPartition\SpatialPartitionManager.h"
 #include "MasterEntityManager\MasterEntityManager.h"
+#include "QuadTree\QuadTreeManager.h"
 
 #include "Manager\CollisionManager.h"
 
@@ -191,7 +192,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateAxes("reference");
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
+	//MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GenerateLine("redline", Color(1, 0, 0));
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
 	MeshBuilder::GetInstance()->GetMesh("text")->textureID[0] = LoadTGA("Image//calibri.tga");
@@ -262,21 +263,23 @@ void SceneText::Init()
 	//CMasterEntityManager::GetInstance()->Init(CSpatialPartitionManager::GetInstance()->GetPartitionCount());
 	//CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
 
-	//for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
-	//{
-	//	Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
-	//	position.y += 10.f;
-	//	EntityBase* chair = Create::Entity("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
-	//	chair->SetEntityType(ECEntityTypes::OBJECT);
+	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
+	{
+		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
+		position.x += 10.f;
+		position.y += 20.f;
+		EntityBase* chair = Create::Entity("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
+		chair->SetEntityType(ECEntityTypes::OBJECT);
 
-	//	chair->collider = new CCollider(chair);
-	//	chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
-	//	chair->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + position);
-	//	chair->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
-	//	CollisionManager::GetInstance()->AddCollider(chair->collider, chair->GetPartitionPtr());
+		chair->collider = new CCollider(chair);
+		chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
+		chair->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + position);
+		chair->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
+		CollisionManager::GetInstance()->AddCollider(chair->collider, chair->GetPartitionPtr());
 
-	//	//CMasterEntityManager::GetInstance()->AddEntity(chair);
-	//}
+		QuadTreeManager::GetInstance()->InsertEntity(chair);
+		//CMasterEntityManager::GetInstance()->AddEntity(chair);
+	}
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 	groundEntity = Create::Ground("COMGROUND", "COMGROUND");
@@ -313,6 +316,7 @@ void SceneText::Init()
 
 	GenericEntity* aCube = Create::Asset("cube", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f));
 	CSceneNode* aCubeNode = CSceneGraph::GetInstance()->AddNode(aCube);
+	//QuadTreeManager::GetInstance()->InsertEntity(aCube);
 
 	GenericEntity* bCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f));
 	CSceneNode* bCubeNode = aCubeNode->AddChild(bCube);
@@ -375,6 +379,7 @@ void SceneText::Init()
 		textObj[i]->SetEntityType(ECEntityTypes::STATIC);
 	}
 	textObj[0]->SetText("HELLO WORLD");
+
 }
 
 void SceneText::Update(double dt)
@@ -463,8 +468,10 @@ void SceneText::Update(double dt)
 	// Update the player position and other details based on keyboard and mouse inputs
 	playerInfo->Update(dt);
 
+	QuadTreeManager::GetInstance()->Update(dt);
 	//Collision Updates
 	CollisionManager::GetInstance()->Update(dt);
+	QuadTreeManager::GetInstance()->PostUpdate(dt);
 
 
 	//camera.Update(dt); // Can put the camera into an entity rather than here (Then we don't have to write this)
@@ -584,15 +591,15 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 	EntityManager::GetInstance()->Render();
-	//RenderHelper::DrawLine(Vector3(10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
-	//RenderHelper::DrawLine(Vector3(-10, 0, 0), Vector3(10, 10, 0), Color(1, 0, 0));
-	//for (int i = 0; i < CollisionManager::GetInstance()->posColliderChecks.size(); ++i)
-	//{
-	//	std::pair<Vector3, Vector3> &p = CollisionManager::GetInstance()->posColliderChecks[i];
-	//	RenderHelper::DrawLine(p.first, p.second, Color(0, 1, 0));
-	//}
-	RenderHelper::DrawLine(CollisionManager::GetInstance()->posColliderChecks, Color(0, 1, 0));
+
+	//RenderHelper::DrawLine(CollisionManager::GetInstance()->posColliderChecks, Color(0, 1, 0));
 	CollisionManager::GetInstance()->posColliderChecks.clear();
+	
+	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+	ms.PushMatrix();
+	ms.Translate(0, -10, 0);
+	//QuadTreeManager::GetInstance()->RenderGrid();
+	ms.PopMatrix();
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;

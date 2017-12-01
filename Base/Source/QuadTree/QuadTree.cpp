@@ -1,5 +1,7 @@
 #include "QuadTree.h"
 
+#include "QuadTreeManager.h"
+
 QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary, unsigned _level, unsigned _maxLevel, std::list<EntityBase*> entityList)
 	: position(_position)
 	, minBoundary(_minBoundary)
@@ -7,9 +9,13 @@ QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary
 	, level(_level)
 	, maxLevel(_maxLevel)
 	, entityList(entityList)
+	, topLeft(nullptr)
+	, topRight(nullptr)
+	, bottomLeft(nullptr)
+	, bottomRight(nullptr)
 {
-	if (level == maxLevel)
-		return;
+	//if (level == maxLevel)
+	//	return;
 
 	/*Does not matter if we use x axis or z axis as it will always be the same value.
 	For example, minBoundary (0.f, 0.f, 0.f) and maxBoundary (400.f, 0.f, 400.f).
@@ -81,6 +87,8 @@ bool QuadTree::CheckGrid(std::list<Vector3> positionList)
 
 void QuadTree::Split(void)
 {
+	if (level + 1 > maxLevel)
+		return;
 	//aiya shouldve used a vector instead of just floats
 	/*Theory example:
 	maxBoundary = 400.f
@@ -136,25 +144,51 @@ void QuadTree::Split(void)
 	Vector3 _bottomLeft(position.x, position.y, position.z);
 	Vector3 _bottomRight(position.x + (quadSize * 0.5f), position.y, position.z);
 
+
+
+
 	/*Assuming QuadTree started creating at Vector3(0.f, 0.f, 0.f) and maxBoundary (400.f, 0.f, 400.f)*/
 
 	/*topLeft will be created at (0.f, 0.f, 200.f), minBoundary = (0.f, 0.f, 200.f) and maxBoundary = (200.f, 0.f, 400.f).*/
-	topLeft = new QuadTree(_topLeft, _topLeft, Vector3(_topLeft.x + (quadSize * 0.5f), position.y, _topLeft.z + (quadSize * 0.5f)), level + 1, maxLevel, entityList);
+	topLeft = new QuadTree(_topLeft, Vector3(_topLeft.x, -1000, _topLeft.z), Vector3(_topLeft.x + (quadSize * 0.5f), position.y + 1000, _topLeft.z + (quadSize * 0.5f)), level + 1, maxLevel, {});
+	QuadTreeManager::GetInstance()->PutEntitiesInGrid(topLeft, entityList);
 	/*topRight will be created at (200.f, 0.f, 200.f), minBoundary = (200.f, 0.f, 200.f) and maxBoundary = (400.f, 0.f, 400.f).*/
-	topRight = new QuadTree(_topRight, _topRight, Vector3(_topRight.x + (quadSize * 0.5f), position.y, _topRight.z + (quadSize * 0.5f)), level + 1, maxLevel, entityList);
+	topRight = new QuadTree(_topRight, Vector3(_topRight.x, -1000, _topRight.z), Vector3(_topRight.x + (quadSize * 0.5f), position.y + 1000, _topRight.z + (quadSize * 0.5f)), level + 1, maxLevel, {});
+	QuadTreeManager::GetInstance()->PutEntitiesInGrid(topRight, entityList);
 	/*bottomLeft will be created at (0.f, 0.f, 0.f), minBoundary = (0.f, 0.f, 0.f) and maxBoundary = (200.f, 0.f, 200.f).*/
-	bottomLeft = new QuadTree(_bottomLeft, _bottomLeft, Vector3(_bottomLeft.x + (quadSize * 0.5f), position.y, _bottomLeft.z + (quadSize * 0.5f)), level + 1, maxLevel, entityList);
+	bottomLeft = new QuadTree(_bottomLeft, Vector3(_bottomLeft.x, -1000, _bottomLeft.z), Vector3(_bottomLeft.x + (quadSize * 0.5f), position.y + 1000, _bottomLeft.z + (quadSize * 0.5f)), level + 1, maxLevel, {});
+	QuadTreeManager::GetInstance()->PutEntitiesInGrid(bottomLeft, entityList);
 	/*bottomRight will be created at (200.f, 0.f, 0.f), minBoundary = (200.f, 0.f, 0.f) and maxBoundary = (400.f, 0.f, 200.f).*/
-	bottomRight = new QuadTree(_bottomRight, _bottomRight, Vector3(_bottomRight.x + (quadSize * 0.5f), position.y, _bottomRight.z + (quadSize * 0.5f)), level + 1, maxLevel, entityList);
+	bottomRight = new QuadTree(_bottomRight, Vector3(_bottomRight.x, -1000, _bottomRight.z), Vector3(_bottomRight.x + (quadSize * 0.5f), position.y + 1000, _bottomRight.z + (quadSize * 0.5f)), level + 1, maxLevel, {});
+	QuadTreeManager::GetInstance()->PutEntitiesInGrid(bottomRight, entityList);
 }
 
-
+#include "MeshBuilder.h"
+#include "GraphicsManager.h"
+#include "RenderHelper.h"
+#include "Mesh.h"
 void QuadTree::Render(void)
 {
+
+	Mesh* quad = MeshBuilder::GetInstance()->GetMesh("W_GRASS");
+
+	quad->material.kAmbient.Set(Math::RandFloatMinMax(0, 1), Math::RandFloatMinMax(0, 1), Math::RandFloatMinMax(0, 1));
+
+	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+	ms.PushMatrix();
+	ms.Rotate(-90, 1, 0, 0);
+	ms.Translate(this->position);
+	//ms.Translate(this->maxBoundary - this->minBoundary * 0.5f);
+	ms.Translate(0, 5, 0);
+	ms.Rotate(90, 0, 0, 1);
+	ms.Scale(this->maxBoundary - this->minBoundary);
+	RenderHelper::RenderMesh(quad);
+	ms.PopMatrix();
 }
 
 void QuadTree::Update(double dt)
 {
+
 }
 
 void QuadTree::DeleteChildren()
