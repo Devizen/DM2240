@@ -4,10 +4,11 @@
 #include "EntityBase.h"
 #include <string>
 #include "Collider/Collider.h"
+#include "LevelOfDetail\LevelOfDetail.h"
 class Mesh;
 /*For categorising entity.*/
 enum class ECEntityTypes;
-class GenericEntity : public EntityBase//, public CCollider
+class GenericEntity : public EntityBase, public CLevelOfDetail//, public CCollider
 {
 public:
 	GenericEntity(Mesh* _modelMesh);
