@@ -598,7 +598,7 @@ void SceneText::RenderPassMain(void)
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 	ms.PushMatrix();
 	ms.Translate(0, -10, 0);
-	//QuadTreeManager::GetInstance()->RenderGrid();
+	QuadTreeManager::GetInstance()->RenderGrid();
 	ms.PopMatrix();
 
 	// Setup 2D pipeline then render 2D

@@ -13,7 +13,7 @@ EntityBase::EntityBase()
 	, m_bCollider(false)
 	, entityType(ECEntityTypes::OTHERS)
 	, collider(nullptr)
-	, levelOfDetail(ECLevelOfDetail::LOW)
+	//, levelOfDetail(ECLevelOfDetail::LOW)
 {
 }
 

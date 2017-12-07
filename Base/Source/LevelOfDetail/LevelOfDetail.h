@@ -3,6 +3,7 @@
 #include "Mesh.h"
 class CLevelOfDetail
 {
+public:
 	enum LEVEL {
 		NONE = 0,
 		LOW,
@@ -11,7 +12,6 @@ class CLevelOfDetail
 		TOTAL
 	};
 
-public:
 	CLevelOfDetail(void);
 	~CLevelOfDetail(void);
 	bool Init(const std::string& _meshNameHigh,

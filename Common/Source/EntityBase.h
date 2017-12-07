@@ -4,7 +4,7 @@
 #include "Vector3.h"
 #include "../../Base/Source/SpatialPartition/SpatialPartition.h"
 #include "../../Base/Source/SceneGraph/SceneNode.h"
-enum class ECLevelOfDetail;
+//enum class ECLevelOfDetail;
 enum class ECEntityTypes;
 class CCollider;
 class EntityBase : public CSpatialPartition, public CSceneNode
@@ -49,9 +49,9 @@ public:
 
 	/*Level of Detail*/
 	/*Set level of detail. To be used in conjunction with distance to player.*/
-	virtual void SetLevelOfDetail(ECLevelOfDetail _levelOfDetail) { levelOfDetail = _levelOfDetail; }
+	// void SetLevelOfDetail(ECLevelOfDetail _levelOfDetail) { levelOfDetail = _levelOfDetail; }
 	/*Get level of detail. To determine what type of object quality should be rendered.*/
-	ECLevelOfDetail GetLevelOfDetail(void) { return levelOfDetail; }
+	//ECLevelOfDetail GetLevelOfDetail(void) { return levelOfDetail; }
 
 	//Collision
 	CCollider* collider;
@@ -63,7 +63,7 @@ protected:
 	Vector3 scale;
 	ECEntityTypes entityType;
 	/*Initialise levelOfDetail to low quality.*/
-	ECLevelOfDetail levelOfDetail;
+	//ECLevelOfDetail levelOfDetail;
 
 	bool isDone;
 	bool m_bCollider;

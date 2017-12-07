@@ -36,13 +36,13 @@ void EntityManager::Update(double _dt)
 		float gridSize = spManager->GetGridLength() * spManager->GetGridLength();
 		if ((*it)->GetEntityType() != ECEntityTypes::STATIC)
 		{
-			if (((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 3.f)
-				(*it)->SetLevelOfDetail(ECLevelOfDetail::LOW);
-			else if (((*it)->GetPosition() - player->GetPos()).LengthSquared() < gridSize * 3.f && 
-				((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 2.f)
-				(*it)->SetLevelOfDetail(ECLevelOfDetail::NORMAL);
-			else
-				(*it)->SetLevelOfDetail(ECLevelOfDetail::HIGH);
+			//if (((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 3.f)
+			//	(*it)->SetLevelOfDetail(CLevelOfDetail::LOW);
+			//else if (((*it)->GetPosition() - player->GetPos()).LengthSquared() < gridSize * 3.f && 
+			//	((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 2.f)
+			//	(*it)->SetLevelOfDetail(CLevelOfDetail::NORMAL);
+			//else
+			//	(*it)->SetLevelOfDetail(CLevelOfDetail::HIGH);
 
 			(*it)->Update(_dt);
 		}

@@ -46,11 +46,11 @@ void GenericEntity::Render()
 	modelStack.Scale(scale.x, scale.y, scale.z);
 	if (GetIsActive() == true) {
 		if (GetLevel() != CLevelOfDetail::NONE) {
-			Ren
+			//Ren
 		}
 	}
 	//if (levelOfDetail == ECLevelOfDetail::HIGH)
-	//	RenderHelper::RenderMesh(modelMesh);
+	RenderHelper::RenderMesh(modelMesh);
 	//else if (levelOfDetail == ECLevelOfDetail::NORMAL)
 	//	RenderHelper::RenderMesh(/*MeshBuilder::GetInstance()->GetMesh("BLUESPHERE")*/modelMesh);
 	//else if (levelOfDetail == ECLevelOfDetail::LOW)
