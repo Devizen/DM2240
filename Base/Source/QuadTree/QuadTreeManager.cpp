@@ -3,6 +3,7 @@
 #include "EntityBase.h"
 #include "RenderHelper.h"
 #include "Manager\CollisionManager.h"
+#include "../GenericEntity.h"
 
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
@@ -34,7 +35,17 @@ void QuadTreeManager::Update(double dt)
 		//check split
 		this->CheckTreeNode(root);
 
-		root->Update(dt);
+		//root->Update(dt);
+	}
+
+	for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
+		if (dynamic_cast<GenericEntity*>((*it))) {
+			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
+			if (castedEntity->GetSceneGraph() != nullptr) {
+				//castedEntity->GetSceneGraph()->Update();
+				castedEntity->UpdateChildren(dt);
+			}
+		}
 	}
 
 	renderCout = false;
@@ -115,11 +126,21 @@ void QuadTreeManager::RenderGrid()
 
 	RenderHelper::DrawLine(allVertices, Color(1, 0, 0), 4);
 
+	for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
+		if (dynamic_cast<GenericEntity*>((*it))) {
+			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
+			if (castedEntity->GetSceneGraph() != nullptr) {
+				castedEntity->RenderChildren();
+			}
+		}
+	}
 //	RenderGrid(root);
 }
 
+/*Dieded.*/
 void QuadTreeManager::RenderGrid(QuadTree * node)
 {
+	std::cout << "AM I RUNNING THIS NIGGER" << std::endl;
 	if (!node)
 		return;
 

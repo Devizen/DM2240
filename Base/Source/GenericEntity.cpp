@@ -7,10 +7,13 @@
 #include "EntityTypes\EntityTypes.h"
 #include "MasterEntityManager\MasterEntityManager.h"
 #include "LevelOfDetail\LevelOfDetail.h"
+#include "QuadTree\QuadTreeManager.h"
 GenericEntity::GenericEntity(Mesh* _modelMesh)
 	: modelMesh(_modelMesh)
 	, timer(0.f)
 	, translateDirection(false)
+	, sceneGraph(nullptr)
+	, isParent(false)
 {
 }
 
@@ -33,12 +36,35 @@ void GenericEntity::Update(double _dt)
 		position = Vector3(position.x, position.y + (_dt * 10.f), position.z);
 	else
 		position = Vector3(position.x, position.y - (_dt * 10.f), position.z);
+
+	if (isParent) {
+		EntityBase* parent = GetSceneGraph()->GetRoot()->GetEntity();
+			parent->AddPosition(Vector3(_dt, 0.f, 0.f));
+	}
+
+	position += parentNode->GetEntity()->GetPosition();
+}
+
+void GenericEntity::UpdateChildren(double _dt)
+{
+	for (int i = 0; i < sceneGraph->GetRoot()->GetNumOfChild(); ++i) {
+		sceneGraph->GetRoot()->GetEntity(i)->Update();
+		sceneGraph->GetRoot()->GetEntity(i)->GetEntity()->Update(_dt);
+	}
 }
 
 void GenericEntity::Render()
 {
+	Vector3 parentPosition(0.f, 0.f, 0.f);
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	modelStack.PushMatrix();
+	//if (isParent) {
+		//parentPosition.Set(parentNode->GetEntity()->GetPosition().x,
+		//	parentNode->GetEntity()->GetPosition().y,
+		//	parentNode->GetEntity()->GetPosition().z);
+		//position += parentPosition;
+		//std::cout << position << std::endl
+	//}
 	modelStack.Translate(position.x, position.y, position.z);
 	/*Only rotate the modelStack when there is axis selected.*/
 	if (rotateAxis.LengthSquared() != 0.f)
@@ -75,6 +101,21 @@ void GenericEntity::Render()
 	//RenderHelper::DrawLine(Vector3(max.x, min.y, min.z), Vector3(max.x, max.y, min.z), color);
 }
 
+void GenericEntity::RenderChildren()
+{
+	for (int i = 0; i < sceneGraph->GetRoot()->GetNumOfChild(); ++i) {
+		sceneGraph->GetRoot()->GetEntity(i)->Render();
+		sceneGraph->GetRoot()->GetEntity(i)->GetEntity()->Render();
+	}
+}
+
+CSceneGraph * GenericEntity::GetSceneGraph()
+{
+	if (sceneGraph == nullptr)
+		sceneGraph = new CSceneGraph();
+	return sceneGraph;
+}
+
 // Set the maxAABB and minAABB
 //void GenericEntity::SetAABB(Vector3 maxAABB, Vector3 minAABB)
 //{
@@ -102,7 +143,7 @@ GenericEntity* Create::Entity(	const std::string& _meshName,
 	return result;
 }
 
-GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & const _position, const Vector3 & _scale)
+GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & const _position, const Vector3 & _scale, const Vector3& _maxAABB, const bool& _parent)
 {
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)
@@ -112,6 +153,14 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetCollider(false);
-	//EntityManager::GetInstance()->AddEntity(result);
+	/*Min AABB followed by Max AABB.*/
+	result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
+		Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
+	if (_parent) {
+		QuadTreeManager::GetInstance()->InsertEntity(result);
+		//EntityManager::GetInstance()->AddEntity(result);
+		result->GetSceneGraph()->AddNode(result);
+		result->SetIsParent(true);
+	}
 	return result;
 }

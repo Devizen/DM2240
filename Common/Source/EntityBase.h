@@ -20,6 +20,8 @@ public:
 	/*Terrain*/
 	virtual void RenderTerrain(void);
 
+	/*Adders.*/
+	void AddPosition(const Vector3& _position) { position += _position; };
 	inline void SetPosition(const Vector3& _value){ position = _value; };
 	inline Vector3 GetPosition(){ return position; };
 

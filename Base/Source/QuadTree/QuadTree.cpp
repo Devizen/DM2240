@@ -77,6 +77,7 @@ QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary
 
 QuadTree::~QuadTree(void)
 {
+	//DeleteChildren();
 }
 
 bool QuadTree::CheckGrid(std::list<Vector3> positionList)

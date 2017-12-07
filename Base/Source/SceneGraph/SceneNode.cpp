@@ -4,6 +4,7 @@
 
 #include "SceneGraph.h"
 #include "GraphicsManager.h"
+#include "../GenericEntity.h"
 
 CSceneNode::CSceneNode(void)
 	: ID(-1)
@@ -73,8 +74,13 @@ CSceneNode* CSceneNode::GetParent(void) const
 	return theParent;
 }
 
+void CSceneNode::CreateEntityBase(void)
+{
+	theEntity = new EntityBase();
+}
+
 // Add a child to this node
-CSceneNode* CSceneNode::AddChild(EntityBase* theEntity)
+CSceneNode* CSceneNode::AddChild(EntityBase* theEntity, int _ID)
 {
 	if (theEntity)
 	{
@@ -84,8 +90,13 @@ CSceneNode* CSceneNode::AddChild(EntityBase* theEntity)
 		aNewNode->SetEntity(theEntity);
 		// Store the pointer to the parent
 		aNewNode->SetParent(this);
-		// Assign an ID to this node
-		aNewNode->SetID(CSceneGraph::GetInstance()->GenerateID());
+		if (dynamic_cast<GenericEntity*>(theEntity)) {
+			dynamic_cast<GenericEntity*>(theEntity)->parentNode = this;
+		}
+		/*Assign ID based on Size.
+		For example, at the start of SceneGraph initialisation, the ID will be 0 while SceneGraph size is 1.
+		When a child is added, the size of the SceneGraph can be used, which is 1.*/
+		aNewNode->SetID(_ID);
 		// Add to vector list
 		this->theChildren.push_back(aNewNode);
 		// Return this new scene node
@@ -266,14 +277,19 @@ CSceneNode* CSceneNode::GetEntity(EntityBase* theEntity)
 
 	if (theChildren.size() != 0)
 	{
-		std::vector<CSceneNode*>::iterator it;
-		for (it = theChildren.begin(); it != theChildren.end(); ++it)
-		{
-			CSceneNode* theNode = (*it)->GetEntity(theEntity);
-			if (theNode)
-			{
-				return theNode;
-			}
+		//std::vector<CSceneNode*>::iterator it;
+		//for (it = theChildren.begin(); it != theChildren.end(); ++it)
+		//{
+		//	CSceneNode* theNode = (*it)->GetEntity(theEntity);
+		//	if (theNode)
+		//	{
+		//		return theNode;
+		//	}
+		//}
+
+		for (std::vector<CSceneNode*>::iterator it = theChildren.begin(); it != theChildren.end(); ++it) {
+			if ((*it)->GetEntity() == theEntity)
+				return (*it);
 		}
 	}
 	return NULL;
@@ -281,6 +297,7 @@ CSceneNode* CSceneNode::GetEntity(EntityBase* theEntity)
 // Get a child from this node using its ID
 CSceneNode* CSceneNode::GetEntity(const int ID)
 {
+	return theChildren[ID];
 	// if it is inside this node, then return this node
 	if (this->ID == ID)
 		return this;
@@ -303,9 +320,10 @@ CSceneNode* CSceneNode::GetEntity(const int ID)
 // Return the number of children in this group
 int CSceneNode::GetNumOfChild(void)
 {
+	return static_cast<int>(theChildren.size());
 	// Start with this node's children
 	int NumOfChild = theChildren.size();
-
+	
 	// Ask the children to feedback how many children they have
 	std::vector<CSceneNode*>::iterator it;
 	for (it = theChildren.begin(); it != theChildren.end(); ++it)
