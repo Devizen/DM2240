@@ -5,10 +5,11 @@
 #include <string>
 #include "Collider/Collider.h"
 #include "LevelOfDetail\LevelOfDetail.h"
+#include "SceneGraph\SceneGraph.h"
 class Mesh;
 /*For categorising entity.*/
 enum class ECEntityTypes;
-class GenericEntity : public EntityBase, public CLevelOfDetail//, public CCollider
+class GenericEntity : public EntityBase, public CLevelOfDetail
 {
 public:
 	GenericEntity(Mesh* _modelMesh);
@@ -17,18 +18,27 @@ public:
 	virtual void Update(double _dt);
 	virtual void Render();
 
-	// Set the maxAABB and minAABB
-	void SetAABB(Vector3 maxAABB, Vector3 minAABB);
+	/*Set Min AABB and Max AABB.*/
+	void SetAABB(Vector3 _minAABB, Vector3 _maxAABB) { minAABB = _minAABB; maxAABB = _maxAABB; }
 
 	virtual void CollisionResponse(EntityBase* other) {
 		std::cout << "BOOM : " << other << std::endl;
 		isDone = true;
 	}
+
+	/*Get SceneGraph Node Count.*/
+	size_t GetSceneGraphSize() { return sceneGraph->GetNumOfNode(); }
+	/*Get SceneGraph.*/
+	CSceneGraph* GetSceneGraph();
+
 private:
+	Vector3 minAABB;
+	Vector3 maxAABB;
 	Mesh* modelMesh;
 	/*Demo-ing Spatial Partitioning.*/
 	float timer;
 	bool translateDirection;
+	CSceneGraph* sceneGraph;
 };
 
 namespace Create
@@ -38,7 +48,9 @@ namespace Create
 		const Vector3& _scale = Vector3(1.0f, 1.0f, 1.0f));
 	GenericEntity* Asset(const std::string& _meshName,
 		const Vector3& const _position,
-		const Vector3& _scale = Vector3(1.0f, 1.0f, 1.0f));
+		const Vector3& _scale = Vector3(1.0f, 1.0f, 1.0f),
+		const Vector3& _maxAABB = Vector3(1.f, 1.f, 1.f),
+		const bool& _parent = false);
 };
 
 #endif // GENERIC_ENTITY_H

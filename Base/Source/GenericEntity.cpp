@@ -11,6 +11,7 @@ GenericEntity::GenericEntity(Mesh* _modelMesh)
 	: modelMesh(_modelMesh)
 	, timer(0.f)
 	, translateDirection(false)
+	, sceneGraph(nullptr)
 {
 }
 
@@ -70,6 +71,13 @@ void GenericEntity::Render()
 	//RenderHelper::DrawLine(Vector3(max.x, min.y, min.z), Vector3(max.x, max.y, min.z), color);
 }
 
+CSceneGraph * GenericEntity::GetSceneGraph()
+{
+	if (sceneGraph == nullptr)
+		sceneGraph = new CSceneGraph();
+	return sceneGraph;
+}
+
 // Set the maxAABB and minAABB
 //void GenericEntity::SetAABB(Vector3 maxAABB, Vector3 minAABB)
 //{
@@ -97,7 +105,7 @@ GenericEntity* Create::Entity(	const std::string& _meshName,
 	return result;
 }
 
-GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & const _position, const Vector3 & _scale)
+GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & const _position, const Vector3 & _scale, const Vector3& _maxAABB, const bool& _parent)
 {
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)
@@ -107,6 +115,10 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetCollider(false);
-	//EntityManager::GetInstance()->AddEntity(result);
+	/*Min AABB followed by Max AABB.*/
+	result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
+		Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
+	if (_parent)
+		result->GetSceneGraph()->AddNode(result);
 	return result;
 }

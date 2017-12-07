@@ -31,8 +31,8 @@ public:
 	// Get parent of this node
 	CSceneNode* GetParent(void) const;
 
-	// Add a child to this node
-	CSceneNode* AddChild(EntityBase* theEntity = NULL);
+	/*Add a child to the main node. Pass in the size of the Scene Graph to assign the ID.*/
+	CSceneNode* AddChild(EntityBase* theEntity = NULL, int _ID = 0);
 	// Delete a child from this node using the pointer to the entity
 	bool DeleteChild(EntityBase* theEntity = NULL);
 	// Delete a child from this node using its ID

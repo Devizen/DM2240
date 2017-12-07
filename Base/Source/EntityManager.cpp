@@ -12,6 +12,7 @@
 #include "LevelOfDetail\LevelOfDetail.h"
 
 #include "SceneGraph\SceneGraph.h"
+#include "GenericEntity.h"
 
 #include <iostream>
 using namespace std;
@@ -45,10 +46,14 @@ void EntityManager::Update(double _dt)
 			//	(*it)->SetLevelOfDetail(CLevelOfDetail::HIGH);
 
 			(*it)->Update(_dt);
+			if (dynamic_cast<GenericEntity*>((*it))) {
+				GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
+				castedEntity->GetSceneGraph()->Update();
+			}
 		}
 	}
 
-	CSceneGraph::GetInstance()->Update();
+	//CSceneGraph::GetInstance()->Update();
 	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); )
 	{
 		
@@ -89,8 +94,14 @@ void EntityManager::Render()
 	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
 		(*it)->Render();
+		if (dynamic_cast<GenericEntity*>(*it))
+		{
+			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>(*it);
+			if (castedEntity->GetSceneGraph()->GetRoot()->GetNumOfChild() > 0)
+				castedEntity->GetSceneGraph()->GetRoot()->Render();
+		}
 	}
-	CSceneGraph::GetInstance()->Render();
+	//CSceneGraph::GetInstance()->Render();
 }
 
 // Render the UI entities

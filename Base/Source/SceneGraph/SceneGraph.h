@@ -8,9 +8,8 @@
 
 class Mesh;
 
-class CSceneGraph : public Singleton<CSceneGraph>
+class CSceneGraph
 {
-	friend Singleton<CSceneGraph>;
 public:
 	CSceneGraph(void);
 	virtual ~CSceneGraph();
