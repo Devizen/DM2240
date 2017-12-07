@@ -8,6 +8,7 @@
 #include "Collider\LineCollider.h"
 #include "Manager\CollisionManager.h"
 #include "../SpatialPartition/SpatialPartitionManager.h"
+#include "../QuadTree/QuadTreeManager.h"
 
 CProjectile::CProjectile(void)
 	: modelMesh(NULL)
@@ -62,6 +63,8 @@ void CProjectile::Set(Vector3 theNewPosition, Vector3 theNewDirection, const flo
 	lineCollider->Init(theNewPosition, theNewDirection, m_fSpeed, 1000);
 	this->collider = lineCollider;
 	CollisionManager::GetInstance()->AddCollider(this->collider, this->GetPartitionPtr());
+
+	QuadTreeManager::GetInstance()->InsertEntity(this);
 }
 
 // Get the direction of the projectile

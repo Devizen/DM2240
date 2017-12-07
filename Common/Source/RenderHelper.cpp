@@ -345,21 +345,31 @@ void RenderHelper::DrawLine(std::vector<Vector3> vertices, Color color, int numP
 	//if odd number then i crash
 	for (int i = 0; i < vertices.size(); )
 	{
-		//01 12 23 34  56 67 78 89
+		//01 12 23 30  45 56 67 74
+		int firstIndex = i;
 		for (int j = 0; j < numPerSet; ++j)
 		{
 			v.pos.Set(vertices[i].x, vertices[i].y, vertices[i].z);
 			v.color = color;
 			vertex_buffer_data.push_back(v);
 			++i;
+			
+			index_buffer_data.push_back(index++);
+			index_buffer_data.push_back(index % numPerSet + firstIndex);
 		}
-
-		++i;
-		v.pos.Set(vertices[i].x, vertices[i].y, vertices[i].z);
-		v.color = color;
-		vertex_buffer_data.push_back(v);
-
-		index_buffer_data.push_back(index++);
-		index_buffer_data.push_back(index++);
 	}
+
+	Mesh *mesh = new Mesh("line");
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(Vertex), &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = index_buffer_data.size();
+	mesh->mode = Mesh::DRAW_LINES;
+
+	RenderMesh(mesh);
+
+	delete mesh;
 }
