@@ -49,11 +49,16 @@ void GenericEntity::Render()
 			//Ren
 		}
 	}
-	//if (levelOfDetail == ECLevelOfDetail::HIGH)
-	RenderHelper::RenderMesh(modelMesh);
-	//else if (levelOfDetail == ECLevelOfDetail::NORMAL)
+
+	if (LoD.GetIsActive())
+		RenderHelper::RenderMesh(LoD.GetCurrMesh());
+	else
+		RenderHelper::RenderMesh(LoD.GetMesh(CLevelOfDetail::LEVEL::HIGH));
+	//if (levelOfDetail == CLevelOfDetail::HIGH)
+	//RenderHelper::RenderMesh(modelMesh);
+	//else if (levelOfDetail == CLevelOfDetail::MEDIUM)
 	//	RenderHelper::RenderMesh(/*MeshBuilder::GetInstance()->GetMesh("BLUESPHERE")*/modelMesh);
-	//else if (levelOfDetail == ECLevelOfDetail::LOW)
+	//else if (levelOfDetail == CLevelOfDetail::LOW)
 	//	RenderHelper::RenderMesh(/*MeshBuilder::GetInstance()->GetMesh("REDSPHERE")*/modelMesh);
 	modelStack.PopMatrix();
 

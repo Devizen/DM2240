@@ -30,6 +30,7 @@ public:
 
 	std::vector<std::pair<Vector3, Vector3>> posColliderChecks;
 
+	void RenderGrid();
 protected:
 	CollisionManager();
 	virtual ~CollisionManager();

@@ -24,8 +24,10 @@ public:
 		std::cout << "BOOM : " << other << std::endl;
 		isDone = true;
 	}
+
 private:
 	Mesh* modelMesh;
+
 	/*Demo-ing Spatial Partitioning.*/
 	float timer;
 	bool translateDirection;

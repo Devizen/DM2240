@@ -12,18 +12,18 @@ CLevelOfDetail::CLevelOfDetail()
 
 CLevelOfDetail::~CLevelOfDetail(void)
 {
-	if (high != nullptr) {
-		delete high;
-		high = nullptr;
-	}
-	if (medium != nullptr) {
-		delete medium;
-		medium = nullptr;
-	}
-	if (low != nullptr) {
-		delete low;
-		low = nullptr;
-	}
+	//if (high != nullptr) {
+	//	delete high;
+	//	high = nullptr;
+	//}
+	//if (medium != nullptr) {
+	//	delete medium;
+	//	medium = nullptr;
+	//}
+	//if (low != nullptr) {
+	//	delete low;
+	//	low = nullptr;
+	//}
 }
 
 bool CLevelOfDetail::Init(const std::string & _meshNameHigh, const std::string & _meshNameMedium, const std::string & _meshNameLow)
@@ -36,6 +36,8 @@ bool CLevelOfDetail::Init(const std::string & _meshNameHigh, const std::string &
 		medium == nullptr ||
 		low == nullptr)
 		return false;
+
+	level = LEVEL::HIGH;
 
 	SetIsActive(true);
 	return true;

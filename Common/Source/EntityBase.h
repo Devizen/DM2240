@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "../../Base/Source/SpatialPartition/SpatialPartition.h"
 #include "../../Base/Source/SceneGraph/SceneNode.h"
+#include "../../Base/Source/LevelOfDetail/LevelOfDetail.h"
 //enum class ECLevelOfDetail;
 enum class ECEntityTypes;
 class CCollider;
@@ -56,6 +57,13 @@ public:
 	//Collision
 	CCollider* collider;
 
+	bool InitLoD(const std::string& _meshNameHigh,
+		const std::string& _meshNameMedium,
+		const std::string& _meshNameLow) {
+		return LoD.Init(_meshNameHigh, _meshNameMedium, _meshNameLow);
+	}
+	CLevelOfDetail& GetLoD() { return LoD; }
+	
 protected:
 	Vector3 position;
 	float rotateAngle;
@@ -63,7 +71,9 @@ protected:
 	Vector3 scale;
 	ECEntityTypes entityType;
 	/*Initialise levelOfDetail to low quality.*/
-	//ECLevelOfDetail levelOfDetail;
+	//CLevelOfDetail levelOfDetail;
+
+	CLevelOfDetail LoD;
 
 	bool isDone;
 	bool m_bCollider;

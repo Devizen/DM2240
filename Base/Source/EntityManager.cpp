@@ -14,6 +14,8 @@
 #include "SceneGraph\SceneGraph.h"
 
 #include <iostream>
+#include "QuadTree\QuadTreeManager.h"
+
 using namespace std;
 
 EntityManager* EntityManager::s_instance = 0;
@@ -55,6 +57,7 @@ void EntityManager::Update(double _dt)
 		if (CSpatialPartitionManager::GetInstance()->UpdateGridInfo((*it)->GetPosition()) == nullptr 
 			|| (*it)->IsDone())
 		{
+			QuadTreeManager::GetInstance()->RemoveEntity(*it);
 			delete (*it);
 			it = entityList.erase(it);
 		}

@@ -36,6 +36,7 @@
 #include "QuadTree\QuadTreeManager.h"
 
 #include "Manager\CollisionManager.h"
+#include "QuadTree\CameraManager.h"
 
 /*Scene Graph.*/
 #include "SceneGraph\SceneGraph.h"
@@ -270,6 +271,7 @@ void SceneText::Init()
 		position.y += 20.f;
 		EntityBase* chair = Create::Entity("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
 		chair->SetEntityType(ECEntityTypes::OBJECT);
+		chair->InitLoD("GREENSPHERE", "BLUESPHERE", "REDSPHERE");
 
 		chair->collider = new CCollider(chair);
 		chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
@@ -316,15 +318,18 @@ void SceneText::Init()
 
 	GenericEntity* aCube = Create::Asset("cube", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f));
 	CSceneNode* aCubeNode = CSceneGraph::GetInstance()->AddNode(aCube);
+	aCube->InitLoD("cube", "cube", "cube");
 	//QuadTreeManager::GetInstance()->InsertEntity(aCube);
 
 	GenericEntity* bCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f));
 	CSceneNode* bCubeNode = aCubeNode->AddChild(bCube);
+	bCube->InitLoD("cubeSG", "cubeSG", "cubeSG");
 	bCubeNode->ApplyTranslate(0.f, 5.f, 0.f);
 
 	GenericEntity* cCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f));
 	CSceneNode* cCubeNode = bCubeNode->AddChild(cCube);
 	cCubeNode->ApplyTranslate(0.f, 5.f, 5.f);
+	cCube->InitLoD("cubeSG", "cubeSG", "cubeSG");
 
 	aCubeNode->PrintSelf();
 
@@ -380,6 +385,8 @@ void SceneText::Init()
 	}
 	textObj[0]->SetText("HELLO WORLD");
 
+	
+	CameraManager::GetInstance()->AttachPlayerCam(&this->camera);
 }
 
 void SceneText::Update(double dt)
@@ -592,8 +599,7 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 	EntityManager::GetInstance()->Render();
 
-	//RenderHelper::DrawLine(CollisionManager::GetInstance()->posColliderChecks, Color(0, 1, 0));
-	CollisionManager::GetInstance()->posColliderChecks.clear();
+	CollisionManager::GetInstance()->RenderGrid();
 	
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 	ms.PushMatrix();
