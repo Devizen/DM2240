@@ -11,6 +11,11 @@ class CameraManager
 
 	FPSCamera* playerCam;
 	FPSCamera* birdEyeCam;
+
+	struct Frustum
+	{
+		double fovAngle, aspectRatio, nearPlane, farPlane;
+	} frustum;
 public:
 	static CameraManager* GetInstance() { return (instance ? instance : instance = new CameraManager()); }
 
@@ -18,6 +23,16 @@ public:
 
 	FPSCamera* GetPlayerCam() { return playerCam; }
 	FPSCamera* GetBirdEyeCam() { return birdEyeCam; }
+	FPSCamera* GetActiveCam() { return (toggleBirdEyeView ? birdEyeCam : playerCam); }
 
-	void Destroy();
+	//void Destroy();
+
+	bool toggleBirdEyeView;
+
+	void RenderPlayerFrustum();
+
+	double GetFrustumFoV() { return frustum.fovAngle; }
+	double GetFrustumAspect() { return frustum.aspectRatio; }
+	double GetNearPlane() { return frustum.nearPlane; }
+	double GetFarPlane() { return frustum.farPlane; }
 };
