@@ -29,7 +29,13 @@ public:
 	void ClearPartition() { partitionNum.clear(); }
 
 	/*Getters*/
-	Vector3 GetPosition(void) { return spPosition; }
+	//ACTUALLY No need change name ;P can remain as GetPosition
+	//coz this one not virtual
+	//But VEERY tilting eh
+	Vector3 GetSPPosition(void) { return spPosition; }
+
+
+
 	//Vector3 GetMinBoundary(void) { return minBoundary; }
 	//Vector3 GetMaxBoundary(void) { return maxBoundary; }
 	/*Get the partition number the player is in.*/

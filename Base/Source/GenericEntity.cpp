@@ -14,6 +14,7 @@ GenericEntity::GenericEntity(Mesh* _modelMesh)
 	, translateDirection(false)
 	, sceneGraph(nullptr)
 	, isParent(false)
+	, parentNode(nullptr)
 {
 }
 

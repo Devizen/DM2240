@@ -17,6 +17,7 @@ QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary
 	, bottomLeft(nullptr)
 	, bottomRight(nullptr)
 	, RenderGrid(false)
+	, parent(nullptr)
 {
 	//if (level == maxLevel)
 	//	return;
@@ -166,6 +167,12 @@ void QuadTree::Split(void)
 	/*bottomRight will be created at (200.f, 0.f, 0.f), minBoundary = (200.f, 0.f, 0.f) and maxBoundary = (400.f, 0.f, 200.f).*/
 	bottomRight = new QuadTree(_bottomRight, Vector3(_bottomRight.x, -1000, _bottomRight.z), Vector3(_bottomRight.x + (quadSize * 0.5f), position.y + 1000, _bottomRight.z + (quadSize * 0.5f)), level + 1, maxLevel, {});
 	QuadTreeManager::GetInstance()->PutEntitiesInGrid(bottomRight, entityList);
+
+	//put parent
+	topLeft->parent = this;
+	topRight->parent = this;
+	bottomLeft->parent = this;
+	bottomRight->parent = this;
 }
 
 //#include "MeshBuilder.h"
@@ -189,6 +196,8 @@ void QuadTree::Render(void)
 	//ms.Scale(this->maxBoundary - this->minBoundary);
 	//RenderHelper::RenderMesh(quad);
 	//ms.PopMatrix();
+
+	
 }
 
 void QuadTree::Update(double dt)

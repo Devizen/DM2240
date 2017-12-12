@@ -4,6 +4,7 @@
 #include "RenderHelper.h"
 #include "Manager\CollisionManager.h"
 #include "../GenericEntity.h"
+#include "GraphicsManager.h"
 
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
@@ -119,12 +120,16 @@ std::vector<Vector3> QuadTreeManager::GetGridVertices(QuadTree * node)
 	return result;
 }
 
-
 void QuadTreeManager::RenderGrid()
 {
 	std::vector<Vector3> allVertices(this->GetGridVertices(root));
 
+	//Can be disabled
+	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+	ms.PushMatrix();
+	ms.Translate(0, -10, 0);
 	RenderHelper::DrawLine(allVertices, Color(1, 0, 0), 4);
+	ms.PopMatrix();
 
 	for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
 		if (dynamic_cast<GenericEntity*>((*it))) {
@@ -135,20 +140,34 @@ void QuadTreeManager::RenderGrid()
 		}
 	}
 //	RenderGrid(root);
+	this->RenderObj();
 }
 
 /*Dieded.*/
-void QuadTreeManager::RenderGrid(QuadTree * node)
+void QuadTreeManager::RenderObj()
 {
-	std::cout << "AM I RUNNING THIS NIGGER" << std::endl;
+	RenderObj(root);
+}
+
+
+void QuadTreeManager::RenderObj(QuadTree * node)
+{
 	if (!node)
 		return;
 
 	node->Render();
-	RenderGrid(node->topLeft);
-	RenderGrid(node->topRight);
-	RenderGrid(node->bottomLeft);
-	RenderGrid(node->bottomRight);
+
+	//this is not using scenenode. remove later
+	for (auto e : node->entityList)
+	{
+		//can check if obj is inside ah
+		e->Render();
+	}
+
+	RenderObj(node->topLeft);
+	RenderObj(node->topRight);
+	RenderObj(node->bottomLeft);
+	RenderObj(node->bottomRight);
 }
 
 int QuadTreeManager::PutEntitiesInGrid(QuadTree * node, std::list<EntityBase*>& entityList)
@@ -182,6 +201,8 @@ void QuadTreeManager::CheckCollision(std::vector<std::pair<Vector3, Vector3>>& p
 	posOfChecks.assign(ret.begin(), ret.end());
 }
 
+#include <Windows.h>
+#include "SceneManager.h"
 std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTree * node, double dt)
 {
 	std::vector<std::pair<Vector3, Vector3>> posOfChecks;
@@ -206,16 +227,90 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 
 
 
+
 	for (std::list<EntityBase*>::iterator it = node->entityList.begin(); it != node->entityList.end(); ++it) {
 
-		std::list<EntityBase*>::iterator it2 = std::next(it, 1);
-		for (; it2 != node->entityList.end(); ++it2)
-		{
-			CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
-			posOfChecks.push_back(std::make_pair((*it)->GetPosition(), (*it2)->GetPosition()));
-		}
+			GenericEntity* gEntity = dynamic_cast<GenericEntity*>(*it);
+			if (gEntity)
+			{
+				//is scenenode
+				std::list<EntityBase*> checkEntities(GetNearbyEntities(gEntity, node));
+				std::list<EntityBase*>::iterator removeIter, checkIter;
+
+				removeIter = node->entityList.begin();
+				do {
+					if ((checkIter = std::remove(checkEntities.begin(), checkEntities.end(), *removeIter)) != checkEntities.end())
+					{
+						checkEntities.erase(checkIter);
+					}
+					
+					++removeIter;
+					//remove everything incl myself coz idw check with myself
+				} while (removeIter != std::next(it, 1) && removeIter != node->entityList.end());
+				
+				if (checkEntities.size() >= 2)
+					posOfChecks.push_back(std::make_pair(gEntity->GetPosition(), Vector3(0, 1000, 0) + gEntity->GetPosition()));
+
+				for (std::list<EntityBase*>::iterator it2 = checkEntities.begin(); it2 != checkEntities.end(); ++it2) {
+
+					CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
+					posOfChecks.push_back(std::make_pair((*it)->GetPosition(), (*it2)->GetPosition()));
+
+				}
+			}
+			else
+			{
+				//the normal thing we always do
+				std::list<EntityBase*>::iterator it2 = std::next(it, 1);
+				for (; it2 != node->entityList.end(); ++it2)
+				{
+					CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
+					posOfChecks.push_back(std::make_pair((*it)->GetPosition(), (*it2)->GetPosition()));
+				}
+			}
+
 	}
 
 	return posOfChecks;
 }
 
+std::list<EntityBase*> QuadTreeManager::GetNearbyEntities(GenericEntity * entity, QuadTree * leafNode)
+{
+	//returns including my node de
+	std::list<EntityBase*> ret;
+
+	QuadTree* curr = leafNode;
+	while (curr)
+	{
+		if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), curr) == 2 //im totally inside
+			|| curr->parent == nullptr) // at root
+		{
+			std::vector<QuadTree*> childrens = curr->GetAllChildren();
+			if (!childrens.empty())
+			{
+				//if i can go down one level, i check from thr
+				for (auto child : childrens)
+				{
+					if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), child) >= 1)
+					{
+						//if at least 1 point inside
+						ret.insert(ret.end(), child->entityList.begin(), child->entityList.end());
+					}
+
+				}
+			}
+			else //at leaf, cant go deeper
+				ret.assign(curr->entityList.begin(), curr->entityList.end());
+			break;
+		}
+		curr = curr->parent;
+	}
+
+	return ret;
+}
+
+int QuadTreeManager::IsAABBInGrid(Vector3 min, Vector3 max, QuadTree * node)
+{
+	//min and max must be inside node's min max
+	return (min > node->minBoundary) + ( max < node->maxBoundary);
+}

@@ -266,7 +266,7 @@ void SceneText::Init()
 
 	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
 	{
-		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
+		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetSPPosition();
 		position.x += 10.f;
 		position.y += 20.f;
 		EntityBase* chair = Create::Asset("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
@@ -472,7 +472,10 @@ void SceneText::Update(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN))
 	{
-		CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true);
+		QuadTreeManager::GetInstance()->toggle = (QuadTreeManager::GetInstance()->toggle ? false :
+			CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true));
+		//CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true);
+		std::cout << "QuadTree " << QuadTreeManager::GetInstance()->toggle << "   SpatialPartition " << CSpatialPartitionManager::GetInstance()->toggle << std::endl;
 	}
 	// <THERE>
 
@@ -606,10 +609,11 @@ void SceneText::RenderPassMain(void)
 	CollisionManager::GetInstance()->RenderGrid();
 	
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
-	ms.PushMatrix();
-	ms.Translate(0, -10, 0);
+
 	QuadTreeManager::GetInstance()->RenderGrid();
-	ms.PopMatrix();
+
+	//QuadTreeManager::GetInstance()->RenderObj();
+	
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
