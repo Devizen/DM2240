@@ -234,7 +234,9 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 			if (gEntity)
 			{
 				//is scenenode
-				std::list<EntityBase*> checkEntities(GetNearbyEntities(gEntity, node));
+				std::list<EntityBase*> checkEntities(GetNearbyEntities(gEntity, root));
+				//!!!!!!!!!
+
 				std::list<EntityBase*>::iterator removeIter, checkIter;
 
 				removeIter = node->entityList.begin();
@@ -274,33 +276,69 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 	return posOfChecks;
 }
 
-std::list<EntityBase*> QuadTreeManager::GetNearbyEntities(GenericEntity * entity, QuadTree * leafNode)
+std::list<EntityBase*> QuadTreeManager::GetNearbyEntities(GenericEntity * entity, QuadTree * node)
 {
 	//returns including my node de
 	std::list<EntityBase*> ret;
 
-	QuadTree* curr = leafNode;
+	int pointsInside = this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), node);
+
+	std::vector<QuadTree*> childrens = node->GetAllChildren();
+	if (!childrens.empty())
+	{
+		for (auto child : childrens)
+		{
+			if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), child) >= 1)
+			{
+				//one pt inside grid
+				std::list<EntityBase*> tempRet(GetNearbyEntities(entity, child));
+				ret.insert(ret.end(), tempRet.begin(), tempRet.end());
+			}
+		}
+	}
+	else
+	{
+		//at leaf node
+		//only here i assign the entities inside the return list
+		ret.assign(node->entityList.begin(), node->entityList.end());
+	}
+
+	return ret;
+
+
+	///==================== BELOW CODE IS THE LESS OPTIMISED TO GET ENTITY LIST ============================//
+	//To use this part, the parameter must not start with root. it should start with its residing node
+
+	QuadTree* curr = node;
 	while (curr)
 	{
 		if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), curr) == 2 //im totally inside
 			|| curr->parent == nullptr) // at root
 		{
-			std::vector<QuadTree*> childrens = curr->GetAllChildren();
-			if (!childrens.empty())
+			while (true)
 			{
-				//if i can go down one level, i check from thr
-				for (auto child : childrens)
-				{
-					if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), child) >= 1)
-					{
-						//if at least 1 point inside
-						ret.insert(ret.end(), child->entityList.begin(), child->entityList.end());
-					}
 
+				std::vector<QuadTree*> childrens = curr->GetAllChildren();
+				if (!childrens.empty())
+				{
+					//if i can go down one level, i check from thr
+
+					for (auto child : childrens)
+					{
+						if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), child) >= 1)
+						{
+							//if at least 1 point inside
+							ret.insert(ret.end(), child->entityList.begin(), child->entityList.end());
+						}
+
+					}
+				}
+				else //at leaf, cant go deeper
+				{
+					ret.assign(curr->entityList.begin(), curr->entityList.end());
+					break;
 				}
 			}
-			else //at leaf, cant go deeper
-				ret.assign(curr->entityList.begin(), curr->entityList.end());
 			break;
 		}
 		curr = curr->parent;
@@ -312,5 +350,11 @@ std::list<EntityBase*> QuadTreeManager::GetNearbyEntities(GenericEntity * entity
 int QuadTreeManager::IsAABBInGrid(Vector3 min, Vector3 max, QuadTree * node)
 {
 	//min and max must be inside node's min max
-	return (min > node->minBoundary) + ( max < node->maxBoundary);
+
+	//IMPORTANT NOTE: IGNORING Y FOR NOW
+		//+ ( max < node->maxBoundary);
+
+	return(Vector3(min.x, 0, min.z) > node->minBoundary && Vector3(min.x, 0, min.z) < node->maxBoundary) + (Vector3(max.x, 0, min.z) > node->minBoundary && Vector3(max.x, 0, min.z) < node->maxBoundary) +
+		(Vector3(max.x, 0, max.z) > node->minBoundary && Vector3(max.x, 0, max.z) < node->maxBoundary) +
+		(Vector3(min.x, 0, max.z) > node->minBoundary && Vector3(min.x, 0, max.z) < node->maxBoundary);
 }
