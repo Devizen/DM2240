@@ -1,6 +1,9 @@
 #include "QuadTree.h"
 
 #include "QuadTreeManager.h"
+#include "EntityBase.h"
+#include "CameraManager.h"
+#include "Collider\Collider.h"
 
 QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary, unsigned _level, unsigned _maxLevel, std::list<EntityBase*> entityList)
 	: position(_position)
@@ -13,6 +16,7 @@ QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary
 	, topRight(nullptr)
 	, bottomLeft(nullptr)
 	, bottomRight(nullptr)
+	, RenderGrid(false)
 {
 	//if (level == maxLevel)
 	//	return;
@@ -73,6 +77,7 @@ QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary
 
 QuadTree::~QuadTree(void)
 {
+	//DeleteChildren();
 }
 
 bool QuadTree::CheckGrid(std::list<Vector3> positionList)
@@ -163,31 +168,74 @@ void QuadTree::Split(void)
 	QuadTreeManager::GetInstance()->PutEntitiesInGrid(bottomRight, entityList);
 }
 
-#include "MeshBuilder.h"
-#include "GraphicsManager.h"
-#include "RenderHelper.h"
-#include "Mesh.h"
+//#include "MeshBuilder.h"
+//#include "GraphicsManager.h"
+//#include "RenderHelper.h"
+//#include "Mesh.h"
 void QuadTree::Render(void)
 {
 
-	Mesh* quad = MeshBuilder::GetInstance()->GetMesh("W_GRASS");
+	//Mesh* quad = MeshBuilder::GetInstance()->GetMesh("W_GRASS");
 
-	quad->material.kAmbient.Set(Math::RandFloatMinMax(0, 1), Math::RandFloatMinMax(0, 1), Math::RandFloatMinMax(0, 1));
+	//quad->material.kAmbient.Set(Math::RandFloatMinMax(0, 1), Math::RandFloatMinMax(0, 1), Math::RandFloatMinMax(0, 1));
 
-	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
-	ms.PushMatrix();
-	ms.Rotate(-90, 1, 0, 0);
-	ms.Translate(this->position);
-	//ms.Translate(this->maxBoundary - this->minBoundary * 0.5f);
-	ms.Translate(0, 5, 0);
-	ms.Rotate(90, 0, 0, 1);
-	ms.Scale(this->maxBoundary - this->minBoundary);
-	RenderHelper::RenderMesh(quad);
-	ms.PopMatrix();
+	//MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+	//ms.PushMatrix();
+	//ms.Rotate(-90, 1, 0, 0);
+	//ms.Translate(this->position);
+	////ms.Translate(this->maxBoundary - this->minBoundary * 0.5f);
+	//ms.Translate(0, 5, 0);
+	//ms.Rotate(90, 0, 0, 1);
+	//ms.Scale(this->maxBoundary - this->minBoundary);
+	//RenderHelper::RenderMesh(quad);
+	//ms.PopMatrix();
 }
 
 void QuadTree::Update(double dt)
 {
+
+	FPSCamera* cam = CameraManager::GetInstance()->GetPlayerCam();
+
+	for (auto e : entityList) {
+
+		if ((e->GetPosition() - cam->GetCameraPos()).LengthSquared() < 100 * 100)
+			e->GetLoD().SetLevel(CLevelOfDetail::HIGH);
+		else if ((e->GetPosition() - cam->GetCameraPos()).LengthSquared() < 200 * 200)
+			e->GetLoD().SetLevel(CLevelOfDetail::MEDIUM);
+		else
+			e->GetLoD().SetLevel(CLevelOfDetail::LOW);
+		
+		e->Update(dt);
+
+		if (this->RenderGrid == false) {
+			Vector3 min = e->collider->GetMinAABB();
+			Vector3 max = e->collider->GetMaxAABB();
+			Vector3 boundingPoints[8];
+			boundingPoints[0] = Vector3(min);
+			boundingPoints[1] = Vector3(min.x, min.y, max.z);
+			boundingPoints[2] = Vector3(max.x, min.y, max.z);
+			boundingPoints[3] = Vector3(max.x, min.y, min.z);
+
+			boundingPoints[4] = Vector3(min.x, max.y, min.z);
+			boundingPoints[5] = Vector3(min.x, max.y, max.z);
+			boundingPoints[6] = Vector3(max.x, max.y, max.z);
+			boundingPoints[7] = Vector3(max.x, max.y, min.z);
+
+			//check if any points is in withing 180 of cam
+			Vector3 camRight = (cam->GetCameraTarget() - cam->GetCameraPos()).Cross(cam->GetCameraUp()).Normalize();
+			Vector3 camDir = (cam->GetCameraTarget() - cam->GetCameraPos()).Normalized();
+			for (int i = 0; i < 8; ++i) {
+
+				if (Math::RadianToDegree(acos(camDir.Dot((boundingPoints[i] - cam->GetCameraPos()).Normalized()))) < 90.f) {
+					this->RenderGrid = true;
+					break;
+				}
+			}
+		}
+	
+		
+	}
+
 
 }
 

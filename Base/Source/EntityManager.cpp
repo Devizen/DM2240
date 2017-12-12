@@ -15,6 +15,8 @@
 #include "GenericEntity.h"
 
 #include <iostream>
+#include "QuadTree\QuadTreeManager.h"
+
 using namespace std;
 
 EntityManager* EntityManager::s_instance = 0;
@@ -35,22 +37,25 @@ void EntityManager::Update(double _dt)
 		CSpatialPartitionManager* spManager = CSpatialPartitionManager::GetInstance();
 		CPlayerInfo* player = spManager->GetPlayer();
 		float gridSize = spManager->GetGridLength() * spManager->GetGridLength();
-		if ((*it)->GetEntityType() != ECEntityTypes::STATIC)
-		{
-			//if (((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 3.f)
-			//	(*it)->SetLevelOfDetail(CLevelOfDetail::LOW);
-			//else if (((*it)->GetPosition() - player->GetPos()).LengthSquared() < gridSize * 3.f && 
-			//	((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 2.f)
-			//	(*it)->SetLevelOfDetail(CLevelOfDetail::NORMAL);
-			//else
-			//	(*it)->SetLevelOfDetail(CLevelOfDetail::HIGH);
+		//if ((*it)->GetEntityType() != ECEntityTypes::STATIC)
+		//{
+		//	//if (((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 3.f)
+		//	//	(*it)->SetLevelOfDetail(CLevelOfDetail::LOW);
+		//	//else if (((*it)->GetPosition() - player->GetPos()).LengthSquared() < gridSize * 3.f && 
+		//	//	((*it)->GetPosition() - player->GetPos()).LengthSquared() >= gridSize * 2.f)
+		//	//	(*it)->SetLevelOfDetail(CLevelOfDetail::NORMAL);
+		//	//else
+		//	//	(*it)->SetLevelOfDetail(CLevelOfDetail::HIGH);
 
-			(*it)->Update(_dt);
-			if (dynamic_cast<GenericEntity*>((*it))) {
-				GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
-				castedEntity->GetSceneGraph()->Update();
-			}
-		}
+		//	//(*it)->Update(_dt);
+		//	if (dynamic_cast<GenericEntity*>((*it))) {
+		//		GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
+		//		if (castedEntity->GetSceneGraph() != nullptr) {
+		//			castedEntity->GetSceneGraph()->Update();
+		//			castedEntity->UpdateChildren(_dt);
+		//		}
+		//	}
+		//}
 	}
 
 	//CSceneGraph::GetInstance()->Update();
@@ -60,6 +65,7 @@ void EntityManager::Update(double _dt)
 		if (CSpatialPartitionManager::GetInstance()->UpdateGridInfo((*it)->GetPosition()) == nullptr 
 			|| (*it)->IsDone())
 		{
+			QuadTreeManager::GetInstance()->RemoveEntity(*it);
 			delete (*it);
 			it = entityList.erase(it);
 		}
@@ -94,12 +100,12 @@ void EntityManager::Render()
 	for (EntityList::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
 		(*it)->Render();
-		if (dynamic_cast<GenericEntity*>(*it))
-		{
-			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>(*it);
-			if (castedEntity->GetSceneGraph()->GetRoot()->GetNumOfChild() > 0)
-				castedEntity->GetSceneGraph()->GetRoot()->Render();
-		}
+		//if (dynamic_cast<GenericEntity*>(*it))
+		//{
+		//	GenericEntity* castedEntity = dynamic_cast<GenericEntity*>(*it);
+		//	if (castedEntity->GetSceneGraph()->GetRoot()->GetNumOfChild() > 0)
+		//		castedEntity->GetSceneGraph()->GetRoot()->Render();
+		//}
 	}
 	//CSceneGraph::GetInstance()->Render();
 }

@@ -2,7 +2,7 @@
 #define QUADTREE_H
 
 /*For positions.*/
-#include "Vector3.h"
+#include "../../Common/Source/Vector3.h"
 #include <list>
 #include <vector>
 
@@ -28,6 +28,8 @@ public:
 	Vector3 GetPosition();
 	Vector3 GetMinBoundary();
 	Vector3 GetMaxBoundary();
+
+	void SetRenderGrid(bool render) { this->RenderGrid = render; }
 private:
 	QuadTree* topLeft;
 	QuadTree* topRight;
@@ -38,7 +40,7 @@ private:
 	Vector3 minBoundary;
 	Vector3 maxBoundary;
 
-	/*Position of grid.*/
+	/*Position of grid.*/ 
 	Vector3 position;
 
 	/*Size of Quad.*/
@@ -51,6 +53,8 @@ private:
 
 	unsigned level;
 	unsigned maxLevel;
+
+	bool RenderGrid;
 protected:
 };
 

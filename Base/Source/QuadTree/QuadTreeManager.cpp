@@ -2,6 +2,8 @@
 
 #include "EntityBase.h"
 #include "RenderHelper.h"
+#include "Manager\CollisionManager.h"
+#include "../GenericEntity.h"
 
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
@@ -33,10 +35,20 @@ void QuadTreeManager::Update(double dt)
 		//check split
 		this->CheckTreeNode(root);
 
-		root->Update(dt);
+		//root->Update(dt);
 	}
 
-	wadawd = false;
+	for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
+		if (dynamic_cast<GenericEntity*>((*it))) {
+			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
+			if (castedEntity->GetSceneGraph() != nullptr) {
+				//castedEntity->GetSceneGraph()->Update();
+				castedEntity->UpdateChildren(dt);
+			}
+		}
+	}
+
+	renderCout = false;
 }
 
 void QuadTreeManager::PostUpdate(double dt)
@@ -57,7 +69,7 @@ void QuadTreeManager::CheckTreeNode(QuadTree * node)
 
 	if (node->entityList.size() >= minSplitSize)
 	{
-		if (wadawd)
+		if (renderCout)
 			std::cout << "Pos : " << node->position << "  Min : " << node->minBoundary <<
 			"  Max : " << node->maxBoundary << std::endl;
 		node->Split();
@@ -114,11 +126,21 @@ void QuadTreeManager::RenderGrid()
 
 	RenderHelper::DrawLine(allVertices, Color(1, 0, 0), 4);
 
+	for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
+		if (dynamic_cast<GenericEntity*>((*it))) {
+			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
+			if (castedEntity->GetSceneGraph() != nullptr) {
+				castedEntity->RenderChildren();
+			}
+		}
+	}
 //	RenderGrid(root);
 }
 
+/*Dieded.*/
 void QuadTreeManager::RenderGrid(QuadTree * node)
 {
+	std::cout << "AM I RUNNING THIS NIGGER" << std::endl;
 	if (!node)
 		return;
 
@@ -149,5 +171,51 @@ int QuadTreeManager::PutEntitiesInGrid(QuadTree * node, std::list<EntityBase*>& 
 	}
 
 	return pushed;
+}
+
+void QuadTreeManager::CheckCollision(std::vector<std::pair<Vector3, Vector3>>& posOfChecks, double dt)
+{
+	if (!root)
+		return;
+
+	std::vector<std::pair<Vector3, Vector3>> ret(CheckCollision(root, dt));
+	posOfChecks.assign(ret.begin(), ret.end());
+}
+
+std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTree * node, double dt)
+{
+	std::vector<std::pair<Vector3, Vector3>> posOfChecks;
+
+	if (!node)
+		return posOfChecks;
+
+	//check leaf node only
+	if (node->GetAllChildren().size()) {
+		
+		std::vector<std::pair<Vector3, Vector3>> temp (CheckCollision(node->topLeft, dt));
+		posOfChecks.insert(posOfChecks.end(), temp.begin(), temp.end());
+		std::vector<std::pair<Vector3, Vector3>> temp2(CheckCollision(node->topRight, dt));
+		posOfChecks.insert(posOfChecks.end(), temp2.begin(), temp2.end());
+		std::vector<std::pair<Vector3, Vector3>> temp3(CheckCollision(node->bottomLeft, dt));
+		posOfChecks.insert(posOfChecks.end(), temp3.begin(), temp3.end());
+		std::vector<std::pair<Vector3, Vector3>> temp4(CheckCollision(node->bottomRight, dt));
+		posOfChecks.insert(posOfChecks.end(), temp4.begin(), temp4.end());
+
+		return posOfChecks;
+	}
+
+
+
+	for (std::list<EntityBase*>::iterator it = node->entityList.begin(); it != node->entityList.end(); ++it) {
+
+		std::list<EntityBase*>::iterator it2 = std::next(it, 1);
+		for (; it2 != node->entityList.end(); ++it2)
+		{
+			CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
+			posOfChecks.push_back(std::make_pair((*it)->GetPosition(), (*it2)->GetPosition()));
+		}
+	}
+
+	return posOfChecks;
 }
 

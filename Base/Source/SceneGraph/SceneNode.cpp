@@ -4,6 +4,7 @@
 
 #include "SceneGraph.h"
 #include "GraphicsManager.h"
+#include "../GenericEntity.h"
 
 CSceneNode::CSceneNode(void)
 	: ID(-1)
@@ -73,6 +74,11 @@ CSceneNode* CSceneNode::GetParent(void) const
 	return theParent;
 }
 
+void CSceneNode::CreateEntityBase(void)
+{
+	theEntity = new EntityBase();
+}
+
 // Add a child to this node
 CSceneNode* CSceneNode::AddChild(EntityBase* theEntity, int _ID)
 {
@@ -84,6 +90,9 @@ CSceneNode* CSceneNode::AddChild(EntityBase* theEntity, int _ID)
 		aNewNode->SetEntity(theEntity);
 		// Store the pointer to the parent
 		aNewNode->SetParent(this);
+		if (dynamic_cast<GenericEntity*>(theEntity)) {
+			dynamic_cast<GenericEntity*>(theEntity)->parentNode = this;
+		}
 		/*Assign ID based on Size.
 		For example, at the start of SceneGraph initialisation, the ID will be 0 while SceneGraph size is 1.
 		When a child is added, the size of the SceneGraph can be used, which is 1.*/
@@ -288,6 +297,7 @@ CSceneNode* CSceneNode::GetEntity(EntityBase* theEntity)
 // Get a child from this node using its ID
 CSceneNode* CSceneNode::GetEntity(const int ID)
 {
+	return theChildren[ID];
 	// if it is inside this node, then return this node
 	if (this->ID == ID)
 		return this;

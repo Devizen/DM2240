@@ -7,6 +7,7 @@
 #include <vector>
 #include <deque>
 #include <algorithm>
+#include <utility>
 
 class QuadTreeManager
 {
@@ -34,7 +35,11 @@ public:
 	void InsertEntity(EntityBase* entity) { entityList.push_back(entity); };
 	void RemoveEntity(EntityBase* entity) { entityList.erase(std::remove(entityList.begin(), entityList.end(), entity), entityList.end()); }
 
-	bool wadawd = true;
+	bool renderCout = true;
+
+	bool toggle;
+	void CheckCollision(std::vector<std::pair<Vector3, Vector3>>& posOfChecks, double dt);
+	std::vector<std::pair<Vector3, Vector3>> CheckCollision(QuadTree* node, double dt);
 };
 
 #endif // !QUADTREEMANAGER_H

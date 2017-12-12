@@ -5,6 +5,8 @@
 #include "../Collider/LineCollider.h"
 #include "../EntityBase.h"
 #include "SpatialPartition\SpatialPartitionManager.h"
+#include "QuadTree\QuadTreeManager.h"
+#include "../RenderHelper.h"
 
 CollisionManager::CollisionManager()
 {
@@ -16,7 +18,11 @@ CollisionManager::~CollisionManager() {
 
 void CollisionManager::Update(double dt)
 {
-	if (CSpatialPartitionManager::GetInstance()->toggle)
+	if (QuadTreeManager::GetInstance()->toggle)
+	{
+		QuadTreeManager::GetInstance()->CheckCollision(posColliderChecks, dt);
+	}
+	else if (CSpatialPartitionManager::GetInstance()->toggle)
 	{
 		//build up colliders
 		for (CMasterMap::iterator it = colliderMap.begin(); it != colliderMap.end(); ++it) {
@@ -218,3 +224,9 @@ bool CollisionManager::InBox(Vector3 Hit, Vector3 B1, Vector3 B2, const int Axis
 //{
 //	return ground;
 //}
+
+void CollisionManager::RenderGrid()
+{
+	RenderHelper::DrawLine(CollisionManager::GetInstance()->posColliderChecks, Color(0, 1, 0));
+	CollisionManager::GetInstance()->posColliderChecks.clear();
+}

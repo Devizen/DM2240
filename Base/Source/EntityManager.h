@@ -3,7 +3,7 @@
 
 #include <list>
 #include <vector>
-#include "Vector3.h"
+#include "../../Common/Source/Vector3.h"
 
 class EntityBase;
 class QuadTreeManager;

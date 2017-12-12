@@ -25,6 +25,7 @@
     <ClCompile Include="Source\PlayerInfo\PlayerInfo.cpp" />
     <ClCompile Include="Source\Projectile\Laser\Laser.cpp" />
     <ClCompile Include="Source\Projectile\Projectile.cpp" />
+    <ClCompile Include="Source\QuadTree\CameraManager.cpp" />
     <ClCompile Include="Source\QuadTree\QuadTree.cpp" />
     <ClCompile Include="Source\QuadTree\QuadTreeManager.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneGraph.cpp" />
@@ -55,6 +56,7 @@
     <ClInclude Include="Source\PlayerInfo\PlayerInfo.h" />
     <ClInclude Include="Source\Projectile\Laser\Laser.h" />
     <ClInclude Include="Source\Projectile\Projectile.h" />
+    <ClInclude Include="Source\QuadTree\CameraManager.h" />
     <ClInclude Include="Source\QuadTree\QuadTree.h" />
     <ClInclude Include="Source\QuadTree\QuadTreeManager.h" />
     <ClInclude Include="Source\SceneGraph\SceneGraph.h" />

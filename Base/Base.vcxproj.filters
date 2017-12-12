@@ -138,6 +138,9 @@
     <ClCompile Include="Source\QuadTree\QuadTreeManager.cpp">
       <Filter>QuadTree</Filter>
     </ClCompile>
+    <ClCompile Include="Source\QuadTree\CameraManager.cpp">
+      <Filter>QuadTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -222,6 +225,9 @@
       <Filter>SceneGraph</Filter>
     </ClInclude>
     <ClInclude Include="Source\QuadTree\QuadTreeManager.h">
+      <Filter>QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\QuadTree\CameraManager.h">
       <Filter>QuadTree</Filter>
     </ClInclude>
   </ItemGroup>

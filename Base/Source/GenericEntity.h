@@ -16,25 +16,34 @@ public:
 	virtual ~GenericEntity();
 
 	virtual void Update(double _dt);
+	void UpdateChildren(double _dt);
 	virtual void Render();
+	void RenderChildren();
 
 	/*Set Min AABB and Max AABB.*/
 	void SetAABB(Vector3 _minAABB, Vector3 _maxAABB) { minAABB = _minAABB; maxAABB = _maxAABB; }
+
+	void SetIsParent(bool _isParent) { isParent = _isParent; }
 
 	virtual void CollisionResponse(EntityBase* other) {
 		std::cout << "BOOM : " << other << std::endl;
 		isDone = true;
 	}
 
+
 	/*Get SceneGraph Node Count.*/
 	size_t GetSceneGraphSize() { return sceneGraph->GetNumOfNode(); }
 	/*Get SceneGraph.*/
 	CSceneGraph* GetSceneGraph();
+	bool GetIsParent() { return isParent; }
 
+	CSceneNode* parentNode;
 private:
+	bool isParent;
 	Vector3 minAABB;
 	Vector3 maxAABB;
 	Mesh* modelMesh;
+
 	/*Demo-ing Spatial Partitioning.*/
 	float timer;
 	bool translateDirection;
