@@ -233,26 +233,27 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 			GenericEntity* gEntity = dynamic_cast<GenericEntity*>(*it);
 			if (gEntity)
 			{
-				//is scenenode
+				//== Is scenenode ==//                                     //important param
 				std::list<EntityBase*> checkEntities(GetNearbyEntities(gEntity, root));
-				//!!!!!!!!!
+				
 
+				//== Remove the unnessecary obj checks. e.g in the same grid ones and before me ones ==//
 				std::list<EntityBase*>::iterator removeIter, checkIter;
-
 				removeIter = node->entityList.begin();
 				do {
 					if ((checkIter = std::remove(checkEntities.begin(), checkEntities.end(), *removeIter)) != checkEntities.end())
-					{
 						checkEntities.erase(checkIter);
-					}
 					
 					++removeIter;
-					//remove everything incl myself coz idw check with myself
+					///remove everything incl myself coz idw check with myself
 				} while (removeIter != std::next(it, 1) && removeIter != node->entityList.end());
 				
+
+				//== Draw a beacon line to indicate that this obj is checking with 2 or more others ==//
 				if (checkEntities.size() >= 2)
 					posOfChecks.push_back(std::make_pair(gEntity->GetPosition(), Vector3(0, 1000, 0) + gEntity->GetPosition()));
 
+				//== Do the collision check ==//
 				for (std::list<EntityBase*>::iterator it2 = checkEntities.begin(); it2 != checkEntities.end(); ++it2) {
 
 					CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
