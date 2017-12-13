@@ -5,6 +5,7 @@
 #include "Manager\CollisionManager.h"
 #include "../GenericEntity.h"
 #include "GraphicsManager.h"
+#include "CameraManager.h"
 
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
@@ -38,6 +39,9 @@ void QuadTreeManager::Update(double dt)
 
 		//root->Update(dt);
 	}
+
+	//to determine which node to render or no
+	this->UpdateLeafNode(root, dt);
 
 	for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
 		if (dynamic_cast<GenericEntity*>((*it))) {
@@ -155,6 +159,21 @@ void QuadTreeManager::RenderObj(QuadTree * node)
 	if (!node)
 		return;
 
+	std::vector<QuadTree*> children(node->GetAllChildren());
+	if (!children.empty())
+	{
+		for (auto child : children)
+		{
+			RenderObj(child);
+		}
+		return;
+	}
+
+	// At leaf Node
+
+	if (!node->RenderGrid)
+		return;
+
 	node->Render();
 
 	//this is not using scenenode. remove later
@@ -164,10 +183,25 @@ void QuadTreeManager::RenderObj(QuadTree * node)
 		e->Render();
 	}
 
-	RenderObj(node->topLeft);
-	RenderObj(node->topRight);
-	RenderObj(node->bottomLeft);
-	RenderObj(node->bottomRight);
+	//RenderObj(node->topLeft);
+	//RenderObj(node->topRight);
+	//RenderObj(node->bottomLeft);
+	//RenderObj(node->bottomRight);
+}
+
+void QuadTreeManager::UpdateLeafNode(QuadTree * node, double dt)
+{
+	if (node->topLeft)
+	{
+		std::vector<QuadTree*> children(node->GetAllChildren());
+		for (auto child : children)
+		{
+			UpdateLeafNode(child, dt);
+		}
+		return;
+	}
+
+	node->Update(dt);
 }
 
 int QuadTreeManager::PutEntitiesInGrid(QuadTree * node, std::list<EntityBase*>& entityList)

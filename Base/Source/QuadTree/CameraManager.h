@@ -35,4 +35,6 @@ public:
 	double GetFrustumAspect() { return frustum.aspectRatio; }
 	double GetNearPlane() { return frustum.nearPlane; }
 	double GetFarPlane() { return frustum.farPlane; }
+
+	bool IsAABBInFrustum(Vector3 min, Vector3 max);
 };

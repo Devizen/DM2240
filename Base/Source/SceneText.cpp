@@ -611,7 +611,8 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->UpdateLightUniforms();
 
 	// Setup 3D pipeline then render 3D
-	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
+	GraphicsManager::GetInstance()->SetPerspectiveProjection(CameraManager::GetInstance()->GetFrustumFoV(),
+		CameraManager::GetInstance()->GetFrustumAspect(), CameraManager::GetInstance()->GetNearPlane(), CameraManager::GetInstance()->GetFarPlane());
 	//GraphicsManager::GetInstance()->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(CameraManager::GetInstance()->GetActiveCam());
 	EntityManager::GetInstance()->Render();

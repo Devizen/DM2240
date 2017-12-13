@@ -35,6 +35,7 @@ class QuadTreeManager
 	//std::list<EntityBase*> GetNearbyEntities(GenericEntity* entity, QuadTree* root);
 
 	void RenderObj(QuadTree* node);
+	void UpdateLeafNode(QuadTree* node, double dt);
 public:
 	static QuadTreeManager* GetInstance() { return (instance ? instance : instance = new QuadTreeManager()); }
 	void Update(double dt);
