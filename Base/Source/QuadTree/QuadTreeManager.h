@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+class GenericEntity;
 class QuadTreeManager
 {
 	QuadTreeManager();
@@ -24,12 +25,24 @@ class QuadTreeManager
 	void CheckTreeNode(QuadTree* node);
 	std::list<EntityBase*> GetEntityList();
 	std::vector<Vector3> GetGridVertices(QuadTree* node);
+	//returns 0 if totally outside, returns 1 if one point inside, return 2 if all inside
+	int IsAABBInGrid(Vector3 min, Vector3 max, QuadTree* node);
+
+	//This func finds the parent grid that encaps the whole entity.
+	std::list<EntityBase*> GetNearbyEntities(GenericEntity* entity, QuadTree* leafNode);
+
+	////more optimsied
+	//std::list<EntityBase*> GetNearbyEntities(GenericEntity* entity, QuadTree* root);
+
+	void RenderObj(QuadTree* node);
+	void UpdateLeafNode(QuadTree* node, double dt);
 public:
 	static QuadTreeManager* GetInstance() { return (instance ? instance : instance = new QuadTreeManager()); }
 	void Update(double dt);
 	void PostUpdate(double dt);
 	void RenderGrid();
-	void RenderGrid(QuadTree* node);
+	void RenderObj();
+
 
 	int PutEntitiesInGrid(QuadTree* node, std::list<EntityBase*>& entityList);
 	void InsertEntity(EntityBase* entity) { entityList.push_back(entity); };

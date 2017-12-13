@@ -270,7 +270,7 @@ void SceneText::Init()
 
 	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
 	{
-		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetPosition();
+		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetSPPosition();
 		position.x += 10.f;
 		position.y += 20.f;
 		EntityBase* chair = Create::Asset("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
@@ -389,6 +389,11 @@ void SceneText::Init()
 
 	
 	CameraManager::GetInstance()->AttachPlayerCam(&this->camera);
+	FPSCamera* birdEyeCam = CameraManager::GetInstance()->GetBirdEyeCam();
+
+
+	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
+	//birdEyeCam->
 }
 
 void SceneText::Update(double dt)
@@ -411,39 +416,39 @@ void SceneText::Update(double dt)
 	EntityManager::GetInstance()->Update(dt);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
-	if(KeyboardController::GetInstance()->IsKeyDown('1'))
+	if (KeyboardController::GetInstance()->IsKeyDown('1'))
 		glEnable(GL_CULL_FACE);
-	if(KeyboardController::GetInstance()->IsKeyDown('2'))
+	if (KeyboardController::GetInstance()->IsKeyDown('2'))
 		glDisable(GL_CULL_FACE);
-	if(KeyboardController::GetInstance()->IsKeyDown('3'))
+	if (KeyboardController::GetInstance()->IsKeyDown('3'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if(KeyboardController::GetInstance()->IsKeyDown('4'))
+	if (KeyboardController::GetInstance()->IsKeyDown('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
-	if(KeyboardController::GetInstance()->IsKeyDown('5'))
+
+	if (KeyboardController::GetInstance()->IsKeyDown('5'))
 	{
 		lights[0]->type = Light::LIGHT_POINT;
 	}
-	else if(KeyboardController::GetInstance()->IsKeyDown('6'))
+	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
 	{
 		lights[0]->type = Light::LIGHT_DIRECTIONAL;
 	}
-	else if(KeyboardController::GetInstance()->IsKeyDown('7'))
+	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
 	{
 		lights[0]->type = Light::LIGHT_SPOT;
 	}
 
-	if(KeyboardController::GetInstance()->IsKeyDown('I'))
+	if (KeyboardController::GetInstance()->IsKeyDown('I'))
 		lights[0]->position.z -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('K'))
+	if (KeyboardController::GetInstance()->IsKeyDown('K'))
 		lights[0]->position.z += (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('J'))
+	if (KeyboardController::GetInstance()->IsKeyDown('J'))
 		lights[0]->position.x -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('L'))
+	if (KeyboardController::GetInstance()->IsKeyDown('L'))
 		lights[0]->position.x += (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('O'))
+	if (KeyboardController::GetInstance()->IsKeyDown('O'))
 		lights[0]->position.y -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('P'))
+	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 		lights[0]->position.y += (float)(10.f * dt);
 
 	// if the left mouse button was released
@@ -470,7 +475,14 @@ void SceneText::Update(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN))
 	{
-		CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true);
+		QuadTreeManager::GetInstance()->toggle = (QuadTreeManager::GetInstance()->toggle ? false :
+			CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true));
+		//CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true);
+		std::cout << "QuadTree " << QuadTreeManager::GetInstance()->toggle << "   SpatialPartition " << CSpatialPartitionManager::GetInstance()->toggle << std::endl;
+	}
+	if (KeyboardController::GetInstance()->IsKeyPressed('M'))
+	{
+		CameraManager::GetInstance()->toggleBirdEyeView = (CameraManager::GetInstance()->toggleBirdEyeView ? false : true);
 	}
 	// <THERE>
 
@@ -597,17 +609,20 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->UpdateLightUniforms();
 
 	// Setup 3D pipeline then render 3D
-	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	GraphicsManager::GetInstance()->AttachCamera(&camera);
+	GraphicsManager::GetInstance()->SetPerspectiveProjection(CameraManager::GetInstance()->GetFrustumFoV(),
+		CameraManager::GetInstance()->GetFrustumAspect(), CameraManager::GetInstance()->GetNearPlane(), CameraManager::GetInstance()->GetFarPlane());
+	//GraphicsManager::GetInstance()->AttachCamera(&camera);
+	GraphicsManager::GetInstance()->AttachCamera(CameraManager::GetInstance()->GetActiveCam());
 	EntityManager::GetInstance()->Render();
 
 	CollisionManager::GetInstance()->RenderGrid();
 	
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
-	ms.PushMatrix();
-	ms.Translate(0, -10, 0);
+
 	QuadTreeManager::GetInstance()->RenderGrid();
-	ms.PopMatrix();
+	CameraManager::GetInstance()->RenderPlayerFrustum();
+	//QuadTreeManager::GetInstance()->RenderObj();
+	
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;

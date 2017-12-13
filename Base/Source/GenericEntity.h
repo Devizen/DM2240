@@ -22,6 +22,8 @@ public:
 
 	/*Set Min AABB and Max AABB.*/
 	void SetAABB(Vector3 _minAABB, Vector3 _maxAABB) { minAABB = _minAABB; maxAABB = _maxAABB; }
+	Vector3 GetMinAABB() { return minAABB; }
+	Vector3 GetMaxAABB() { return maxAABB; }
 
 	void SetIsParent(bool _isParent) { isParent = _isParent; }
 

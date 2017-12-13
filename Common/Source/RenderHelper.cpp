@@ -335,7 +335,7 @@ void RenderHelper::DrawLine(std::vector<std::pair<Vector3, Vector3>>& lines, Col
 }
 
 //all unqiue vertices
-void RenderHelper::DrawLine(std::vector<Vector3> vertices, Color color, int numPerSet)
+void RenderHelper::DrawLine(std::vector<Vector3>& vertices, Color color, int numPerSet)
 {
 
 	Vertex v;

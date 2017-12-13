@@ -4,6 +4,7 @@
 #include "EntityBase.h"
 #include "CameraManager.h"
 #include "Collider\Collider.h"
+#include "../GenericEntity.h"
 
 QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary, unsigned _level, unsigned _maxLevel, std::list<EntityBase*> entityList)
 	: position(_position)
@@ -17,6 +18,7 @@ QuadTree::QuadTree(Vector3 _position, Vector3 _minBoundary, Vector3 _maxBoundary
 	, bottomLeft(nullptr)
 	, bottomRight(nullptr)
 	, RenderGrid(false)
+	, parent(nullptr)
 {
 	//if (level == maxLevel)
 	//	return;
@@ -166,6 +168,12 @@ void QuadTree::Split(void)
 	/*bottomRight will be created at (200.f, 0.f, 0.f), minBoundary = (200.f, 0.f, 0.f) and maxBoundary = (400.f, 0.f, 200.f).*/
 	bottomRight = new QuadTree(_bottomRight, Vector3(_bottomRight.x, -1000, _bottomRight.z), Vector3(_bottomRight.x + (quadSize * 0.5f), position.y + 1000, _bottomRight.z + (quadSize * 0.5f)), level + 1, maxLevel, {});
 	QuadTreeManager::GetInstance()->PutEntitiesInGrid(bottomRight, entityList);
+
+	//put parent
+	topLeft->parent = this;
+	topRight->parent = this;
+	bottomLeft->parent = this;
+	bottomRight->parent = this;
 }
 
 //#include "MeshBuilder.h"
@@ -189,6 +197,8 @@ void QuadTree::Render(void)
 	//ms.Scale(this->maxBoundary - this->minBoundary);
 	//RenderHelper::RenderMesh(quad);
 	//ms.PopMatrix();
+
+	
 }
 
 void QuadTree::Update(double dt)
@@ -205,32 +215,38 @@ void QuadTree::Update(double dt)
 		else
 			e->GetLoD().SetLevel(CLevelOfDetail::LOW);
 		
-		e->Update(dt);
+		//e->Update(dt);
 
 		if (this->RenderGrid == false) {
-			Vector3 min = e->collider->GetMinAABB();
-			Vector3 max = e->collider->GetMaxAABB();
-			Vector3 boundingPoints[8];
-			boundingPoints[0] = Vector3(min);
-			boundingPoints[1] = Vector3(min.x, min.y, max.z);
-			boundingPoints[2] = Vector3(max.x, min.y, max.z);
-			boundingPoints[3] = Vector3(max.x, min.y, min.z);
-
-			boundingPoints[4] = Vector3(min.x, max.y, min.z);
-			boundingPoints[5] = Vector3(min.x, max.y, max.z);
-			boundingPoints[6] = Vector3(max.x, max.y, max.z);
-			boundingPoints[7] = Vector3(max.x, max.y, min.z);
-
-			//check if any points is in withing 180 of cam
-			Vector3 camRight = (cam->GetCameraTarget() - cam->GetCameraPos()).Cross(cam->GetCameraUp()).Normalize();
-			Vector3 camDir = (cam->GetCameraTarget() - cam->GetCameraPos()).Normalized();
-			for (int i = 0; i < 8; ++i) {
-
-				if (Math::RadianToDegree(acos(camDir.Dot((boundingPoints[i] - cam->GetCameraPos()).Normalized()))) < 90.f) {
-					this->RenderGrid = true;
-					break;
-				}
+			GenericEntity* ge = dynamic_cast<GenericEntity*>(e);
+			if (ge)
+			{
+				RenderGrid = CameraManager::GetInstance()->IsAABBInFrustum(ge->GetMinAABB() + ge->GetPosition(), ge->GetMaxAABB() + ge->GetPosition());
 			}
+
+			//Vector3 min = e->collider->GetMinAABB();
+			//Vector3 max = e->collider->GetMaxAABB();
+			//Vector3 boundingPoints[8];
+			//boundingPoints[0] = Vector3(min);
+			//boundingPoints[1] = Vector3(min.x, min.y, max.z);
+			//boundingPoints[2] = Vector3(max.x, min.y, max.z);
+			//boundingPoints[3] = Vector3(max.x, min.y, min.z);
+
+			//boundingPoints[4] = Vector3(min.x, max.y, min.z);
+			//boundingPoints[5] = Vector3(min.x, max.y, max.z);
+			//boundingPoints[6] = Vector3(max.x, max.y, max.z);
+			//boundingPoints[7] = Vector3(max.x, max.y, min.z);
+
+			////check if any points is in withing 180 of cam
+			//Vector3 camRight = (cam->GetCameraTarget() - cam->GetCameraPos()).Cross(cam->GetCameraUp()).Normalize();
+			//Vector3 camDir = (cam->GetCameraTarget() - cam->GetCameraPos()).Normalized();
+			//for (int i = 0; i < 8; ++i) {
+
+			//	if (Math::RadianToDegree(acos(camDir.Dot((boundingPoints[i] - cam->GetCameraPos()).Normalized()))) < 90.f) {
+			//		this->RenderGrid = true;
+			//		break;
+			//	}
+			//}
 		}
 	
 		
