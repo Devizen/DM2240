@@ -127,7 +127,7 @@ void QuadTreeManager::RenderGrid()
 	//Can be disabled
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 	ms.PushMatrix();
-	ms.Translate(0, -10, 0);
+	ms.Translate(0, -9.5f, 0);
 	RenderHelper::DrawLine(allVertices, Color(1, 0, 0), 4);
 	ms.PopMatrix();
 

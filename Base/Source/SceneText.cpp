@@ -621,7 +621,7 @@ void SceneText::RenderPassMain(void)
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 
 	QuadTreeManager::GetInstance()->RenderGrid();
-
+	CameraManager::GetInstance()->RenderPlayerFrustum();
 	//QuadTreeManager::GetInstance()->RenderObj();
 	
 
