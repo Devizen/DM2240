@@ -31,42 +31,7 @@ GenericEntity::~GenericEntity()
 
 void GenericEntity::Update(double _dt)
 {
-	// Does nothing here, can inherit & override or create your own version of this class :D
-	timer += _dt;
-
-	if (timer > 1.f)
-	{
-		transformChange = transformChange ? false : true;
-		timer = 0.f;
-	}
-
-	//if (!transformChange)
-	//	position = Vector3(position.x, position.y + (_dt * 10.f), position.z);
-	//else
-	//	position = Vector3(position.x, position.y - (_dt * 10.f), position.z);
-
-	/*To only calculate the transformation of the root node (SceneGraph) once.*/
-	if (isParent) {
-		static float offset = 0.f;
-		offset += static_cast<float>(_dt);
-		static bool translateLoop = false;
-		EntityBase* parent = rootNode->GetEntity();
-		if (offset > 2.f) {
-			translateLoop = translateLoop ? false : true;
-			offset = 0.f;
-		}
-		//if (translateLoop)
-		//	//parent->AddPosition(Vector3(static_cast<float>(_dt), 0.f, 0.f));
-		//	rootNode->GetEntity()->SetPosition(parent->GetDirection().x, parent->GetDirection().y, parent->GetDirection().z);
-		//else
-		//	//parent->AddPosition(Vector3(-static_cast<float>(_dt), 0.f, 0.f));
-		//	rootNode->GetEntity()->SetPosition(parent->GetDirection().x, parent->GetDirection().y, parent->GetDirection().z);
-	}
-	//std::cout << "DIRECTION: " << GetRootNode()->GetEntity()->GetDirection() << std::endl;
-	/*Entire SceneGraph translate together.*/
-	//position += rootNode->GetEntity()->GetDirection() * _dt;
-
-	/*Translate based on individual parts.*/
+	/*Translate as a whole based on individual parts.*/
 	position += rootNode->GetEntity()->GetDirection() * _dt;
 	/*Translate based on own offset.*/
 	position += direction * _dt;
@@ -94,7 +59,20 @@ void GenericEntity::Render()
 	//modelStack.PushMatrix();
 	///*Only rotate the modelStack when there is axis selected.*/
 	if (rotateAxis.LengthSquared() != 0.f) {
-		modelStack.Rotate(rotateAngle, rotateAxis.x, rotateAxis.y, rotateAxis.z);
+		if (rotateAxis.y != 0) {
+			modelStack.PushMatrix();
+			modelStack.Rotate(rotateAngle, 0.f, 1.f, 0.f);
+			if (rotateAxis.x != 0) {
+				modelStack.PushMatrix();
+				modelStack.Translate(0.f, 10.f, 0.f);
+				modelStack.Rotate(offset.x, 1.f, 0.f, 0.f);
+				modelStack.Translate(0.f, -10.f, 0.f);
+			}
+		}
+		if (rotateAxis.z != 0) {
+			modelStack.PushMatrix();
+			modelStack.Rotate(offset.z, 0.f, 0.f, 1.f);
+		}
 	}
 	//	//modelStack.Translate(offset.x, offset.y, offset.z);
 	//	//modelStack.Translate(-offset.x, -offset.y, -offset.z);
@@ -112,6 +90,18 @@ void GenericEntity::Render()
 		RenderHelper::RenderMesh(LoD.GetCurrMesh());
 	else
 		RenderHelper::RenderMesh(LoD.GetMesh(CLevelOfDetail::LEVEL::HIGH));
+
+
+	if (rotateAxis.x != 0) {
+		modelStack.PopMatrix();
+	}
+	if (rotateAxis.y != 0) {
+		modelStack.PopMatrix();
+	}
+	if (rotateAxis.z != 0) {
+		modelStack.PopMatrix();
+	}
+
 	modelStack.PopMatrix();
 
 	if (CEnemyManager::GetInstance()->GetRenderAABB()) {

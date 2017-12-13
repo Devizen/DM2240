@@ -68,7 +68,7 @@ public:
 	/*Set transformChange.*/
 	void SetTransformChange(bool _transformChange) { transformChange = _transformChange; }
 	/*Toggle transformChange, true will be false and false will become true.*/
-	void ToggleTrasnformChange(void) { transformChange = transformChange ? false : true; }
+	void ToggleTransformChange(void) { transformChange = transformChange ? false : true; }
 
 	/*Add transformOffset for animation.*/
 	void AddTransformOffset(float _transformOffset) { transformOffset += _transformOffset; }

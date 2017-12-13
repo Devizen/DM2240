@@ -88,7 +88,7 @@ void CMonk::UpdatePart(double dt, std::string _part)
 		}
 		if (part->GetName() != "MONK_HEAD")
 			part->SetRotateAngle(rotateAngle);
-		part->SetRotateAxis(0.f, 1.f, 0.f);
+		part->SetRotateAxis(1.f, 1.f, 0.f);
 
 		if (part->GetName() == "MONK_HEAD") {
 			tempPosition = head->GetPosition();
@@ -178,9 +178,9 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	head->SetRotateAngle(head->GetRotateAngle() + static_cast<float>(dt) * 50.f);
 	head->SetRotateAxis(0.f, 1.f, 0.f);
 	head->AddTimer(dt);
-	if (head->GetTimer() > 2.f) {
+	if (head->GetTimer() > 0.5f) {
 		head->ResetTimer();
-		head->ToggleTrasnformChange();
+		head->ToggleTransformChange();
 	}
 	if (!head->GetTransformChange())
 		head->SetDirection(head->translateAnimation["MOVE_UP"] * 10.f);
@@ -206,6 +206,34 @@ void CMonk::UpdatePart(double dt, std::string _part)
 		core->SetDirection(moveToPlayer * 20.f);
 	else
 		core->SetDirection(0.f, 0.f, 0.f);
+
+	/*Rotate the legs to animate as walking.*/
+
+	if (leftLeg->GetTransformOffset() >= 10.f)
+		leftLeg->SetTransformChange(true);
+	else if (leftLeg->GetTransformOffset() <= leftLeg->GetTimer())
+		leftLeg->SetTransformChange(false);
+
+	if (!leftLeg->GetTransformChange()) {
+		leftLeg->AddTransformOffset(dt * 50.f);
+		leftLeg->SetTimer(-10.f);
+	}
+	else 
+		leftLeg->AddTransformOffset(-dt * 50.f);
+	leftLeg->SetOffset(leftLeg->GetTransformOffset(), 0.f, 0.f);
+
+	if (rightLeg->GetTransformOffset() <= -10.f)
+		rightLeg->SetTransformChange(true);
+	else if (rightLeg->GetTransformOffset() >= rightLeg->GetTimer())
+		rightLeg->SetTransformChange(false);
+
+	if (!rightLeg->GetTransformChange()) {
+		rightLeg->AddTransformOffset(-dt * 50.f);
+		rightLeg->SetTimer(10.f);
+	}
+	else
+		rightLeg->AddTransformOffset(dt * 50.f);
+	rightLeg->SetOffset(rightLeg->GetTransformOffset(), 0.f, 0.f);
 
 	if (_part == "MONK_HEAD") {
 
