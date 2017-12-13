@@ -6,6 +6,8 @@
 
 EntityBase::EntityBase() 
 	: position(0.0f, 0.0f, 0.0f)
+	, direction(0.f, 0.f, 0.f)
+	, offset(0.f, 0.f, 0.f)
 	, rotateAngle(0.f)
 	, rotateAxis(0.f, 0.f, 0.f)
 	, scale(1.0f, 1.0f, 1.0f)
@@ -28,6 +30,7 @@ EntityBase::~EntityBase()
 
 void EntityBase::Update(double _dt)
 {
+	position += direction * _dt;
 }
 
 void EntityBase::Render()

@@ -28,9 +28,6 @@
     <Filter Include="Terrain">
       <UniqueIdentifier>{e673e670-77e4-4d16-904c-52fa2c71d344}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EntityTypes">
-      <UniqueIdentifier>{8571f7d5-9c81-4670-96ce-26d4fdd0f572}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DepthFBO">
       <UniqueIdentifier>{3e16b3eb-3ece-4238-80a6-b2862d789eb3}</UniqueIdentifier>
     </Filter>
@@ -48,6 +45,15 @@
     </Filter>
     <Filter Include="Projectile\Laser">
       <UniqueIdentifier>{12df8daa-45ab-4733-9c9b-f1a97ea92157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy">
+      <UniqueIdentifier>{f12ac9d0-c61c-4d49-bc5f-b02899b67504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemy\Monk">
+      <UniqueIdentifier>{a1e54570-2b53-443d-b766-78220721bf5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntityTypes">
+      <UniqueIdentifier>{8571f7d5-9c81-4670-96ce-26d4fdd0f572}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +147,12 @@
     <ClCompile Include="Source\QuadTree\CameraManager.cpp">
       <Filter>QuadTree</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Enemy\Monk\Monk.cpp">
+      <Filter>Enemy\Monk</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Enemy\EnemyManager.cpp">
+      <Filter>Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -229,6 +241,15 @@
     </ClInclude>
     <ClInclude Include="Source\QuadTree\CameraManager.h">
       <Filter>QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy\Monk\Monk.h">
+      <Filter>Enemy\Monk</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy\EnemyManager.h">
+      <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy\AnimationPattern.h">
+      <Filter>Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

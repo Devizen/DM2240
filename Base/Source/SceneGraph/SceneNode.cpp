@@ -8,8 +8,8 @@
 
 CSceneNode::CSceneNode(void)
 	: ID(-1)
-	, theEntity(NULL)
-	, theParent(NULL)
+	, theEntity(nullptr)
+	, theParent(nullptr)
 	, theRoot(nullptr)
 {
 }
@@ -57,7 +57,7 @@ bool CSceneNode::SetEntity(EntityBase* theEntity)
 	}
 	return false;
 }
-// Get the ID for this node
+// Get the entity for this node
 EntityBase* CSceneNode::GetEntity(void) const
 {
 	return theEntity;
@@ -342,10 +342,10 @@ int CSceneNode::GetNumOfChild(void)
 void CSceneNode::Update(void)
 {
 	// Update the Transformation between this node and its children
-	if (theUpdateTransformation)
-	{
-		ApplyTransform(GetUpdateTransform());
-	}
+	//if (theUpdateTransformation)
+	//{
+	//	ApplyTransform(GetUpdateTransform());
+	//}
 
 	/*
 	Mtx44 orig = GetTransform();
@@ -370,11 +370,11 @@ void CSceneNode::Update(void)
 	*/
 
 	// Update the children
-	std::vector<CSceneNode*>::iterator it;
-	for (it = theChildren.begin(); it != theChildren.end(); ++it)
-	{
-		(*it)->Update();
-	}
+	//std::vector<CSceneNode*>::iterator it;
+	//for (it = theChildren.begin(); it != theChildren.end(); ++it)
+	//{
+	//	(*it)->Update();
+	//}
 }
 // Render the Scene Graph
 void CSceneNode::Render(void)
@@ -385,7 +385,7 @@ void CSceneNode::Render(void)
 	if (theEntity)
 	{
 		//modelStack.LoadMatrix(this->GetTransform());
-		modelStack.MultMatrix(this->GetTransform());
+		//modelStack.MultMatrix(this->GetTransform());
 
 		/*
 		Mtx44 Mtx = modelStack.Top();
@@ -405,11 +405,11 @@ void CSceneNode::Render(void)
 	}
 
 	// Render the children
-	std::vector<CSceneNode*>::iterator it;
-	for (it = theChildren.begin(); it != theChildren.end(); ++it)
-	{
-		(*it)->Render();
-	}
+	//std::vector<CSceneNode*>::iterator it;
+	//for (it = theChildren.begin(); it != theChildren.end(); ++it)
+	//{
+	//	(*it)->Render();
+	//}
 
 	modelStack.PopMatrix();
 }
@@ -470,6 +470,8 @@ CSceneNode * Create::SceneNode(CSceneNode* _theRoot, CSceneNode* _theParent, Ent
 		result->SetRoot(_theRoot);
 		/*Set the Parent so that we can check information regarding parent object.*/
 		result->SetParent(_theParent);
+		/*Use the number of children as ID. The root node will be -1.*/
+		result->SetID(_theParent->GetNumOfChild());
 		/*Add the new child to the parent so that they are linked.*/
 		_theParent->AddChild(result);
 		/*Add the entity to the node for transformation and calculation.*/

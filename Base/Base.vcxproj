@@ -13,6 +13,8 @@
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\DepthFBO\DepthFBO.cpp" />
+    <ClCompile Include="Source\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="Source\Enemy\Monk\Monk.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
     <ClCompile Include="Source\EntityTypes\EntityTypes.cpp" />
     <ClCompile Include="Source\FPSCamera.cpp" />
@@ -45,6 +47,9 @@
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\DepthFBO\DepthFBO.h" />
+    <ClInclude Include="Source\Enemy\AnimationPattern.h" />
+    <ClInclude Include="Source\Enemy\EnemyManager.h" />
+    <ClInclude Include="Source\Enemy\Monk\Monk.h" />
     <ClInclude Include="Source\EntityManager.h" />
     <ClInclude Include="Source\EntityTypes\EntityTypes.h" />
     <ClInclude Include="Source\FPSCamera.h" />

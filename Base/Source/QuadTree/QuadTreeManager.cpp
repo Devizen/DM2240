@@ -6,7 +6,7 @@
 #include "../GenericEntity.h"
 #include "GraphicsManager.h"
 #include "CameraManager.h"
-
+#include "../Enemy/EnemyManager.h"
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
 QuadTreeManager::QuadTreeManager() : root(nullptr), entityList(entityList), minSplitSize(2U)
@@ -43,16 +43,18 @@ void QuadTreeManager::Update(double dt)
 	//to determine which node to render or no
 	this->UpdateLeafNode(root, dt);
 
-	for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
-		if (dynamic_cast<GenericEntity*>((*it))) {
-			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
+	/*Update all the entities through Scene Graph.*/
+	for (auto e : entityList)
+	{
+		if (dynamic_cast<GenericEntity*>(e)) {
+			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>(e);
 			if (castedEntity->GetSceneGraph() != nullptr) {
-				//castedEntity->GetSceneGraph()->Update();
-				castedEntity->UpdateChildren(dt);
+				castedEntity->UpdateAllNodes(castedEntity->GetRootNode(), dt);
 			}
 		}
 	}
 
+	CEnemyManager::GetInstance()->Update(dt);
 	renderCout = false;
 }
 
@@ -135,14 +137,14 @@ void QuadTreeManager::RenderGrid()
 	RenderHelper::DrawLine(allVertices, Color(1, 0, 0), 4);
 	ms.PopMatrix();
 
-	for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
-		if (dynamic_cast<GenericEntity*>((*it))) {
-			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
-			if (castedEntity->GetSceneGraph() != nullptr) {
-				castedEntity->RenderChildren();
-			}
-		}
-	}
+	//for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
+	//	if (dynamic_cast<GenericEntity*>((*it))) {
+	//		GenericEntity* castedEntity = dynamic_cast<GenericEntity*>((*it));
+	//		if (castedEntity->GetSceneGraph() != nullptr) {
+	//			castedEntity->RenderChildren();
+	//		}
+	//	}
+	//}
 //	RenderGrid(root);
 	this->RenderObj();
 }
@@ -180,7 +182,13 @@ void QuadTreeManager::RenderObj(QuadTree * node)
 	for (auto e : node->entityList)
 	{
 		//can check if obj is inside ah
-		e->Render();
+		//e->Render();
+		if (dynamic_cast<GenericEntity*>(e)) {
+			GenericEntity* castedEntity = dynamic_cast<GenericEntity*>(e);
+			if (castedEntity->GetSceneGraph() != nullptr) {
+				castedEntity->RenderAllNodes(castedEntity->GetRootNode());
+			}
+		}
 	}
 
 	//RenderObj(node->topLeft);
