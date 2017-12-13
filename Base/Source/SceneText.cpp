@@ -512,6 +512,15 @@ void SceneText::Update(double dt)
 	{
 		CEnemyManager::GetInstance()->ToggleRenderAABB();
 	}
+
+	/*Toggle between Windowed and Fullscreen Mode.*/
+	if (KeyboardController::GetInstance()->IsKeyDown(VK_LMENU) && KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN)) {
+		if (Application::GetInstance().screenMode) {
+			Application::GetInstance().MakeWindowedMode();
+		}
+		else
+			Application::GetInstance().MakeFullScreen();
+	}
 	// Update the player position and other details based on keyboard and mouse inputs
 	playerInfo->Update(dt);
 

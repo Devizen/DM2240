@@ -44,7 +44,8 @@ bool Application::IsKeyPressed(unsigned short key)
     return ((GetAsyncKeyState(key) & 0x8001) != 0);
 }
 
-Application::Application()
+Application::Application() :
+	screenMode(false)
 {
 }
 
@@ -70,8 +71,28 @@ void Application::Init()
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 
+																   /*Get Monitor*/
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
 	//Create a window and create its OpenGL context
-	m_window = glfwCreateWindow(m_window_width, m_window_height, "NYP Framework", NULL, NULL);
+	//m_window_width = mode->width;
+	//m_window_height = mode->height;
+	m_window_width = 800;
+	m_window_height = 600;
+
+	/*glfwGetPrimaryMonitor() to set full screen.*/
+	//m_window = glfwCreateWindow(m_window_width, m_window_height, "DM2240", glfwGetPrimaryMonitor(), NULL);
+
+	/*Windowed Full-Screen*/
+	//m_window = glfwCreateWindow(mode->width, mode->height, "DM2240", NULL, NULL);
+
+	/*Windowed Mode*/
+	m_window = glfwCreateWindow(m_window_width, m_window_height, "DM2240", NULL, NULL);
 
 	//If the window couldn't be created
 	if (!m_window)
@@ -195,4 +216,35 @@ int Application::GetWindowHeight()
 int Application::GetWindowWidth()
 {
 	return m_window_width;
+}
+
+void Application::MakeFullScreen(void)
+{
+	/*Get Monitor*/
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+	m_window_width = mode->width;
+	m_window_height = mode->height;
+	//glfwSetWindowSize(m_window, m_window_width, m_window_height);
+
+	glfwSetWindowMonitor(m_window, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, mode->refreshRate);
+	screenMode = true;
+}
+
+void Application::MakeWindowedMode(void)
+{
+	/*Get Monitor*/
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	m_window_width = 800;
+	m_window_height = 600;
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+	//glfwSetWindowSize(m_window, m_window_width, m_window_height);
+	glfwSetWindowMonitor(m_window, NULL, 0, 0, m_window_width, m_window_height, mode->refreshRate);
+	screenMode = false;
 }
