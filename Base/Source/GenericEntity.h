@@ -30,14 +30,19 @@ public:
 		isDone = true;
 	}
 
-
+	/*Set SceneGraph for multiple objects tied together.*/
+	void SetSceneGraph(CSceneGraph* _sceneGraph) { sceneGraph = _sceneGraph; }
 	/*Get SceneGraph Node Count.*/
 	size_t GetSceneGraphSize() { return sceneGraph->GetNumOfNode(); }
 	/*Get SceneGraph.*/
 	CSceneGraph* GetSceneGraph();
+
 	bool GetIsParent() { return isParent; }
 
-	CSceneNode* parentNode;
+	/*Set Root Scene Node.*/
+	void SetRootNode(CSceneNode* _rootNode) { rootNode = _rootNode; }
+	/*Set Parent Scene Node.*/
+	void SetParentNode(CSceneNode* _parentNode) { parentNode = _parentNode; }
 private:
 	bool isParent;
 	Vector3 minAABB;
@@ -48,6 +53,10 @@ private:
 	float timer;
 	bool translateDirection;
 	CSceneGraph* sceneGraph;
+
+	/*For following the transformation.*/
+	CSceneNode* rootNode;
+	CSceneNode* parentNode;
 };
 
 namespace Create

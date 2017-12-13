@@ -55,3 +55,8 @@ protected:
 	// The next ID to be assigned to a scene node.
 	int ID;
 };
+
+namespace Create
+{
+	CSceneGraph* SceneGraph(CSceneNode* _theRoot);
+};

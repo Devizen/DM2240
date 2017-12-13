@@ -14,6 +14,8 @@ GenericEntity::GenericEntity(Mesh* _modelMesh)
 	, translateDirection(false)
 	, sceneGraph(nullptr)
 	, isParent(false)
+	, parentNode(nullptr)
+	, rootNode(nullptr)
 {
 }
 
@@ -38,11 +40,23 @@ void GenericEntity::Update(double _dt)
 		position = Vector3(position.x, position.y - (_dt * 10.f), position.z);
 
 	if (isParent) {
+		static float offset = 0.f;
+		offset += static_cast<float>(_dt);
+		static bool translateLoop = false;
 		EntityBase* parent = GetSceneGraph()->GetRoot()->GetEntity();
-			parent->AddPosition(Vector3(_dt, 0.f, 0.f));
+		if (offset > 2.f) {
+			translateLoop = translateLoop ? false : true;
+			offset = 0.f;
+		}
+		if (translateLoop)
+			//parent->AddPosition(Vector3(static_cast<float>(_dt), 0.f, 0.f));
+			parent->SetPosition(static_cast<float>(_dt), parent->GetPosition().y, parent->GetPosition().z);
+		else
+			//parent->AddPosition(Vector3(-static_cast<float>(_dt), 0.f, 0.f));
+			parent->SetPosition(-static_cast<float>(_dt), parent->GetPosition().y, parent->GetPosition().z);
 	}
 
-	position += parentNode->GetEntity()->GetPosition();
+	position += rootNode->GetEntity()->GetPosition();
 }
 
 void GenericEntity::UpdateChildren(double _dt)

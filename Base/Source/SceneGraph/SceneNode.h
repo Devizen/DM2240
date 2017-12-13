@@ -60,10 +60,24 @@ public:
 	// PrintSelf for debug purposes
 	void PrintSelf(const int numTabs = 0);
 
+	/*Add child node to theChildren vector.*/
+	void AddChild(CSceneNode* _child);
+
+	/*Transforming all objects in SceneGraph.*/
+	void SetRoot(CSceneNode* _theRoot) { theRoot = _theRoot; }
+	CSceneNode* GetRoot(void) { return theRoot; }
+
 protected:
 	int			ID;
 	EntityBase* theEntity;
 	CSceneNode* theParent;
+	/*For transforming every objects in the SceneGraph.*/
+	CSceneNode* theRoot;
 
 	vector<CSceneNode*> theChildren;
+};
+
+namespace Create
+{
+	CSceneNode* SceneNode(CSceneNode* _theRoot, CSceneNode* _theParent, EntityBase* _theEntity);
 };

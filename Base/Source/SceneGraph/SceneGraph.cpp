@@ -38,6 +38,10 @@ CSceneNode* CSceneGraph::AddNode(EntityBase* theEntity)
 	if (theRoot->GetEntity() == nullptr)
 		theRoot->CreateEntityBase();
 	CSceneNode* aNewSceneNode = theRoot->AddChild(theEntity);
+	/*Set Root so that it can be retrieved for transformation.*/
+	aNewSceneNode->SetRoot(theRoot);
+
+
 	//	aNewSceneNode->SetID(this->GenerateID());
 	return aNewSceneNode;
 }
@@ -106,4 +110,11 @@ void CSceneGraph::Render(void)
 void CSceneGraph::PrintSelf(void)
 {
 	theRoot->PrintSelf();
+}
+
+CSceneGraph * Create::SceneGraph(CSceneNode * _theRoot)
+{
+	CSceneGraph* result = new CSceneGraph();
+	result->theRoot = _theRoot;
+	return result;
 }

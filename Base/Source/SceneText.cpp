@@ -320,26 +320,29 @@ void SceneText::Init()
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
 
-
+	/*We will take this aCube as an example of Parent Node which will destroy all children if collided.*/
 	GenericEntity* aCube = Create::Asset("cube", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
-	CSceneNode* aCubeNode = aCube->GetSceneGraph()->GetRoot();
+	/*Create root for Scene Graph.*/
+	CSceneNode* rootNodeForCube = Create::SceneNode(nullptr, nullptr, nullptr);
+	/*Create an empty Scene Graph for aCube which will be rendered and updated in QuadTreeManager.
+	The entire Scene Graph will be traversed from the root.*/
+	aCube->SetSceneGraph(Create::SceneGraph(rootNodeForCube));
+	CSceneNode* aCubeNode = Create::SceneNode(rootNodeForCube, rootNodeForCube, aCube);
+	/*Init the LoD.*/
 	aCube->InitLoD("cube", "cube", "cube");
-	//CSceneNode* aCubeNode = CSceneGraph::GetInstance()->AddNode(aCube);
-	//QuadTreeManager::GetInstance()->InsertEntity(aCube);
 	
 	GenericEntity* bCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f));
-	CSceneNode* bCubeNode = aCubeNode->AddChild(bCube, aCube->GetSceneGraphSize());
 	bCube->InitLoD("cubeSG", "cubeSG", "cubeSG");
-	//CSceneNode* bCubeNode = aCubeNode->AddChild(bCube);
+	/*Create node and bind it to parent and root.*/
+	CSceneNode* bCubeNode = Create::SceneNode(rootNodeForCube, rootNodeForCube, bCube);
 	bCubeNode->ApplyTranslate(0.f, 5.f, 0.f);
 
 	GenericEntity* cCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f));
-	//CSceneNode* cCubeNode = bCubeNode->AddChild(cCube);
-	CSceneNode* cCubeNode = aCubeNode->AddChild(cCube, aCube->GetSceneGraphSize());
-	cCubeNode->ApplyTranslate(0.f, 5.f, 5.f);
 	cCube->InitLoD("cubeSG", "cubeSG", "cubeSG");
+	CSceneNode* cCubeNode = Create::SceneNode(rootNodeForCube, rootNodeForCube, cCube);
+	cCubeNode->ApplyTranslate(0.f, 5.f, 5.f);
 
-	aCubeNode->PrintSelf();
+	rootNodeForCube->PrintSelf();
 
 	aCube->SetEntityType(ECEntityTypes::OBJECT);
 	aCube->collider = new CCollider(aCube);
@@ -363,15 +366,6 @@ void SceneText::Init()
 	cCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(cCube->GetPosition(), cCube->GetScale()));
 	CollisionManager::GetInstance()->AddCollider(cCube->collider, cCube->GetPartitionPtr());
 
-	///*Create the root node.*/
-	//CSceneNode* theNode = CSceneGraph::GetInstance()->AddNode(aCube);
-	//if (theNode == nullptr)
-	//	std::cout << "FAILED TO ADD NODE" << std::endl;
-	///*Add another node to the root node.*/
-	//CSceneNode* anotherNode = theNode->AddChild(aCube);
-	//if (theNode == nullptr)
-	//	std::cout << "FAILED TO ADD NODE" << std::endl;
-	//theNode->PrintSelf();
 
 //	Create::Text3DObject("text", Vector3(0.0f, 0.0f, 0.0f), "DM2210", Vector3(10.0f, 10.0f, 10.0f), Color(0, 1, 1));
 	Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));

@@ -10,6 +10,7 @@ CSceneNode::CSceneNode(void)
 	: ID(-1)
 	, theEntity(NULL)
 	, theParent(NULL)
+	, theRoot(nullptr)
 {
 }
 
@@ -84,14 +85,17 @@ CSceneNode* CSceneNode::AddChild(EntityBase* theEntity, int _ID)
 {
 	if (theEntity)
 	{
+		std::cout << "Add child: " << this << ", Parent: " << this->GetParent() << std::endl;
 		// Create a new Scene Node
 		CSceneNode* aNewNode = new CSceneNode();
 		// Set the entity to this new scene node
 		aNewNode->SetEntity(theEntity);
-		// Store the pointer to the parent
+
+		/*Set Parent so that it can go back to previous node.*/
 		aNewNode->SetParent(this);
+
 		if (dynamic_cast<GenericEntity*>(theEntity)) {
-			dynamic_cast<GenericEntity*>(theEntity)->parentNode = this;
+			dynamic_cast<GenericEntity*>(theEntity)->SetParentNode(this);
 		}
 		/*Assign ID based on Size.
 		For example, at the start of SceneGraph initialisation, the ID will be 0 while SceneGraph size is 1.
@@ -443,4 +447,39 @@ void CSceneNode::PrintSelf(const int numTabs)
 			it++;
 		}
 	}
+}
+
+void CSceneNode::AddChild(CSceneNode * _child)
+{
+	theChildren.push_back(_child);
+}
+
+CSceneNode * Create::SceneNode(CSceneNode* _theRoot, CSceneNode* _theParent, EntityBase* _theEntity)
+{
+	CSceneNode* result = new CSceneNode();
+	/*When there is no root, make this scene node as a root.*/
+	if (_theRoot == nullptr) {
+		/*This creates an empty entity base for transformation.*/
+		result->CreateEntityBase();
+		/*Set the root and parent to ownself so that it doesn't point to elsewhere.*/
+		result->SetRoot(result);
+		result->SetParent(result);
+	}
+	else {
+		/*Set the Root so that transformation for the entire Scene Graph can be done with all related objects.*/
+		result->SetRoot(_theRoot);
+		/*Set the Parent so that we can check information regarding parent object.*/
+		result->SetParent(_theParent);
+		/*Add the new child to the parent so that they are linked.*/
+		_theParent->AddChild(result);
+		/*Add the entity to the node for transformation and calculation.*/
+		result->SetEntity(_theEntity);
+		GenericEntity* castedEntity = dynamic_cast<GenericEntity*>(_theEntity);
+		if (castedEntity) {
+			castedEntity->SetParentNode(_theParent);
+			castedEntity->SetRootNode(_theRoot);
+		}
+
+	}
+	return result;
 }

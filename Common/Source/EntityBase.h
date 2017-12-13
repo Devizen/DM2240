@@ -23,6 +23,7 @@ public:
 	/*Adders.*/
 	void AddPosition(const Vector3& _position) { position += _position; };
 	inline void SetPosition(const Vector3& _value){ position = _value; };
+	inline void SetPosition(const float& _x, const float& _y, const float& _z) { position.x = _x; position.y = _y; position.z = _z; };
 	inline Vector3 GetPosition(){ return position; };
 
 	inline void SetRotateAngle(const float& _value) { rotateAngle = _value; };
