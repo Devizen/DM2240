@@ -15,7 +15,8 @@ class CameraManager
 	struct Frustum
 	{
 		double fovAngle, aspectRatio, nearPlane, farPlane;
-	} frustum;
+	};
+	Frustum frustum;
 public:
 	static CameraManager* GetInstance() { return (instance ? instance : instance = new CameraManager()); }
 
@@ -35,6 +36,7 @@ public:
 	double GetFrustumAspect() { return frustum.aspectRatio; }
 	double GetNearPlane() { return frustum.nearPlane; }
 	double GetFarPlane() { return frustum.farPlane; }
+	void SetAspect(double fov) { frustum.aspectRatio = fov; }
 
 	bool IsAABBInFrustum(Vector3 min, Vector3 max);
 };

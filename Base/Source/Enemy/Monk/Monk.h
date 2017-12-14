@@ -27,6 +27,7 @@ public:
 	CPlayerInfo* GetPlayer() { return player; }
 
 	virtual void CollisionResponse(EntityBase* other);
+	//EntityBase* root;
 private:
 	Mesh* headModelMesh;
 	Mesh* bodyModelMesh;
@@ -34,6 +35,7 @@ private:
 	Mesh* rightArmModelMesh;
 	Mesh* leftLegModelMesh;
 	Mesh* rightLegModelMesh;
+
 
 	GenericEntity* head;
 	GenericEntity* body;

@@ -74,6 +74,15 @@ void QuadTreeManager::Update(double dt)
 		else
 			++it;
 	}
+
+	for (std::vector<AOEQuad>::iterator it = hitScanList.begin(); it != hitScanList.end(); )
+	{
+		(*it).dt -= dt;
+		if ((*it).dt <= 0.0)
+			it = hitScanList.erase(it);
+		else
+			++it;
+	}
 }
 
 void QuadTreeManager::PostUpdate(double dt)
@@ -191,6 +200,15 @@ void QuadTreeManager::RenderGrid()
 
 		//std::cout << "renderQuadList : " << renderList.size() << std::endl;
 	}
+
+	for (std::vector<AOEQuad>::iterator it = hitScanList.begin(); it != hitScanList.end(); ++it)
+	{
+		ms.PushMatrix();
+		ms.Translate((*it).pos);
+		ms.Scale((*it).scale);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("sphere"));
+		ms.PopMatrix();
+	}
 }
 
 /*Dieded.*/
@@ -305,6 +323,8 @@ void QuadTreeManager::CheckCollision(std::vector<std::pair<Vector3, Vector3>>& p
 
 #include <Windows.h>
 #include "SceneManager.h"
+#include "EntityBase.h"
+#include "../GenericEntity.h"
 std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTree * node, double dt)
 {
 	std::vector<std::pair<Vector3, Vector3>> posOfChecks;
@@ -334,6 +354,14 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 
 			//GenericEntity* gEntity = dynamic_cast<GenericEntity*>(*it);
 			EntityBase* gEntity = dynamic_cast<EntityBase*>(*it);
+			GenericEntity* genericEntity = dynamic_cast<GenericEntity*>(*it);
+			if (genericEntity)
+			{
+				if (genericEntity->GetName() == "MONK_HEAD")
+				{
+					gEntity = genericEntity->rootNode->GetEntity();
+				}
+			}
 			//if (gEntity)
 			{
 				//== Is scenenode ==//                                     //important param
@@ -359,7 +387,8 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 				//== Do the collision check ==//
 				for (std::list<EntityBase*>::iterator it2 = checkEntities.begin(); it2 != checkEntities.end(); ++it2) {
 
-					CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
+					//if (dynamic_cast<EntityBase*>(gEntity))
+					CollisionManager::GetInstance()->CheckCollision(gEntity->collider, (*it2)->collider, dt);
 					posOfChecks.push_back(std::make_pair((*it)->GetPosition(), (*it2)->GetPosition()));
 
 				}

@@ -63,5 +63,7 @@ GenericEntity* Create::Tower(const Vector3 & _position, const Vector3 & _scale)
 	rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
 	rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
 	CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+
+	tower->isStatic = true;
 	return tower;
 }

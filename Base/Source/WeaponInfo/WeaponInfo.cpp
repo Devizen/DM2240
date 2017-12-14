@@ -168,10 +168,33 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 				{
 					Vector3 outPt;
 
-					if (isLineIntersectAABB(e, position, (target - position).Normalized(), outPt))
+					if (e->rootNode)
 					{
-						e->SetIsDone(true);
+						if (isLineIntersectAABB(e, position, (target - position).Normalized(), outPt))
+						{
+							e->SetIsDone(true);
+						}
+
+						std::vector<CSceneNode*> children = e->rootNode->GetChildren();
+						for (auto child : children)
+						{
+							if (isLineIntersectAABB(child->GetEntity(), position, (target - position).Normalized(), outPt))
+							{
+								child->GetEntity()->SetIsDone(true);
+							}
+						}
 					}
+					else
+						if (isLineIntersectAABB(e, position, (target - position).Normalized(), outPt))
+						{
+							e->SetIsDone(true);
+						}
+
+					QuadTreeManager::AOEQuad aoequad;
+					aoequad.pos = outPt;
+					aoequad.scale.Set(0.1, 0.1, 0.1);
+					aoequad.dt = 2.0;
+					QuadTreeManager::GetInstance()->hitScanList.push_back(aoequad);
 				}
 
 			}
@@ -179,7 +202,7 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 
 			//aProjectile->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
 			bFire = false;
-			magRounds--;
+			//magRounds--;
 		}
 	}
 }

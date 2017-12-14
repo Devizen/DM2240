@@ -13,17 +13,26 @@ GenericEntity::GenericEntity()
 {
 }
 GenericEntity::GenericEntity(Mesh* _modelMesh)
-	: modelMesh(_modelMesh)
-	, timer(0.f)
-	, transformOffset(0.f)
-	, transformChange(false)
-	, sceneGraph(nullptr)
-	, isParent(false)
-	, parentNode(nullptr)
-	, rootNode(nullptr)
-	, name("")
+//: modelMesh(_modelMesh)
+//, timer(0.f)
+//, transformOffset(0.f)
+//, transformChange(false)
+//, sceneGraph(nullptr)
+////, isParent(false)
+//, parentNode(nullptr)
+//, rootNode(nullptr)
+//, name("")
 {
-	InitLoD(modelMesh->name, modelMesh->name, modelMesh->name);
+	InitLoD(_modelMesh->name, _modelMesh->name, _modelMesh->name);
+	this->modelMesh = _modelMesh;
+	timer = (0.f);
+	transformOffset = (0.f);
+	transformChange = (false);
+	sceneGraph = (nullptr);
+	isParent = (false);
+	parentNode = (nullptr);
+	rootNode = (nullptr);
+	name = ("");
 }
 
 GenericEntity::~GenericEntity()
@@ -254,9 +263,46 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 	//	Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
 	if (_parent) {
 		QuadTreeManager::GetInstance()->InsertEntity(result);
+
 		//EntityManager::GetInstance()->AddEntity(result);
 		//result->GetSceneGraph()->AddNode(result);
 		result->SetIsParent(true);
 	}
 	return result;
+}
+
+#include "Manager\CollisionManager.h"
+#include "Projectile\Projectile.h"
+void GenericEntity::CollisionResponse(EntityBase* other)
+{
+	std::cout << "BOOM : " << other << std::endl;
+
+	if (name == "MONK_HEAD" && dynamic_cast<CProjectile*>(other))
+	{
+		this->isStatic = false;
+		if (rootNode)
+		{
+			rootNode->GetEntity()->isStatic = false;
+		}
+	}
+
+	if (name == "MONK_BODY")
+	{
+		std::cout << "BOM" << std::endl;
+	}
+	//if (this->sceneGraph)
+	//{
+	//	if (this->GetRootNode())
+	//	{
+	//		std::vector<CSceneNode*> children = this->GetRootNode()->GetChildren();
+	//		for (auto child : children)
+	//		{
+	//			
+	//			CollisionManager::GetInstance()->CheckCollision(other->collider, child->GetEntity()->collider, 1.0 / 60.0);
+	//		}
+	//	}
+	//}
+
+	if (isStatic == false)
+		isDone = true;
 }

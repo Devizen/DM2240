@@ -7,6 +7,7 @@
 #include "../../Base/Source/LevelOfDetail/LevelOfDetail.h"
 //enum class ECLevelOfDetail;
 enum class ECEntityTypes;
+class CSceneGraph;
 class CCollider;
 class EntityBase : public CSpatialPartition, public CSceneNode
 {
@@ -52,7 +53,7 @@ public:
 	// Set the flag to indicate if this entity has a collider class parent
 	virtual void SetCollider(const bool _value);
 	// Response
-	virtual void CollisionResponse(EntityBase* other) {}
+	virtual void CollisionResponse(EntityBase* other);
 
 	/*Entity types.*/
 	/*Set entity type.*/
@@ -77,6 +78,16 @@ public:
 	CLevelOfDetail& GetLoD() { return LoD; }
 	Vector3 constMinAABB;
 	Vector3 constMaxAABB;
+
+	bool isParent=false;
+
+	void UpdateChildren(double _dt);
+	CSceneGraph* sceneGraph;
+
+	bool isStatic = false;
+	Vector3 rootMinAABB, rootMaxAABB;
+	CSceneNode* rootNode;
+	bool isDone;
 protected:
 	Vector3 position;
 	/*For offsetting position for rotation when OBJ is not at center.*/
@@ -92,8 +103,25 @@ protected:
 
 	CLevelOfDetail LoD;
 
-	bool isDone;
+
 	bool m_bCollider;
+
+
+
+	//Vector3 minAABB;
+	//Vector3 maxAABB;
+	Mesh* modelMesh;
+
+	/*Demo-ing Spatial Partitioning.*/
+	float timer;
+	bool transformChange;
+	float transformOffset;
+
+	/*For following the transformation.*/
+
+	CSceneNode* parentNode;
+
+	std::string name;
 };
 
 #endif // ENTITY_BASE_H

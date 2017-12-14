@@ -7,6 +7,8 @@
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
 #include "Enemy\EnemyManager.h"
+#include "SceneGraph\SceneGraph.h"
+#include "SceneGraph\SceneNode.h"
 
 EntityBase::EntityBase()
 	: position(0.0f, 0.0f, 0.0f)
@@ -23,6 +25,7 @@ EntityBase::EntityBase()
 	, constMaxAABB(0.f, 0.f, 0.f)
 	//, levelOfDetail(ECLevelOfDetail::LOW)
 {
+	rootNode = nullptr;
 }
 
 EntityBase::~EntityBase()
@@ -45,6 +48,21 @@ void EntityBase::Update(double _dt)
 		Vector3(constMinAABB.x + position.x,
 			constMinAABB.y + position.y,
 			constMinAABB.z + position.z));
+
+	///*Translate as a whole based on individual parts.*/
+	//if (rootNode)
+	//	if (rootNode->GetEntity())
+	//		position += rootNode->GetEntity()->GetDirection() * _dt;
+	///*Translate based on own offset.*/
+	//position += direction * _dt;
+}
+
+void EntityBase::UpdateChildren(double _dt)
+{
+	for (int i = 0; i < sceneGraph->GetRoot()->GetNumOfChild(); ++i) {
+		sceneGraph->GetRoot()->GetEntity(i)->Update();
+		sceneGraph->GetRoot()->GetEntity(i)->GetEntity()->Update(_dt);
+	}
 }
 
 void EntityBase::Render()
@@ -108,4 +126,33 @@ bool EntityBase::HasCollider(void) const
 void EntityBase::SetCollider(const bool _value)
 {
 	m_bCollider = _value;
+}
+
+#include "Projectile\Projectile.h"
+void EntityBase::CollisionResponse(EntityBase* other) {
+
+	//inside blue
+	std::cout << "BOOMBOOOMBOOM : " << other << std::endl;
+
+	CProjectile* proj = dynamic_cast<CProjectile*>(other);
+	if (proj)
+	{
+
+				std::vector<CSceneNode*> children = this->rootNode->GetChildren();
+				for (auto child : children)
+				{
+					//if (child->GetEntity()->name != "MONK_HEAD")
+					//	child->GetEntity()->CollisionResponse(other);
+					if (CollisionManager::GetInstance()->isLineIntersectAABB(child->GetEntity(), other->position, proj->theDirection))
+					{
+						child->GetEntity()->SetIsDone(true);
+					}
+					//CollisionManager::GetInstance()->CheckCollision(other->collider, child->GetEntity()->collider, 5.0 / 60.0);
+				}
+			
+		
+	}
+
+
+	if (isStatic == false) this->isDone;
 }

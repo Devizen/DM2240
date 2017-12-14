@@ -49,6 +49,8 @@ public:
 		std::cout << "BOOM : " << other << std::endl;
 		isDone = true;
 	}
+
+	Vector3 theDirection;
 protected:
 	// The model mesh for this projectile
 	Mesh* modelMesh;
@@ -59,7 +61,7 @@ protected:
 	// Speed of this projectile in unit / sec
 	float m_fSpeed;
 	// The direction of the projectile
-	Vector3 theDirection;
+
 	// The character which fired this projectile
 	CPlayerInfo* theSource;
 };

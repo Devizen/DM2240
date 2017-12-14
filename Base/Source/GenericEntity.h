@@ -33,10 +33,7 @@ public:
 
 	void SetIsParent(bool _isParent) { isParent = _isParent; }
 
-	virtual void CollisionResponse(EntityBase* other) {
-		std::cout << "BOOM : " << other << std::endl;
-		isDone = true;
-	}
+	virtual void CollisionResponse(EntityBase* other);
 
 	/*Set SceneGraph for multiple objects tied together.*/
 	void SetSceneGraph(CSceneGraph* _sceneGraph) { sceneGraph = _sceneGraph; }
@@ -84,23 +81,10 @@ public:
 	void SetName(std::string _name) { name = _name; }
 	/*Get object name.*/
 	std::string GetName(void) { return name; }
+
+
 protected:
-	bool isParent;
-	//Vector3 minAABB;
-	//Vector3 maxAABB;
-	Mesh* modelMesh;
 
-	/*Demo-ing Spatial Partitioning.*/
-	float timer;
-	bool transformChange;
-	float transformOffset;
-	CSceneGraph* sceneGraph;
-
-	/*For following the transformation.*/
-	CSceneNode* rootNode;
-	CSceneNode* parentNode;
-
-	std::string name;
 };
 
 namespace Create

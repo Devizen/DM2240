@@ -72,6 +72,7 @@ public:
 
 
 	std::vector<AOEQuad> renderList;
+	std::vector<AOEQuad> hitScanList;
 
 	void ClearEntities() {
 		for (auto e : entityList) {

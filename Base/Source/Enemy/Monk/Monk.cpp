@@ -80,9 +80,22 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	float rotateAngle = 0.f;
 	/*Update the main big invisible part*/
 	//this->collider->SetAABBPosition(this->position);
+	for (std::vector<GenericEntity*>::iterator it = partList.begin(); it != partList.end(); )
+	{
+		if ((*it)->isDone)
+		{
+			GenericEntity* del = *it;
+			head->rootNode->DeleteChild(del);
+			it = partList.erase(it);
+			//delete del;
+		}
+		else
+			++it;
+	}
+
 
 	/*Update the direction of each part.*/
-	for each(GenericEntity* part in partList) {
+	for each( GenericEntity* part in partList) {
 		Vector3 tempPosition(0.f, 0.f, 0.f);
 		try {
 			rotateAngle = Math::RadianToDegree(atan2((player->GetPos().x - part->GetPosition().x), (player->GetPos().z - part->GetPosition().z)));
@@ -262,6 +275,14 @@ void CMonk::UpdatePart(double dt, std::string _part)
 void CMonk::CollisionResponse(EntityBase * other)
 {
 	std::cout << "BOOOM " << std::endl;
+
+
+	CollisionManager::GetInstance()->CheckCollision(other->collider, head->collider, 1.0/6.0);
+	CollisionManager::GetInstance()->CheckCollision(other->collider, body->collider, 1.0 / 6.0);
+	CollisionManager::GetInstance()->CheckCollision(other->collider, leftArm->collider, 1.0 / 6.0);
+	CollisionManager::GetInstance()->CheckCollision(other->collider, rightArm->collider, 1.0 / 6.0);
+	CollisionManager::GetInstance()->CheckCollision(other->collider, leftLeg->collider, 1.0 / 6.0);
+	CollisionManager::GetInstance()->CheckCollision(other->collider, rightLeg->collider, 1.0 / 6.0);
 }
 
 CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerInfo* _player)
@@ -410,7 +431,9 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
 	rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
 	CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
-
+	//QuadTreeManager::GetInstance()->InsertEntity(rootNode->GetEntity());
+	tempHead->isStatic = true;
+	rootNode->GetEntity()->rootNode = rootNode;
 
 	/*Assign player to pointer for tracking position.*/
 	monk->SetPlayer(_player);

@@ -202,7 +202,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateAxes("reference");
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("oquad", Color(1, 0.8, 0.4), 0.2f);
+	MeshBuilder::GetInstance()->GenerateQuad("oquad", Color(1, 0.8, 0.4), 1.f);
 	//MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GenerateLine("redline", Color(1, 0, 0));
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
@@ -732,6 +732,10 @@ void SceneText::Update(double dt)
 	//string toggle = CMasterEntityManager::GetInstance()->GetToggle() ? "ON" : "OFF";
 	//ss3 << "Spatial Partition [Numpad 5]:" << toggle;
 	//textObj[4]->SetText(ss3.str());
+
+	double aspectRatio = Application::GetInstance().GetWindowWidth() / (double)Application::GetInstance().GetWindowHeight();
+	//std::cout << aspectRatio << std::endl;
+	CameraManager::GetInstance()->SetAspect(aspectRatio);
 }
 
 void SceneText::Render()
