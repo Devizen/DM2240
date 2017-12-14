@@ -39,7 +39,7 @@ void QuadTreeManager::Update(double dt)
 	{
 		std::list<EntityBase*> eList = this->GetEntityList();
 		root = new QuadTree(Vector3(-200, 0, -200), Vector3(-200, 0, -200), Vector3(200, 0, 200), 0, 4, eList);
-
+		root->groundMesh = MeshBuilder::GetInstance()->GetMesh("COMGROUND");
 		//check split
 		this->CheckTreeNode(root);
 
@@ -159,7 +159,7 @@ void QuadTreeManager::RenderGrid()
 	ms.Translate(0 + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().x,
 		800.f + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().y,
 		0 + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().z);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SKYPLANE"));
+	//RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SKYPLANE"));
 	ms.PopMatrix();
 
 	//for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {
@@ -197,6 +197,19 @@ void QuadTreeManager::RenderGrid()
 void QuadTreeManager::RenderObj()
 {
 	RenderObj(root);
+
+	//if (root == nullptr)
+	//{
+		MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+		ms.PushMatrix();
+		Vector3 scale(400, 0, 400);
+		//ms.Translate(this->maxBoundary - this->minBoundary * 0.5f);
+		ms.Translate(0, -10, 0);
+		ms.Scale(scale);
+		ms.Rotate(-90, 1, 0, 0);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("COMGROUND"));
+		ms.PopMatrix();
+	//}
 }
 
 
@@ -220,7 +233,8 @@ void QuadTreeManager::RenderObj(QuadTree * node)
 	if (!node->RenderGrid)
 		return;
 
-	node->Render();
+	//render ground
+	//node->Render();
 
 	//this is not using scenenode. remove later
 	for (auto e : node->entityList)

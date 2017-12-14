@@ -202,7 +202,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateAxes("reference");
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("oquad", Color(1, 0.8, 0.4), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("oquad", Color(1, 0.8, 0.4), 0.2f);
 	//MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GenerateLine("redline", Color(1, 0, 0));
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
@@ -271,24 +271,24 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_LEG", "OBJ//MONK//MONK_RIGHT_LEG.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
 
-	MeshBuilder::GetInstance()->GenerateSkyPlane("SKYPLANE", Color(1, 1, 1), 128, 400.0f, 1000.0f, 1.0f, 1.0f);
-	MeshBuilder::GetInstance()->GetMesh("SKYPLANE")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
+	//MeshBuilder::GetInstance()->GenerateSkyPlane("SKYPLANE", Color(1, 1, 1), 128, 400.0f, 1000.0f, 1.0f, 1.0f);
+	//MeshBuilder::GetInstance()->GetMesh("SKYPLANE")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 
 	/*Tower for enemy to target.*/
-	MeshBuilder::GetInstance()->GenerateOBJ("TOWER", "OBJ//TOWER.obj");
-	MeshBuilder::GetInstance()->GetMesh("TOWER")->textureID[0] = LoadTGA("Image//TOWER.tga");
+	//MeshBuilder::GetInstance()->GenerateOBJ("TOWER", "OBJ//TOWER.obj");
+	//MeshBuilder::GetInstance()->GetMesh("TOWER")->textureID[0] = LoadTGA("Image//TOWER.tga");
 
-	MeshBuilder::GetInstance()->GenerateOBJ("CRATE", "OBJ//CRATE.obj");
-	MeshBuilder::GetInstance()->GetMesh("CRATE")->textureID[0] = LoadTGA("Image//CRATE.tga");
+	//MeshBuilder::GetInstance()->GenerateOBJ("CRATE", "OBJ//CRATE.obj");
+	//MeshBuilder::GetInstance()->GetMesh("CRATE")->textureID[0] = LoadTGA("Image//CRATE.tga");
 
-	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_0", "OBJ//BUILDING_0.obj");
-	MeshBuilder::GetInstance()->GetMesh("BUILDING_0")->textureID[0] = LoadTGA("Image//BUILDING_0.tga");
+	//MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_0", "OBJ//BUILDING_0.obj");
+	//MeshBuilder::GetInstance()->GetMesh("BUILDING_0")->textureID[0] = LoadTGA("Image//BUILDING_0.tga");
 
-	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1", "OBJ//BUILDING_1.obj");
-	MeshBuilder::GetInstance()->GetMesh("BUILDING_1")->textureID[0] = LoadTGA("Image//BUILDING_1.tga");
+	//MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1", "OBJ//BUILDING_1.obj");
+	//MeshBuilder::GetInstance()->GetMesh("BUILDING_1")->textureID[0] = LoadTGA("Image//BUILDING_1.tga");
 
-	MeshBuilder::GetInstance()->GenerateOBJ("WALL", "OBJ//WALL.obj");
-	MeshBuilder::GetInstance()->GetMesh("WALL")->textureID[0] = LoadTGA("Image//WALL.tga");
+	//MeshBuilder::GetInstance()->GenerateOBJ("WALL", "OBJ//WALL.obj");
+	//MeshBuilder::GetInstance()->GetMesh("WALL")->textureID[0] = LoadTGA("Image//WALL.tga");
 
 	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
 	MeshBuilder::GetInstance()->GenerateSphere("nade", Color(0.3, 0.4, 0.3), 10, 10, .5f);
@@ -438,8 +438,8 @@ void SceneText::Init()
 	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
 	//birdEyeCam->
 
-	Create::Tower(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
-		Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(2.f, 2.f, 2.f));
+	//Create::Tower(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+	//	Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(2.f, 2.f, 2.f));
 }
 
 void SceneText::Update(double dt)
@@ -811,7 +811,7 @@ void SceneText::RenderPassMain(void)
 		CameraManager::GetInstance()->GetFrustumAspect(), CameraManager::GetInstance()->GetNearPlane(), CameraManager::GetInstance()->GetFarPlane());
 	//GraphicsManager::GetInstance()->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(CameraManager::GetInstance()->GetActiveCam());
-	EntityManager::GetInstance()->Render();
+	//EntityManager::GetInstance()->Render();
 
 	CollisionManager::GetInstance()->RenderGrid();
 	

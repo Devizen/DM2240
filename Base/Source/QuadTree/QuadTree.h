@@ -8,6 +8,7 @@
 
 class EntityBase;
 class QuadTreeManager;
+class Mesh;
 class QuadTree
 {
 	friend QuadTreeManager;
@@ -30,6 +31,8 @@ public:
 	Vector3 GetMaxBoundary();
 
 	void SetRenderGrid(bool render) { this->RenderGrid = render; }
+
+	Mesh* groundMesh;
 private:
 	QuadTree* topLeft;
 	QuadTree* topRight;
