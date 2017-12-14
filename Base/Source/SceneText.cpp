@@ -48,6 +48,7 @@
 /*Create tower for enemy to attack.*/
 #include "PlayerInfo\TowerManager.h"
 
+
 #include <iostream>
 using namespace std;
 
@@ -71,7 +72,7 @@ void SceneText::Init()
 {
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Shadow.vertexshader", "Shader//Shadow.fragmentshader");
 	m_gPassShaderID = GraphicsManager::GetInstance()->LoadShader("gpass", "Shader//GPass.vertexshader", "Shader//GPass.fragmentshader");
-	
+
 	// Tell the shader program to store these uniform locations
 	currProg->AddUniform("MVP");
 	currProg->AddUniform("MV");
@@ -436,6 +437,10 @@ void SceneText::Init()
 
 	Create::Tower(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 		Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(2.f, 2.f, 2.f));
+
+	/*Audio Initialisation.*/
+	audioPlayer = CAudioPlayer::GetInstance()->GetISoundEngine();
+	audioPlayer->play2D("Audio/BGM/GAME.ogg", true);
 }
 
 void SceneText::Update(double dt)

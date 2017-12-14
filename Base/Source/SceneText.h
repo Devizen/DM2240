@@ -10,6 +10,8 @@
 #include "MatrixStack.h"
 #include "GenericEntity.h"
 #include <vector>
+/*Audio Player for music.*/
+#include "AudioPlayer\AudioPlayer.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -50,6 +52,9 @@ private:
 
 	/*Size of Map for misc. calculations.*/
 	float groundScale;
+
+	/*Audio player.*/
+	irrklang::ISoundEngine* audioPlayer;
 };
 
 #endif

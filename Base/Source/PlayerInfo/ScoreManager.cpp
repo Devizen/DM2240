@@ -1,5 +1,7 @@
 #include "ScoreManager.h"
 
+CScoreManager* CScoreManager::s_instance = 0;
+
 CScoreManager::CScoreManager(void)
 {
 }
