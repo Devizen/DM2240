@@ -80,9 +80,10 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	float rotateAngle = 0.f;
 	/*Update the main big invisible part*/
 	//this->collider->SetAABBPosition(this->position);
+	bool deleteTheRest = false;
 	for (std::vector<GenericEntity*>::iterator it = partList.begin(); it != partList.end(); )
 	{
-		if ((*it)->isDone)
+		if ((*it)->isDone || deleteTheRest == true)
 		{
 			GenericEntity* del = *it;
 			del->scale -= Vector3(5, 5, 5) * dt;
@@ -95,11 +96,16 @@ void CMonk::UpdatePart(double dt, std::string _part)
 				head->rootNode->DeleteChild(del);
 				it = partList.erase(it);
 				
-				if (del->name == "MONK_LEFT_LEG")
+				if (del->name == "MONK_HEAD")
+				{
+					deleteTheRest = true;
+					head = nullptr;
+				}
+				else if (del->name == "MONK_LEFT_LEG")
 				{
 					leftLeg = nullptr;
 				}
-				if (del->name == "MONK_RIGHT_LEG")
+				else if (del->name == "MONK_RIGHT_LEG")
 				{
 					rightLeg = nullptr;
 				}
@@ -113,7 +119,8 @@ void CMonk::UpdatePart(double dt, std::string _part)
 		else
 			++it;
 	}
-
+	if (partList.empty() || head == nullptr)
+		return;
 
 	/*Update the direction of each part.*/
 	for each( GenericEntity* part in partList) {

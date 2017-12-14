@@ -274,6 +274,7 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 
 #include "Manager\CollisionManager.h"
 #include "Projectile\Projectile.h"
+//#include "Enemy\Monk\Monk.h"
 void GenericEntity::CollisionResponse(EntityBase* other)
 {
 	//std::cout << "BOOM : " << other << std::endl;

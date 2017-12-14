@@ -1,5 +1,6 @@
 #include "EnemyManager.h"
 #include "Monk\Monk.h"
+#include <algorithm>
 CEnemyManager* CEnemyManager::s_instance = 0;
 CEnemyManager::CEnemyManager(void) :
 	renderAABB(false)
@@ -19,8 +20,13 @@ CEnemyManager * CEnemyManager::GetInstance(void)
 
 void CEnemyManager::Update(double dt)
 {
-	for (std::vector<EntityBase*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it) {
-		dynamic_cast<CMonk*>(*it)->UpdatePart(dt);
+	for (std::vector<EntityBase*>::iterator it = enemyList.begin(); it != enemyList.end();) {
+		if (dynamic_cast<CMonk*>(*it)->GetPartSize()) {
+			dynamic_cast<CMonk*>(*it)->UpdatePart(dt);
+			++it;
+		}
+		else
+			it = enemyList.erase(it);
 	}
 }
 
@@ -31,5 +37,5 @@ void CEnemyManager::AddEnemy(EntityBase * _enemy)
 
 void CEnemyManager::RemoveEnemy(EntityBase * _enemy)
 {
-	
+	enemyList.erase(std::remove(enemyList.begin(), enemyList.end(), _enemy), enemyList.end());
 }

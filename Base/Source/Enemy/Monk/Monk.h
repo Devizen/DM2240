@@ -27,6 +27,8 @@ public:
 	CPlayerInfo* GetPlayer() { return player; }
 
 	virtual void CollisionResponse(EntityBase* other);
+
+	int GetPartSize() { return partList.size(); }
 	//EntityBase* root;
 private:
 	Mesh* headModelMesh;
