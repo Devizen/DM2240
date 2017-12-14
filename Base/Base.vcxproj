@@ -23,6 +23,7 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\PlayerInfo\PlayerInfo.cpp" />
+    <ClCompile Include="Source\Projectile\Explosive.cpp" />
     <ClCompile Include="Source\Projectile\Laser\Laser.cpp" />
     <ClCompile Include="Source\Projectile\Projectile.cpp" />
     <ClCompile Include="Source\QuadTree\CameraManager.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\PlayerInfo\PlayerInfo.h" />
+    <ClInclude Include="Source\Projectile\Explosive.h" />
     <ClInclude Include="Source\Projectile\Laser\Laser.h" />
     <ClInclude Include="Source\Projectile\Projectile.h" />
     <ClInclude Include="Source\QuadTree\CameraManager.h" />

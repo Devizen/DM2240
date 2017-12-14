@@ -247,10 +247,10 @@ void SceneText::Init()
 
 	/*Enemy*/
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_LEG", "OBJ//MONK//MONK_LEFT_LEG.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	//MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
 
 	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
-
+	MeshBuilder::GetInstance()->GenerateSphere("nade", Color(0.3, 0.4, 0.3), 10, 10, .5f);
 	/*Number of partitions for each X-axis and Z-axis.*/
 	const unsigned numOfPartitionXZ = 5;
 	const float groundScale(400.f);
@@ -387,11 +387,10 @@ void SceneText::Init()
 	}
 	textObj[0]->SetText("HELLO WORLD");
 
-	
+	QuadTreeManager::GetInstance()->ground = groundEntity;
+
 	CameraManager::GetInstance()->AttachPlayerCam(&this->camera);
 	FPSCamera* birdEyeCam = CameraManager::GetInstance()->GetBirdEyeCam();
-
-
 	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
 	//birdEyeCam->
 }

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+class GroundEntity;
 class GenericEntity;
 class QuadTreeManager
 {
@@ -53,6 +54,8 @@ public:
 	bool toggle;
 	void CheckCollision(std::vector<std::pair<Vector3, Vector3>>& posOfChecks, double dt);
 	std::vector<std::pair<Vector3, Vector3>> CheckCollision(QuadTree* node, double dt);
+
+	GroundEntity* ground;
 };
 
 #endif // !QUADTREEMANAGER_H

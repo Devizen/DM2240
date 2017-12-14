@@ -45,7 +45,7 @@ public:
 	void SetRootNode(CSceneNode* _rootNode) { rootNode = _rootNode; }
 	/*Set Parent Scene Node.*/
 	void SetParentNode(CSceneNode* _parentNode) { parentNode = _parentNode; }
-private:
+protected:
 	bool isParent;
 	Vector3 minAABB;
 	Vector3 maxAABB;
