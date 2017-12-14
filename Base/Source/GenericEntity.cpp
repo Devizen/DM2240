@@ -8,14 +8,20 @@
 #include "MasterEntityManager\MasterEntityManager.h"
 #include "LevelOfDetail\LevelOfDetail.h"
 #include "QuadTree\QuadTreeManager.h"
+#include "Enemy\EnemyManager.h"
+GenericEntity::GenericEntity()
+{
+}
 GenericEntity::GenericEntity(Mesh* _modelMesh)
 	: modelMesh(_modelMesh)
 	, timer(0.f)
-	, translateDirection(false)
+	, transformOffset(0.f)
+	, transformChange(false)
 	, sceneGraph(nullptr)
 	, isParent(false)
 	, parentNode(nullptr)
 	, rootNode(nullptr)
+	, name("")
 {
 }
 
@@ -25,38 +31,10 @@ GenericEntity::~GenericEntity()
 
 void GenericEntity::Update(double _dt)
 {
-	// Does nothing here, can inherit & override or create your own version of this class :D
-	timer += _dt;
-
-	if (timer > 1.f)
-	{
-		translateDirection = translateDirection ? false : true;
-		timer = 0.f;
-	}
-
-	if (!translateDirection)
-		position = Vector3(position.x, position.y + (_dt * 10.f), position.z);
-	else
-		position = Vector3(position.x, position.y - (_dt * 10.f), position.z);
-
-	if (isParent) {
-		static float offset = 0.f;
-		offset += static_cast<float>(_dt);
-		static bool translateLoop = false;
-		EntityBase* parent = GetSceneGraph()->GetRoot()->GetEntity();
-		if (offset > 2.f) {
-			translateLoop = translateLoop ? false : true;
-			offset = 0.f;
-		}
-		if (translateLoop)
-			//parent->AddPosition(Vector3(static_cast<float>(_dt), 0.f, 0.f));
-			parent->SetPosition(static_cast<float>(_dt), parent->GetPosition().y, parent->GetPosition().z);
-		else
-			//parent->AddPosition(Vector3(-static_cast<float>(_dt), 0.f, 0.f));
-			parent->SetPosition(-static_cast<float>(_dt), parent->GetPosition().y, parent->GetPosition().z);
-	}
-
-	position += rootNode->GetEntity()->GetPosition();
+	/*Translate as a whole based on individual parts.*/
+	position += rootNode->GetEntity()->GetDirection() * _dt;
+	/*Translate based on own offset.*/
+	position += direction * _dt;
 }
 
 void GenericEntity::UpdateChildren(double _dt)
@@ -69,20 +47,38 @@ void GenericEntity::UpdateChildren(double _dt)
 
 void GenericEntity::Render()
 {
+	if (LoD.GetCurrMesh() == nullptr)
+		return;
+
 	Vector3 parentPosition(0.f, 0.f, 0.f);
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+
 	modelStack.PushMatrix();
-	//if (isParent) {
-		//parentPosition.Set(parentNode->GetEntity()->GetPosition().x,
-		//	parentNode->GetEntity()->GetPosition().y,
-		//	parentNode->GetEntity()->GetPosition().z);
-		//position += parentPosition;
-		//std::cout << position << std::endl
+	modelStack.Translate(position.x,  position.y, position.z);
+	///*Offsetting OBJ to center.*/
+	//modelStack.PushMatrix();
+	///*Only rotate the modelStack when there is axis selected.*/
+	if (rotateAxis.LengthSquared() != 0.f) {
+		if (rotateAxis.y != 0) {
+			modelStack.PushMatrix();
+			modelStack.Rotate(rotateAngle, 0.f, 1.f, 0.f);
+			if (rotateAxis.x != 0) {
+				modelStack.PushMatrix();
+				modelStack.Translate(0.f, 10.f, 0.f);
+				modelStack.Rotate(offset.x, 1.f, 0.f, 0.f);
+				modelStack.Translate(0.f, -10.f, 0.f);
+			}
+		}
+		if (rotateAxis.z != 0) {
+			modelStack.PushMatrix();
+			modelStack.Rotate(offset.z, 0.f, 0.f, 1.f);
+		}
+	}
+	//	//modelStack.Translate(offset.x, offset.y, offset.z);
+	//	//modelStack.Translate(-offset.x, -offset.y, -offset.z);
 	//}
-	modelStack.Translate(position.x, position.y, position.z);
-	/*Only rotate the modelStack when there is axis selected.*/
-	if (rotateAxis.LengthSquared() != 0.f)
-		modelStack.Rotate(rotateAngle, rotateAxis.x, rotateAxis.y, rotateAxis.z);
+	//modelStack.PopMatrix();
+
 	modelStack.Scale(scale.x, scale.y, scale.z);
 	if (GetIsActive() == true) {
 		if (GetLevel() != CLevelOfDetail::NONE) {
@@ -94,32 +90,83 @@ void GenericEntity::Render()
 		RenderHelper::RenderMesh(LoD.GetCurrMesh());
 	else
 		RenderHelper::RenderMesh(LoD.GetMesh(CLevelOfDetail::LEVEL::HIGH));
-	//if (levelOfDetail == CLevelOfDetail::HIGH)
-	//RenderHelper::RenderMesh(modelMesh);
-	//else if (levelOfDetail == CLevelOfDetail::MEDIUM)
-	//	RenderHelper::RenderMesh(/*MeshBuilder::GetInstance()->GetMesh("BLUESPHERE")*/modelMesh);
-	//else if (levelOfDetail == CLevelOfDetail::LOW)
-	//	RenderHelper::RenderMesh(/*MeshBuilder::GetInstance()->GetMesh("REDSPHERE")*/modelMesh);
+
+
+	if (rotateAxis.x != 0) {
+		modelStack.PopMatrix();
+	}
+	if (rotateAxis.y != 0) {
+		modelStack.PopMatrix();
+	}
+	if (rotateAxis.z != 0) {
+		modelStack.PopMatrix();
+	}
+
 	modelStack.PopMatrix();
 
+	if (CEnemyManager::GetInstance()->GetRenderAABB()) {
+		std::vector<Vector3> allVertices;
+		Vector3 min = collider->GetMinAABB();
+		Vector3 max = collider->GetMaxAABB();
 
-	//AABB
-	//if (this->collider == nullptr)
-	//	return;
-	//Vector3 min = this->collider->GetMinAABB();
-	//Vector3 max = this->collider->GetMaxAABB();
-	//Color color(1, 0, 0);
-	//RenderHelper::DrawLine(Vector3(min.x, min.y, min.z), Vector3(min.x, max.y, min.z), color);
-	//RenderHelper::DrawLine(Vector3(min.x, min.y, max.z), Vector3(min.x, max.y, max.z), color);
-	//RenderHelper::DrawLine(Vector3(max.x, min.y, max.z), Vector3(max.x, max.y, max.z), color);
-	//RenderHelper::DrawLine(Vector3(max.x, min.y, min.z), Vector3(max.x, max.y, min.z), color);
+		/*Right Plane.*/
+		allVertices.push_back(Vector3(max.x, min.y, min.z));
+		allVertices.push_back(Vector3(max.x, min.y, max.z));
+		allVertices.push_back(Vector3(max.x, max.y, max.z));
+		allVertices.push_back(Vector3(max.x, max.y, min.z));
+		/*Left Plane.*/
+		allVertices.push_back(Vector3(min.x, min.y, min.z));
+		allVertices.push_back(Vector3(min.x, min.y, max.z));
+		allVertices.push_back(Vector3(min.x, max.y, max.z));
+		allVertices.push_back(Vector3(min.x, max.y, min.z));
+		/*Bottom Plane.*/
+		allVertices.push_back(Vector3(min.x, min.y, min.z));
+		allVertices.push_back(Vector3(min.x, min.y, max.z));
+		allVertices.push_back(Vector3(max.x, min.y, max.z));
+		allVertices.push_back(Vector3(max.x, min.y, min.z));
+		/*Top Plane.*/
+		allVertices.push_back(Vector3(min.x, max.y, min.z));
+		allVertices.push_back(Vector3(min.x, max.y, max.z));
+		allVertices.push_back(Vector3(max.x, max.y, max.z));
+		allVertices.push_back(Vector3(max.x, max.y, min.z));
+		modelStack.PushMatrix();
+		RenderHelper::DrawLine(allVertices, Color(1, 0, 0), 4);
+		modelStack.PopMatrix();
+	}
 }
 
 void GenericEntity::RenderChildren()
 {
+	rootNode->GetEntity()->Render();
 	for (int i = 0; i < sceneGraph->GetRoot()->GetNumOfChild(); ++i) {
-		sceneGraph->GetRoot()->GetEntity(i)->Render();
+		//sceneGraph->GetRoot()->GetEntity(i)->Render();
 		sceneGraph->GetRoot()->GetEntity(i)->GetEntity()->Render();
+	}
+}
+
+void GenericEntity::RenderAllNodes(CSceneNode* _node)
+{
+	if (_node == nullptr)
+		return;
+
+	_node->Render();
+	if (_node->GetNumOfChild() > 0) {
+		for (vector<CSceneNode*>::iterator it = _node->GetChildren().begin(); it != _node->GetChildren().end(); ++it) {
+			RenderAllNodes(*it);
+		}
+	}
+}
+
+void GenericEntity::UpdateAllNodes(CSceneNode * _node, double _dt)
+{
+	if (_node == nullptr)
+		return;
+
+	_node->GetEntity()->Update(_dt);
+	if (_node->GetNumOfChild() > 0) {
+		for (vector<CSceneNode*>::iterator it = _node->GetChildren().begin(); it != _node->GetChildren().end(); ++it) {
+			UpdateAllNodes((*it), _dt);
+		}
 	}
 }
 
@@ -164,6 +211,7 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 		return nullptr;
 
 	GenericEntity* result = new GenericEntity(modelMesh);
+	result->SetName(_meshName);
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetCollider(false);
@@ -173,7 +221,7 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 	if (_parent) {
 		QuadTreeManager::GetInstance()->InsertEntity(result);
 		//EntityManager::GetInstance()->AddEntity(result);
-		result->GetSceneGraph()->AddNode(result);
+		//result->GetSceneGraph()->AddNode(result);
 		result->SetIsParent(true);
 	}
 	return result;

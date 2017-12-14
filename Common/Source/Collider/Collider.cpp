@@ -2,7 +2,8 @@
 
 
 CCollider::CCollider(EntityBase* owner)
-	: maxAABB(Vector3( 0, 0, 0))
+	: AABBPosition(0.f, 0.f, 0.f)
+	, maxAABB(Vector3( 0, 0, 0))
 	, minAABB(Vector3( 0, 0, 0))
 	, owner(owner)
 {

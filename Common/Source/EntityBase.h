@@ -22,14 +22,23 @@ public:
 
 	/*Adders.*/
 	void AddPosition(const Vector3& _position) { position += _position; };
-	inline void SetPosition(const Vector3& _value){ position = _value; };
+	inline void SetPosition(const Vector3& _value) { position = _value; };
 	inline void SetPosition(const float& _x, const float& _y, const float& _z) { position.x = _x; position.y = _y; position.z = _z; };
-	inline Vector3 GetPosition(){ return position; };
+	inline Vector3 GetPosition() { return position; };
+
+	inline void SetDirection(const Vector3& _value) { direction = _value; };
+	inline void SetDirection(const float& _x, const float& _y, const float& _z) { direction.x = _x; direction.y = _y; direction.z = _z; };
+	inline Vector3 GetDirection() { return direction; };
+
+	inline void SetOffset(const Vector3& _value) { offset = _value; };
+	inline void SetOffset(const float& _x, const float& _y, const float& _z) { offset.x = _x; offset.y = _y; offset.z = _z; };
+	inline Vector3 GetOffset() { return offset; };
 
 	inline void SetRotateAngle(const float& _value) { rotateAngle = _value; };
 	inline float GetRotateAngle() { return rotateAngle; };
 
 	inline void SetRotateAxis(const Vector3& _value) { rotateAxis = _value; };
+	inline void SetRotateAxis(const float& _x, const float& _y, const float& _z) { rotateAxis.x = _x; rotateAxis.y = _y; rotateAxis.z = _z; };
 	inline Vector3 GetRotateAxis() { return rotateAxis; };
 
 	inline void SetScale(const Vector3& _value) { scale = _value; };
@@ -69,6 +78,10 @@ public:
 	
 protected:
 	Vector3 position;
+	/*For offsetting position for rotation when OBJ is not at center.*/
+	Vector3 offset;
+	/*For translating the entire Scene Graph.*/
+	Vector3 direction;
 	float rotateAngle;
 	Vector3 rotateAxis;
 	Vector3 scale;

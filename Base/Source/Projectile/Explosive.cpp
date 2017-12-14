@@ -48,10 +48,22 @@ void CExplosive::Set(Vector3 theNewPosition, Vector3 theNewDirection, const floa
 
 	//for legit collision
 	QuadTreeManager::GetInstance()->InsertEntity(this);
-	this->SetIsParent(true);
 	this->SetAABB(Vector3(-1, -1, -1), Vector3(1, 1, 1));
 
 	this->m_bStatus = true;
+	
+	this->SetIsParent(true);
+	CSceneNode* rootNodeForCube = Create::SceneNode(this, this, this);
+	/*Create an empty Scene Graph for aCube which will be rendered and updated in QuadTreeManager.
+	The entire Scene Graph will be traversed from the root.*/
+	this->SetSceneGraph(Create::SceneGraph(rootNodeForCube));
+	//Create::SceneNode(rootNodeForCube, rootNodeForCube, aCube)
+
+	//CSceneNode* rootNodeForCube = Create::SceneNode(nullptr, nullptr, nullptr);
+	///*Create an empty Scene Graph for aCube which will be rendered and updated in QuadTreeManager.
+	//The entire Scene Graph will be traversed from the root.*/
+	//this->SetSceneGraph(Create::SceneGraph(rootNodeForCube));
+	//CSceneNode* aCubeNode = Create::SceneNode(rootNodeForCube, rootNodeForCube, this);
 }
 
 void CExplosive::Update(double dt)

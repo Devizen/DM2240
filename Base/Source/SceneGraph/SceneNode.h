@@ -67,6 +67,9 @@ public:
 	void SetRoot(CSceneNode* _theRoot) { theRoot = _theRoot; }
 	CSceneNode* GetRoot(void) { return theRoot; }
 
+	/*Get the Children of the node.*/
+	vector<CSceneNode*>&GetChildren(void) { return theChildren; }
+
 protected:
 	int			ID;
 	EntityBase* theEntity;

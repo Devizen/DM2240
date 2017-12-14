@@ -40,6 +40,10 @@
 
 /*Scene Graph.*/
 #include "SceneGraph\SceneGraph.h"
+
+/*For toggling AABB render.*/
+#include "Enemy\EnemyManager.h"
+#include "Enemy\Monk\Monk.h"
 #include <iostream>
 using namespace std;
 
@@ -184,9 +188,10 @@ void SceneText::Init()
 
 	// Create and attach the camera to the scene
 	//camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
-	camera.Init(playerInfo->GetPos(), playerInfo->GetTarget(), playerInfo->GetUp());
-	playerInfo->AttachCamera(&camera);
-	GraphicsManager::GetInstance()->AttachCamera(&camera);
+	camera = new FPSCamera();
+	camera->Init(playerInfo->GetPos(), playerInfo->GetTarget(), playerInfo->GetUp());
+	playerInfo->AttachCamera(camera);
+	GraphicsManager::GetInstance()->AttachCamera(camera);
 
 	//MeshBuilder::GetInstance()->GenerateLine
 	// Load all the meshes
@@ -246,8 +251,18 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[2] = LoadTGA("Image//WORLD//W_WATER.tga");
 
 	/*Enemy*/
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD", "OBJ//MONK//MONK_HEAD.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_BODY", "OBJ//MONK//MONK_BODY.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_BODY")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_ARM", "OBJ//MONK//MONK_LEFT_ARM.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_ARM")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_ARM", "OBJ//MONK//MONK_RIGHT_ARM.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_ARM")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_LEG", "OBJ//MONK//MONK_LEFT_LEG.obj");
-	//MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_LEG", "OBJ//MONK//MONK_RIGHT_LEG.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
 
 	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
 	MeshBuilder::GetInstance()->GenerateSphere("nade", Color(0.3, 0.4, 0.3), 10, 10, .5f);
@@ -343,6 +358,7 @@ void SceneText::Init()
 	cCubeNode->ApplyTranslate(0.f, 5.f, 5.f);
 
 	rootNodeForCube->PrintSelf();
+	Create::Monk(Vector3(200.f, -10.f, 0.f), Vector3(5.f, 5.f, 5.f), playerInfo);
 
 	aCube->SetEntityType(ECEntityTypes::OBJECT);
 	aCube->collider = new CCollider(aCube);
@@ -387,9 +403,11 @@ void SceneText::Init()
 	}
 	textObj[0]->SetText("HELLO WORLD");
 
-	QuadTreeManager::GetInstance()->ground = groundEntity;
 
-	CameraManager::GetInstance()->AttachPlayerCam(&this->camera);
+	QuadTreeManager::GetInstance()->ground = groundEntity;
+	//CameraManager::GetInstance()->AttachPlayerCam(&this->camera);
+	CameraManager::GetInstance()->AttachPlayerCam(this->camera);
+
 	FPSCamera* birdEyeCam = CameraManager::GetInstance()->GetBirdEyeCam();
 	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
 	//birdEyeCam->
@@ -485,6 +503,25 @@ void SceneText::Update(double dt)
 	}
 	// <THERE>
 
+	/*Randomly spawn an enemy on the map.*/
+	if (KeyboardController::GetInstance()->IsKeyPressed(VK_BACK))
+	{
+		Create::Monk(Vector3(Math::RandFloatMinMax(-199.f, 199.f), -10.f, Math::RandFloatMinMax(-199.f, 199.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
+	}
+	/*Display AABB of enemy.*/
+	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
+	{
+		CEnemyManager::GetInstance()->ToggleRenderAABB();
+	}
+
+	/*Toggle between Windowed and Fullscreen Mode.*/
+	if (KeyboardController::GetInstance()->IsKeyDown(VK_LMENU) && KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN)) {
+		if (Application::GetInstance().screenMode) {
+			Application::GetInstance().MakeWindowedMode();
+		}
+		else
+			Application::GetInstance().MakeFullScreen();
+	}
 	// Update the player position and other details based on keyboard and mouse inputs
 	playerInfo->Update(dt);
 

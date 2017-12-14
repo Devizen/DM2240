@@ -116,5 +116,6 @@ CSceneGraph * Create::SceneGraph(CSceneNode * _theRoot)
 {
 	CSceneGraph* result = new CSceneGraph();
 	result->theRoot = _theRoot;
+
 	return result;
 }

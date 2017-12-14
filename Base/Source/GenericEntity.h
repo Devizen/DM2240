@@ -6,12 +6,14 @@
 #include "Collider/Collider.h"
 #include "LevelOfDetail\LevelOfDetail.h"
 #include "SceneGraph\SceneGraph.h"
+#include "Enemy\AnimationPattern.h"
 class Mesh;
 /*For categorising entity.*/
 enum class ECEntityTypes;
-class GenericEntity : public EntityBase, public CLevelOfDetail
+class GenericEntity : public EntityBase, public CLevelOfDetail, public SAnimationPattern
 {
 public:
+	GenericEntity();
 	GenericEntity(Mesh* _modelMesh);
 	virtual ~GenericEntity();
 
@@ -19,6 +21,10 @@ public:
 	void UpdateChildren(double _dt);
 	virtual void Render();
 	void RenderChildren();
+	/*Pass in the SceneGraph of the entity (parent/root).*/
+	void RenderAllNodes(CSceneNode* _node);
+	/*Pass in the SceneGraph of the entity (parent/root).*/
+	void UpdateAllNodes(CSceneNode* _node, double _dt);
 
 	/*Set Min AABB and Max AABB.*/
 	void SetAABB(Vector3 _minAABB, Vector3 _maxAABB) { minAABB = _minAABB; maxAABB = _maxAABB; }
@@ -43,8 +49,41 @@ public:
 
 	/*Set Root Scene Node.*/
 	void SetRootNode(CSceneNode* _rootNode) { rootNode = _rootNode; }
+	/*Get Root Scene Node for traversal of update and render.*/
+	CSceneNode* GetRootNode(void) { return rootNode; }
 	/*Set Parent Scene Node.*/
 	void SetParentNode(CSceneNode* _parentNode) { parentNode = _parentNode; }
+
+
+	/*Add timer for animation.*/
+	void AddTimer(float _timer) { timer += _timer; }
+	/*Set timer.*/
+	void SetTimer(float _timer) { timer = _timer; }
+	/*Get timer.*/
+	float GetTimer(void) { return timer; }
+	/*Reset timer.*/
+	void ResetTimer(void) { timer = 0.f; }
+
+	/*Get transformChange boolean for switching between different transformation.*/
+	bool GetTransformChange(void) { return transformChange; }
+	/*Set transformChange.*/
+	void SetTransformChange(bool _transformChange) { transformChange = _transformChange; }
+	/*Toggle transformChange, true will be false and false will become true.*/
+	void ToggleTransformChange(void) { transformChange = transformChange ? false : true; }
+
+	/*Add transformOffset for animation.*/
+	void AddTransformOffset(float _transformOffset) { transformOffset += _transformOffset; }
+	/*Set transformOffset.*/
+	void SetTransformOffset(float _transformOffset) { transformOffset = _transformOffset; }
+	/*Get transformOffset.*/
+	float GetTransformOffset(void) { return transformOffset; }
+	/*Reset transformOffset.*/
+	void ResetTransformOffset(void) { transformOffset = 0.f; }
+
+	/*Set object name same as Mesh.*/
+	void SetName(std::string _name) { name = _name; }
+	/*Get object name.*/
+	std::string GetName(void) { return name; }
 protected:
 	bool isParent;
 	Vector3 minAABB;
@@ -53,12 +92,15 @@ protected:
 
 	/*Demo-ing Spatial Partitioning.*/
 	float timer;
-	bool translateDirection;
+	bool transformChange;
+	float transformOffset;
 	CSceneGraph* sceneGraph;
 
 	/*For following the transformation.*/
 	CSceneNode* rootNode;
 	CSceneNode* parentNode;
+
+	std::string name;
 };
 
 namespace Create

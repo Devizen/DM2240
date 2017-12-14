@@ -1,0 +1,6 @@
+LINKER
+PLEASE CHANGE INCLUDE FOLDER TO 
+$(SolutionDir)/glfw/lib-vc2015
+
+PLEASE ADD LIB
+glfw3dll.lib
