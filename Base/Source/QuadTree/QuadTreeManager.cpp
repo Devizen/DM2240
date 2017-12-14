@@ -7,18 +7,12 @@
 #include "GraphicsManager.h"
 #include "CameraManager.h"
 #include "../Enemy/EnemyManager.h"
-<<<<<<< HEAD
 #include "CameraManager.h"
 #include "../FPSCamera.h"
 #include "MeshBuilder.h"
-=======
 #include "../GroundEntity.h"
 #include "../Projectile/Explosive.h"
-<<<<<<< HEAD
 #include "../../Common/Source/MeshBuilder.h"
-=======
->>>>>>> 6c2a94d6d81f56fa1cc83c57efa4d55e663555b1
->>>>>>> 884ad655580353daad1f2149dfdc0581f58177da
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
 QuadTreeManager::QuadTreeManager() : root(nullptr), entityList(entityList), minSplitSize(2U)
