@@ -75,7 +75,8 @@ public:
 		return LoD.Init(_meshNameHigh, _meshNameMedium, _meshNameLow);
 	}
 	CLevelOfDetail& GetLoD() { return LoD; }
-	
+	Vector3 constMinAABB;
+	Vector3 constMaxAABB;
 protected:
 	Vector3 position;
 	/*For offsetting position for rotation when OBJ is not at center.*/

@@ -153,6 +153,9 @@
     <ClCompile Include="Source\Enemy\EnemyManager.cpp">
       <Filter>Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PlayerInfo\TowerManager.cpp">
+      <Filter>PlayerInfo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -250,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="Source\Enemy\AnimationPattern.h">
       <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerInfo\TowerManager.h">
+      <Filter>PlayerInfo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -23,6 +23,7 @@ GenericEntity::GenericEntity(Mesh* _modelMesh)
 	, rootNode(nullptr)
 	, name("")
 {
+	InitLoD(modelMesh->name, modelMesh->name, modelMesh->name);
 }
 
 GenericEntity::~GenericEntity()

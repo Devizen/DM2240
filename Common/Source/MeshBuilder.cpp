@@ -374,6 +374,77 @@ float sphereZ(float phi, float theta)
 	return cos(Math::DegreeToRadian(phi)) * sin(Math::DegreeToRadian(theta));
 }
 
+Mesh * MeshBuilder::GenerateSkyPlane(const std::string & meshName, Color color, int slices, float PlanetRadius, float AtmosphereRadius, float hTile, float vTile)
+{
+	std::vector<Vertex> vertex_buffer_data;
+	std::vector<GLuint> index_buffer_data;
+
+	//Keeps the limit to 1 and 256
+	slices = Math::Clamp(slices, 1, 256);
+
+	//Plane Size; Pythagoras's Theorem
+	float planeSize = 2.0f * (float)sqrtf((PlanetRadius * PlanetRadius) + (AtmosphereRadius * AtmosphereRadius));
+
+	//Divides plan evenly.
+	float delta = planeSize / (float)slices;
+
+	//Generate texture coordinates.
+	float texDelta = 2.0f / (float)slices;
+
+	for (int z = 0; z <= slices; ++z)
+	{
+		for (int x = 0; x <= slices; ++x)
+		{
+			float xDist = (-0.5f * planeSize) + ((float)x * delta);
+			float zDist = (-0.5f * planeSize) + ((float)z * delta);
+
+			float xHeight = (xDist * xDist) / AtmosphereRadius;
+			float zHeight = (zDist * zDist) / AtmosphereRadius;
+			float height = xHeight + zHeight;
+
+			Vertex tv;
+
+			tv.pos.x = xDist;
+			tv.pos.y = 0.0f - height;
+			tv.pos.z = zDist;
+
+			tv.texCoord.u = hTile * ((float)x * texDelta * 0.5f);
+			tv.texCoord.v = vTile * (1.0f - (float)z * texDelta * 0.5f);
+
+			tv.color = color;
+
+			vertex_buffer_data.push_back(tv);
+		}
+	}
+
+	for (int i = 0; i < slices; ++i)
+	{
+		for (int j = 0; j < slices; ++j)
+		{
+			int vert = (i * (slices + 1) + j);
+			index_buffer_data.push_back(vert);
+			index_buffer_data.push_back(vert + 1);
+			index_buffer_data.push_back(vert + slices + 1);
+
+			index_buffer_data.push_back(vert + 1);
+			index_buffer_data.push_back(vert + slices + 2);
+			index_buffer_data.push_back(vert + slices + 1);
+		}
+	}
+
+	Mesh *mesh = new Mesh(meshName);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(Vertex), &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = index_buffer_data.size();
+	mesh->mode = Mesh::DRAW_TRIANGLES;
+	AddMesh(meshName, mesh);
+	return mesh;
+}
+
 Mesh* MeshBuilder::GenerateSphere(const std::string &meshName, Color color, unsigned numStack, unsigned numSlice, float radius)
 {
 	std::vector<Vertex> vertex_buffer_data;

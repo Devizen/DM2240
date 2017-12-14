@@ -7,6 +7,9 @@
 #include "GraphicsManager.h"
 #include "CameraManager.h"
 #include "../Enemy/EnemyManager.h"
+#include "CameraManager.h"
+#include "../FPSCamera.h"
+#include "MeshBuilder.h"
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
 QuadTreeManager::QuadTreeManager() : root(nullptr), entityList(entityList), minSplitSize(2U)
@@ -135,6 +138,13 @@ void QuadTreeManager::RenderGrid()
 	ms.PushMatrix();
 	ms.Translate(0, -9.5f, 0);
 	RenderHelper::DrawLine(allVertices, Color(1, 0, 0), 4);
+	ms.PopMatrix();
+
+	ms.PushMatrix();
+	ms.Translate(0 + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().x,
+		800.f + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().y,
+		0 + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().z);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SKYPLANE"));
 	ms.PopMatrix();
 
 	//for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {

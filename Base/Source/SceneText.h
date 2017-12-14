@@ -47,6 +47,9 @@ private:
 	static SceneText* sInstance; // The pointer to the object that gets registered
 
 	std::vector<unsigned char>heightMap;
+
+	/*Size of Map for misc. calculations.*/
+	float groundScale;
 };
 
 #endif

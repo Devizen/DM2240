@@ -78,6 +78,7 @@ CSceneNode* CSceneNode::GetParent(void) const
 void CSceneNode::CreateEntityBase(void)
 {
 	theEntity = new EntityBase();
+	theEntity->collider = new CCollider();
 }
 
 // Add a child to this node
