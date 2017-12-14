@@ -54,6 +54,7 @@ public:
 	/*Set Parent Scene Node.*/
 	void SetParentNode(CSceneNode* _parentNode) { parentNode = _parentNode; }
 
+
 	/*Add timer for animation.*/
 	void AddTimer(float _timer) { timer += _timer; }
 	/*Set timer.*/
@@ -83,7 +84,7 @@ public:
 	void SetName(std::string _name) { name = _name; }
 	/*Get object name.*/
 	std::string GetName(void) { return name; }
-private:
+protected:
 	bool isParent;
 	Vector3 minAABB;
 	Vector3 maxAABB;

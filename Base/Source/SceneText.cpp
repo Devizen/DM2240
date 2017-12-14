@@ -290,7 +290,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("WALL")->textureID[0] = LoadTGA("Image//WALL.tga");
 
 	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
-
+	MeshBuilder::GetInstance()->GenerateSphere("nade", Color(0.3, 0.4, 0.3), 10, 10, .5f);
 	/*Number of partitions for each X-axis and Z-axis.*/
 	const unsigned numOfPartitionXZ = 5;
 	groundScale = 400.f;
@@ -308,24 +308,24 @@ void SceneText::Init()
 	//CMasterEntityManager::GetInstance()->Init(CSpatialPartitionManager::GetInstance()->GetPartitionCount());
 	//CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
 
-	for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
-	{
-		Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetSPPosition();
-		position.x += 10.f;
-		position.y += 20.f;
-		EntityBase* chair = Create::Asset("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
-		chair->SetEntityType(ECEntityTypes::OBJECT);
-		chair->InitLoD("GREENSPHERE", "BLUESPHERE", "REDSPHERE");
+	//for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
+	//{
+	//	Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetSPPosition();
+	//	position.x += 10.f;
+	//	position.y += 20.f;
+	//	EntityBase* chair = Create::Asset("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
+	//	chair->SetEntityType(ECEntityTypes::OBJECT);
+	//	chair->InitLoD("GREENSPHERE", "BLUESPHERE", "REDSPHERE");
 
-		chair->collider = new CCollider(chair);
-		chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
-		chair->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + position);
-		chair->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
-		CollisionManager::GetInstance()->AddCollider(chair->collider, chair->GetPartitionPtr());
+	//	chair->collider = new CCollider(chair);
+	//	chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
+	//	chair->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + position);
+	//	chair->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
+	//	CollisionManager::GetInstance()->AddCollider(chair->collider, chair->GetPartitionPtr());
 
-		QuadTreeManager::GetInstance()->InsertEntity(chair);
-		//CMasterEntityManager::GetInstance()->AddEntity(chair);
-	}
+	//	QuadTreeManager::GetInstance()->InsertEntity(chair);
+	//	//CMasterEntityManager::GetInstance()->AddEntity(chair);
+	//}
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 	groundEntity = Create::Ground("COMGROUND", "COMGROUND");
@@ -428,11 +428,12 @@ void SceneText::Init()
 	}
 	textObj[0]->SetText("HELLO WORLD");
 
-	
+
+	QuadTreeManager::GetInstance()->ground = groundEntity;
+	//CameraManager::GetInstance()->AttachPlayerCam(&this->camera);
 	CameraManager::GetInstance()->AttachPlayerCam(this->camera);
+
 	FPSCamera* birdEyeCam = CameraManager::GetInstance()->GetBirdEyeCam();
-
-
 	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
 	//birdEyeCam->
 

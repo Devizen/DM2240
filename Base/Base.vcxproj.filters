@@ -155,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="Source\PlayerInfo\TowerManager.cpp">
       <Filter>PlayerInfo</Filter>
+    </ClCompile>    
+    <ClCompile Include="Source\Projectile\Explosive.cpp">
+      <Filter>Projectile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="Source\QuadTree\CameraManager.h">
       <Filter>QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Projectile\Explosive.h">
+      <Filter>Projectile</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy\Monk\Monk.h">
       <Filter>Enemy\Monk</Filter>

@@ -59,12 +59,12 @@ void CProjectile::Set(Vector3 theNewPosition, Vector3 theNewDirection, const flo
 	this->m_fSpeed = m_fSpeed;
 
 	this->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(theNewPosition)->GetIndex());
-	LineCollider* lineCollider = new LineCollider(this);
-	lineCollider->Init(theNewPosition, theNewDirection, m_fSpeed, 1000);
-	this->collider = lineCollider;
-	CollisionManager::GetInstance()->AddCollider(this->collider, this->GetPartitionPtr());
+	//LineCollider* lineCollider = new LineCollider(this);
+	//lineCollider->Init(theNewPosition, theNewDirection, m_fSpeed, 1000);
+	//this->collider = lineCollider;
+	//CollisionManager::GetInstance()->AddCollider(this->collider, this->GetPartitionPtr());
 
-	QuadTreeManager::GetInstance()->InsertEntity(this);
+	//QuadTreeManager::GetInstance()->InsertEntity(this);
 }
 
 // Get the direction of the projectile
@@ -193,6 +193,13 @@ CProjectile* Create::Projectile(const std::string& _meshName,
 	//result->SetRotateAngle(90.f);
 	//result->SetRotateAxis(Vector3(1.f, 0.f, 0.f));
 	EntityManager::GetInstance()->AddEntity(result);
+	result->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(_position)->GetIndex());
+	LineCollider* lineCollider = new LineCollider(result);
+	lineCollider->Init(_position, _direction, m_fSpeed, 1000);
+	result->collider = lineCollider;
+	CollisionManager::GetInstance()->AddCollider(result->collider, result->GetPartitionPtr());
+
+	QuadTreeManager::GetInstance()->InsertEntity(result);
 
 	return result;
 }

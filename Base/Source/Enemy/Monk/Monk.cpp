@@ -4,6 +4,7 @@
 #include "../../SpatialPartition/SpatialPartitionManager.h"
 #include "../../EntityTypes/EntityTypes.h"
 #include "../EnemyManager.h"
+#include "../../QuadTree/QuadTreeManager.h"
 
 CMonk::CMonk() : head(nullptr)
 , body(nullptr)
@@ -77,6 +78,9 @@ void CMonk::SetEntityPart(std::string _part, GenericEntity * _entity)
 void CMonk::UpdatePart(double dt, std::string _part)
 {
 	float rotateAngle = 0.f;
+	/*Update the main big invisible part*/
+	//this->collider->SetAABBPosition(this->position);
+
 	/*Update the direction of each part.*/
 	for each(GenericEntity* part in partList) {
 		Vector3 tempPosition(0.f, 0.f, 0.f);
@@ -255,6 +259,11 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	}
 }
 
+void CMonk::CollisionResponse(EntityBase * other)
+{
+	std::cout << "BOOOM " << std::endl;
+}
+
 CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerInfo* _player)
 {
 	CMonk* monk = new CMonk();
@@ -386,6 +395,11 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 
 	/*Add into Enemy Manager for State Changes Update.*/
 	CEnemyManager::GetInstance()->AddEnemy(monk);
+	//monk->SetAABB(-_scale *0.5f, _scale * 0.5f);
+	//monk->SetAABB(-Vector3(10,0,10) *0.5f, Vector3(10, 20, 10) * 0.5f);
+	//monk->collider = new CCollider(monk);
+	//monk->collider->SetAABB(Vector3(10, 0, 10) *0.5f, -Vector3(10, 20, 10) * 0.5f);
+	//QuadTreeManager::GetInstance()->InsertEntity(monk);
 
 	/*Set AABB.*/
 	rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);

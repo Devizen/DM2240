@@ -49,7 +49,40 @@ void GenericEntity::UpdateChildren(double _dt)
 void GenericEntity::Render()
 {
 	if (LoD.GetCurrMesh() == nullptr)
+	{
+		//Render the big invisible AABB
+		if (CEnemyManager::GetInstance()->GetRenderAABB())
+		{
+			std::vector<Vector3> allVertices;
+			Vector3 min = collider->GetMinAABB();
+			Vector3 max = collider->GetMaxAABB();
+
+			/*Right Plane.*/
+			allVertices.push_back(Vector3(max.x, min.y, min.z));
+			allVertices.push_back(Vector3(max.x, min.y, max.z));
+			allVertices.push_back(Vector3(max.x, max.y, max.z));
+			allVertices.push_back(Vector3(max.x, max.y, min.z));
+			/*Left Plane.*/
+			allVertices.push_back(Vector3(min.x, min.y, min.z));
+			allVertices.push_back(Vector3(min.x, min.y, max.z));
+			allVertices.push_back(Vector3(min.x, max.y, max.z));
+			allVertices.push_back(Vector3(min.x, max.y, min.z));
+			/*Bottom Plane.*/
+			allVertices.push_back(Vector3(min.x, min.y, min.z));
+			allVertices.push_back(Vector3(min.x, min.y, max.z));
+			allVertices.push_back(Vector3(max.x, min.y, max.z));
+			allVertices.push_back(Vector3(max.x, min.y, min.z));
+			/*Top Plane.*/
+			allVertices.push_back(Vector3(min.x, max.y, min.z));
+			allVertices.push_back(Vector3(min.x, max.y, max.z));
+			allVertices.push_back(Vector3(max.x, max.y, max.z));
+			allVertices.push_back(Vector3(max.x, max.y, min.z));
+			//modelStack.PushMatrix();
+			RenderHelper::DrawLine(allVertices, Color(1, 0, 0), 4);
+			//modelStack.PopMatrix();
+		}
 		return;
+	}
 
 	Vector3 parentPosition(0.f, 0.f, 0.f);
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
