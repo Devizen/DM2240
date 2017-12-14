@@ -3,7 +3,7 @@
 #include "../Projectile/Laser/Laser.h"
 #include "../QuadTree/QuadTreeManager.h"
 #include "EntityBase.h"
-
+#include "../AudioPlayer/AudioPlayer.h"
 #include <iostream>
 using namespace std;
 
@@ -142,6 +142,7 @@ void CWeaponInfo::Update(const double dt)
 // Discharge this weapon
 void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _source)
 {
+	CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/BULLET.wav", false);
 	if (bFire)
 	{
 		// If there is still ammo in the magazine, then fire
