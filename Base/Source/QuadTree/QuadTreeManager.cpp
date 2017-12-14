@@ -7,6 +7,8 @@
 #include "GraphicsManager.h"
 #include "CameraManager.h"
 #include "../Enemy/EnemyManager.h"
+#include "../GroundEntity.h"
+#include "../Projectile/Explosive.h"
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
 QuadTreeManager::QuadTreeManager() : root(nullptr), entityList(entityList), minSplitSize(2U)
@@ -29,7 +31,7 @@ void QuadTreeManager::Update(double dt)
 	}
 
 	//recreate tree
-	if (entityList.size() > minSplitSize)
+	if (entityList.size())
 	{
 		std::list<EntityBase*> eList = this->GetEntityList();
 		root = new QuadTree(Vector3(-200, 0, -200), Vector3(-200, 0, -200), Vector3(200, 0, 200), 0, 4, eList);
@@ -199,6 +201,8 @@ void QuadTreeManager::RenderObj(QuadTree * node)
 
 void QuadTreeManager::UpdateLeafNode(QuadTree * node, double dt)
 {
+	if (!node)
+		return;
 	if (node->topLeft)
 	{
 		std::vector<QuadTree*> children(node->GetAllChildren());
@@ -301,6 +305,15 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 					CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
 					posOfChecks.push_back(std::make_pair((*it)->GetPosition(), (*it2)->GetPosition()));
 
+				}
+
+				
+				CExplosive* nade = dynamic_cast<CExplosive*>(gEntity);
+				if (nade)
+				{
+					if (nade->GetMinAABB().y + nade->GetPosition().y < this->ground->GetPosition().y) {
+						nade->SetStatus(false);
+					}
 				}
 			}
 			else

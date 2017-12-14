@@ -3,11 +3,12 @@
 #include "Vector3.h"
 #include "Collider/Collider.h"
 #include "../SpatialPartition/SpatialPartition.h"
+#include "../GenericEntity.h"
 
 class Mesh;
 class CPlayerInfo;
 
-class CProjectile : public EntityBase//, public CSpatialPartition //, public CCollider
+class CProjectile : public GenericEntity//, public CSpatialPartition //, public CCollider
 {
 public:
 	CProjectile(void);

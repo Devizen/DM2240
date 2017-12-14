@@ -25,6 +25,8 @@ public:
 	void SetPlayer(CPlayerInfo* _player) { player = _player; }
 	/*Get player object.*/
 	CPlayerInfo* GetPlayer() { return player; }
+
+	virtual void CollisionResponse(EntityBase* other);
 private:
 	Mesh* headModelMesh;
 	Mesh* bodyModelMesh;

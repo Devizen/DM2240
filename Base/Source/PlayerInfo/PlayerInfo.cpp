@@ -455,7 +455,7 @@ void CPlayerInfo::Update(double dt)
 	}
 	else if (MouseController::GetInstance()->IsButtonPressed(MouseController::RMB))
 	{
-		CExplosive* nade = Create::Explosive("nade", position, target, 3.0, 100.0, 5, this);
+		CExplosive* nade = Create::Explosive("nade", position, (target - position).Normalize(), 5.0, 75.0, 1, this);
 	}
 
 	// If the user presses R key, then reset the view to default values

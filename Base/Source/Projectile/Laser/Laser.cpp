@@ -5,6 +5,11 @@
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
 #include "GL\glew.h"
+#include "../../Base/Source/QuadTree/QuadTreeManager.h"
+#include "Manager\CollisionManager.h"
+#include "../../Base/Source/SpatialPartition/SpatialPartitionManager.h"
+#include "../../Base/Source/EntityTypes/EntityTypes.h"
+#include "Collider\LineCollider.h"
 
 #include <iostream>
 using namespace std;
@@ -131,15 +136,48 @@ CLaser* Create::Laser(const std::string& _meshName,
 		return nullptr;
 
 	CLaser* result = new CLaser(modelMesh);
+	result->SetName(_meshName);
+	result->SetPosition(_position);
+	result->SetScale(Vector3(5.f, 5.f, 5.f));
+	result->SetCollider(false);
+	/*Min AABB followed by Max AABB.*/
+	Vector3 _maxAABB(0.5f, 0.5f, 0.5f);
+	result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
+		Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
+	QuadTreeManager::GetInstance()->InsertEntity(result);
+	result->SetIsParent(true);
+
+
+	/*Create root for Scene Graph.*/
+	CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
+	rootNode->GetEntity()->SetPosition(_position);
+	/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
+	The entire Scene Graph will be traversed from the root.*/
+	result->SetSceneGraph(Create::SceneGraph(rootNode));
+	Create::SceneNode(rootNode, rootNode, result);
+	/*Init the LoD.*/
+	result->InitLoD(_meshName, _meshName, _meshName);
+	/*Set AABB.*/
+	result->SetEntityType(ECEntityTypes::OBJECT);
+	//result->collider = new CCollider(result);
+	result->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//result->collider->SetMinAABB(Vector3(-result->GetScale() * 0.5f) + result->GetPosition());
+	//result->collider->SetMaxAABB(Vector3(result->GetScale() * 0.5f) + result->GetPosition());
+	result->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(result->GetPosition(), result->GetScale()));
+	LineCollider* lineCollider = new LineCollider(result);
+	lineCollider->Init(_position, _direction, m_fSpeed, 1000);
+	result->collider = lineCollider;
+	CollisionManager::GetInstance()->AddCollider(result->collider, result->GetPartitionPtr());
+	//CollisionManager::GetInstance()->AddCollider(result->collider, result->GetPartitionPtr());
+
 	result->Set(_position, _direction, m_fLifetime, m_fSpeed);
 	result->SetLength(m_fLength);
 	result->SetStatus(true);
 	result->SetCollider(true);
 	result->SetSource(_source);
-	
-	EntityManager::GetInstance()->AddEntity(result);
 
 	Vector3 base = Vector3(1.0f, 0.0f, 0.0f);
 	result->CalculateAngles();
+
 	return result;
 }

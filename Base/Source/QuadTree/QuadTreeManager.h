@@ -46,8 +46,10 @@ public:
 
 
 	int PutEntitiesInGrid(QuadTree* node, std::list<EntityBase*>& entityList);
-	void InsertEntity(EntityBase* entity) { entityList.push_back(entity); };
-	void RemoveEntity(EntityBase* entity) { entityList.erase(std::remove(entityList.begin(), entityList.end(), entity), entityList.end()); }
+	void InsertEntity(EntityBase* entity) { entityList.push_back(entity); std::cout << entityList.size() << std::endl; };
+	void RemoveEntity(EntityBase* entity) { entityList.erase(std::remove(entityList.begin(), entityList.end(), entity), entityList.end()); 
+	std::cout << entityList.size() << std::endl;
+	}
 
 	bool renderCout = true;
 

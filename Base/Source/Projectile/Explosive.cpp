@@ -42,44 +42,48 @@ void CExplosive::Set(Vector3 theNewPosition, Vector3 theNewDirection, const floa
 	this->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(theNewPosition)->GetIndex());
 
 	//For normal collision
-	this->collider = new CCollider(this);
-	this->collider->SetAABB(Vector3(1, 1, 1), Vector3(-1, -1, -1));
-	CollisionManager::GetInstance()->AddCollider(this->collider, this->GetPartitionPtr());
+	//this->collider = new CCollider(this);
+	//this->collider->SetAABB(Vector3(1, 1, 1), Vector3(-1, -1, -1));
+	//CollisionManager::GetInstance()->AddCollider(this->collider, this->GetPartitionPtr());
 
 	//for legit collision
-	QuadTreeManager::GetInstance()->InsertEntity(this);
-	this->SetAABB(Vector3(-1, -1, -1), Vector3(1, 1, 1));
+	//QuadTreeManager::GetInstance()->InsertEntity(this);
+	//this->SetAABB(Vector3(-1, -1, -1), Vector3(1, 1, 1));
 
 	this->m_bStatus = true;
-	
-	this->SetIsParent(true);
-	CSceneNode* rootNodeForCube = Create::SceneNode(this, this, this);
-	/*Create an empty Scene Graph for aCube which will be rendered and updated in QuadTreeManager.
-	The entire Scene Graph will be traversed from the root.*/
-	this->SetSceneGraph(Create::SceneGraph(rootNodeForCube));
-	//Create::SceneNode(rootNodeForCube, rootNodeForCube, aCube)
+	this->isDone = false;
 
-	//CSceneNode* rootNodeForCube = Create::SceneNode(nullptr, nullptr, nullptr);
-	///*Create an empty Scene Graph for aCube which will be rendered and updated in QuadTreeManager.
-	//The entire Scene Graph will be traversed from the root.*/
-	//this->SetSceneGraph(Create::SceneGraph(rootNodeForCube));
-	//CSceneNode* aCubeNode = Create::SceneNode(rootNodeForCube, rootNodeForCube, this);
 }
 
 void CExplosive::Update(double dt)
 {
+	m_fLifetime -= dt;
+	if (m_fLifetime <= 0.0)
+	{
+		this->SetIsDone(true);
+	}
+
 	if (m_bStatus == false)
 		return;
 
 	// Update Position
-	position.Set(position.x + (float)(theDirection.x * dt * m_fSpeed),
-		position.y + (float)(theDirection.y * dt * m_fSpeed),
-		position.z + (float)(theDirection.z * dt * m_fSpeed));
+	Vector3 velocity = theDirection  * m_fSpeed;
+	Vector3 acceleration = Vector3(0, -10, 0) * mass;
+	velocity = velocity + acceleration * dt;
+	theDirection = velocity.Normalized();
+	position += velocity * dt;
+	//position.Set(position.x + (float)(theDirection.x * dt * m_fSpeed),
+	//	position.y + (float)(theDirection.y * dt * m_fSpeed),
+	//	position.z + (float)(theDirection.z * dt * m_fSpeed));
+	//theDirection.y -= mass * dt;
+	//position.y += -9.0 * mass * dt;
 
 	this->ClearPartition();
 	if (CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position))
 		this->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
 
+	this->collider->SetAABBPosition(this->position);
+	//this->collider->SetAABB(Vector3(1, 1, 1), Vector3(-1, -1, -1));
 }
 
 void CExplosive::Render(void)
@@ -113,8 +117,8 @@ Vector3 CExplosive::GetDirection(void)
 }
 void CExplosive::SetStatus(const bool m_bStatus)
 {
-	if (m_bStatus == false)
-		m_fLifetime = -1;
+	//if (m_bStatus == false)
+	//	m_fLifetime = -1;
 	this->m_bStatus = m_bStatus;
 }
 
@@ -130,15 +134,38 @@ CExplosive * Create::Explosive(const std::string & _meshName, const Vector3 & _p
 		return nullptr;
 
 	CExplosive* result = new CExplosive(modelMesh);
+	result->SetName(_meshName);
+	result->SetPosition(_position);
+	result->SetScale(Vector3(5.f, 5.f, 5.f));
+	result->SetCollider(false);
+	/*Min AABB followed by Max AABB.*/
+	Vector3 _maxAABB(0.5f, 0.5f, 0.5f);
+	result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
+	Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
+	QuadTreeManager::GetInstance()->InsertEntity(result);
+	result->SetIsParent(true);
+
+
+	/*Create root for Scene Graph.*/
+	CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
+	rootNode->GetEntity()->SetPosition(_position);
+	/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
+	The entire Scene Graph will be traversed from the root.*/
+	result->SetSceneGraph(Create::SceneGraph(rootNode));
+	Create::SceneNode(rootNode, rootNode, result);
+	/*Init the LoD.*/
+	result->InitLoD(_meshName, _meshName, _meshName);
+	/*Set AABB.*/
+	result->SetEntityType(ECEntityTypes::OBJECT);
+	result->collider = new CCollider(result);
+	result->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	result->collider->SetMinAABB(Vector3(-result->GetScale() * 0.5f) + result->GetPosition());
+	result->collider->SetMaxAABB(Vector3(result->GetScale() * 0.5f) + result->GetPosition());
+	result->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(result->GetPosition(), result->GetScale()));
+	CollisionManager::GetInstance()->AddCollider(result->collider, result->GetPartitionPtr());
+
+
 	result->Set(_position, _direction, m_fLifetime, m_fSpeed, mass);
-	result->SetStatus(true);
-	result->SetCollider(true);
-	result->SetSource(_source);
-	result->SetEntityType(ECEntityTypes::OTHERS);
-	
-	//result->SetRotateAngle(90.f);
-	//result->SetRotateAxis(Vector3(1.f, 0.f, 0.f));
-	EntityManager::GetInstance()->AddEntity(result);
 
 	return result;
 }
