@@ -3,7 +3,7 @@
 #include "Vector3.h"
 
 class CPlayerInfo;
-
+class EntityBase;
 class CWeaponInfo
 {
 public:
@@ -71,4 +71,7 @@ public:
 
 	// Print Self
 	void PrintSelf(void);
+
+	bool hitScan = false;
+	bool isLineIntersectAABB(EntityBase* entity, Vector3& origin, Vector3& dir, Vector3& outNearPoint);
 };

@@ -1,6 +1,8 @@
 #include "WeaponInfo.h"
 #include "../Projectile/Projectile.h"
 #include "../Projectile/Laser/Laser.h"
+#include "../QuadTree/QuadTreeManager.h"
+#include "EntityBase.h"
 
 #include <iostream>
 using namespace std;
@@ -145,16 +147,36 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 		// If there is still ammo in the magazine, then fire
 		if (magRounds > 0)
 		{
-			// Create a projectile with a cube mesh. Its position and direction is same as the player.
-			// It will last for 3.0 seconds and travel at 500 units per second
-			CLaser* aProjectile = Create::Laser("RAY",
-															position, 
-															(target - position).Normalized(), 
-															2.0f, 
-															10.0f,
-				30.f,
-															_source);
-			aProjectile->SetCollider(true);
+			if (hitScan == false)
+			{
+				// Create a projectile with a cube mesh. Its position and direction is same as the player.
+				// It will last for 3.0 seconds and travel at 500 units per second
+				CLaser* aProjectile = Create::Laser("RAY",
+					position,
+					(target - position).Normalized(),
+					2.0f,
+					10.0f,
+					30.f,
+					_source);
+				aProjectile->SetCollider(true);
+			}
+			else
+			{
+				std::deque<EntityBase*> allEntities(QuadTreeManager::GetInstance()->GetAllEntities());
+
+				for (auto e : allEntities)
+				{
+					Vector3 outPt;
+
+					if (isLineIntersectAABB(e, position, (target - position).Normalized(), outPt))
+					{
+						e->SetIsDone(true);
+					}
+				}
+
+			}
+
+
 			//aProjectile->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
 			bFire = false;
 			magRounds--;
@@ -201,4 +223,150 @@ void CWeaponInfo::PrintSelf(void)
 	cout << "timeBetweenShots\t:\t" << timeBetweenShots << endl;
 	cout << "elapsedTime\t\t:\t" << elapsedTime << endl;
 	cout << "bFire\t\t:\t" << bFire << endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//No, collision is done in CollisionManager, not here ;)
+bool CWeaponInfo::isLineIntersectAABB(EntityBase* entity, Vector3& origin, Vector3& dir, Vector3& outNearPoint)
+{
+	Vector3 MinPt = (entity->collider->GetMinAABB());
+	Vector3 MaxPt = (entity->collider->GetMaxAABB());
+	dir.Normalize();
+	Vector3 invDir(1.0f / dir.x, 1.0f / dir.y, 1.0f / dir.z);
+
+	float lambdaMinX = (MinPt.x - origin.x) * invDir.x;
+	float lambdaMaxX = (MaxPt.x - origin.x) * invDir.x;
+	float lambdaMinY = (MinPt.y - origin.y) * invDir.y;
+	float lambdaMaxY = (MaxPt.y - origin.y) * invDir.y;
+	float lambdaMinZ = (MinPt.z - origin.z) * invDir.z;
+	float lambdaMaxZ = (MaxPt.z - origin.z) * invDir.z;
+
+	//Rearrange the max and min
+	if (lambdaMinX > lambdaMaxX) std::swap(lambdaMinX, lambdaMaxX);
+	if (lambdaMinY > lambdaMaxY) std::swap(lambdaMinY, lambdaMaxY);
+	if (lambdaMinZ > lambdaMaxZ) std::swap(lambdaMinZ, lambdaMaxZ);
+
+	if ((lambdaMinX > lambdaMaxY) || (lambdaMinY > lambdaMaxX))
+		return false;
+
+	if (lambdaMinY > lambdaMinX)
+		lambdaMinX = lambdaMinY;
+
+	if (lambdaMaxY < lambdaMaxX)
+		lambdaMaxX = lambdaMaxY;
+
+	if ((lambdaMinX > lambdaMaxZ) || (lambdaMinZ > lambdaMaxX))
+		return false;
+	if (lambdaMinZ > lambdaMinX)
+		lambdaMinX = lambdaMinZ;
+	if (lambdaMaxZ < lambdaMaxX)
+		lambdaMaxX = lambdaMaxZ;
+
+	outNearPoint = origin + (lambdaMinX * dir);
+	return true;
 }

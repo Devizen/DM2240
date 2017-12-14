@@ -59,6 +59,9 @@ protected:
 	// The character which fired this projectile
 	CPlayerInfo* theSource;
 	float mass;
+
+	std::vector<std::pair<Vector3, Vector3>> lines;
+	bool boom = false;
 };
 
 namespace Create

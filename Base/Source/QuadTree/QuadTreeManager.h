@@ -29,8 +29,6 @@ class QuadTreeManager
 	//returns 0 if totally outside, returns 1 if one point inside, return 2 if all inside
 	int IsAABBInGrid(Vector3 min, Vector3 max, QuadTree* node);
 
-	//This func finds the parent grid that encaps the whole entity.
-	std::list<EntityBase*> GetNearbyEntities(GenericEntity* entity, QuadTree* leafNode);
 
 	////more optimsied
 	//std::list<EntityBase*> GetNearbyEntities(GenericEntity* entity, QuadTree* root);
@@ -46,9 +44,11 @@ public:
 
 
 	int PutEntitiesInGrid(QuadTree* node, std::list<EntityBase*>& entityList);
-	void InsertEntity(EntityBase* entity) { entityList.push_back(entity); std::cout << entityList.size() << std::endl; };
+	void InsertEntity(EntityBase* entity) { entityList.push_back(entity);
+	//std::cout << entityList.size() << std::endl;
+	};
 	void RemoveEntity(EntityBase* entity) { entityList.erase(std::remove(entityList.begin(), entityList.end(), entity), entityList.end()); 
-	std::cout << entityList.size() << std::endl;
+	//std::cout << entityList.size() << std::endl;
 	}
 
 	bool renderCout = true;
@@ -56,6 +56,32 @@ public:
 	bool toggle;
 	void CheckCollision(std::vector<std::pair<Vector3, Vector3>>& posOfChecks, double dt);
 	std::vector<std::pair<Vector3, Vector3>> CheckCollision(QuadTree* node, double dt);
+
+	struct AOEQuad
+	{
+		double dt;
+		Vector3 pos;
+		Vector3 scale;
+		friend bool operator==(const AOEQuad& left, const AOEQuad& other) {
+			return (left.pos == other.pos) && (left.scale == other.scale);
+		}
+	};
+	//This func finds the parent grid that encaps the whole entity.
+	std::list<EntityBase*> GetNearbyEntities(EntityBase* entity, QuadTree* leafNode, bool addToRender = false);
+	QuadTree* GetRoot() { return root; }
+
+
+	std::vector<AOEQuad> renderList;
+
+	void ClearEntities() {
+		for (auto e : entityList) {
+			delete e;
+			e = nullptr;
+		}
+		entityList.clear();
+	};
+
+	std::deque<EntityBase*>& GetAllEntities() { return entityList; };
 
 	GroundEntity* ground;
 };

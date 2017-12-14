@@ -249,8 +249,8 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 	result->SetScale(_scale);
 	result->SetCollider(false);
 	/*Min AABB followed by Max AABB.*/
-	result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
-		Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
+	//result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
+	//	Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
 	if (_parent) {
 		QuadTreeManager::GetInstance()->InsertEntity(result);
 		//EntityManager::GetInstance()->AddEntity(result);

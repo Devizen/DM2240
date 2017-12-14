@@ -9,6 +9,7 @@
 #include "../Enemy/EnemyManager.h"
 #include "../GroundEntity.h"
 #include "../Projectile/Explosive.h"
+#include "../../Common/Source/MeshBuilder.h"
 QuadTreeManager* QuadTreeManager::instance = nullptr;
 
 QuadTreeManager::QuadTreeManager() : root(nullptr), entityList(entityList), minSplitSize(2U)
@@ -58,6 +59,18 @@ void QuadTreeManager::Update(double dt)
 
 	CEnemyManager::GetInstance()->Update(dt);
 	renderCout = false;
+
+
+	for (std::vector<AOEQuad>::iterator it = renderList.begin(); it != renderList.end();)
+	{
+		(*it).dt -= dt;
+		if ((*it).dt <= 0.0)
+		{
+			it = renderList.erase(it);
+		}
+		else
+			++it;
+	}
 }
 
 void QuadTreeManager::PostUpdate(double dt)
@@ -149,6 +162,25 @@ void QuadTreeManager::RenderGrid()
 	//}
 //	RenderGrid(root);
 	this->RenderObj();
+
+	//std::cout << "renderQuadList : " <<  renderList.size() << std::endl;
+	for (std::vector<AOEQuad>::iterator it = renderList.begin(); it != renderList.end(); ++it)
+	{
+		ms.PushMatrix();
+		ms.Translate(0, -9.5, 0);
+		ms.Translate((*it).pos);
+		ms.Translate((*it).scale.x * 0.5, 0, (*it).scale.z * 0.5f);
+		ms.Scale((*it).scale);
+		ms.Rotate(-90, 1,0,0);
+
+
+		//std::cout << "pos " << (*it).pos << " scale " << (*it).scale << std::endl;
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("oquad"));
+		//RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("MONK_HEAD"));
+		ms.PopMatrix();
+
+		//std::cout << "renderQuadList : " << renderList.size() << std::endl;
+	}
 }
 
 /*Dieded.*/
@@ -276,11 +308,12 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 
 	for (std::list<EntityBase*>::iterator it = node->entityList.begin(); it != node->entityList.end(); ++it) {
 
-			GenericEntity* gEntity = dynamic_cast<GenericEntity*>(*it);
-			if (gEntity)
+			//GenericEntity* gEntity = dynamic_cast<GenericEntity*>(*it);
+			EntityBase* gEntity = dynamic_cast<EntityBase*>(*it);
+			//if (gEntity)
 			{
 				//== Is scenenode ==//                                     //important param
-				std::list<EntityBase*> checkEntities(GetNearbyEntities(gEntity, root));
+				std::list<EntityBase*> checkEntities(GetNearbyEntities(gEntity, root, true));
 				
 
 				//== Remove the unnessecary obj checks. e.g in the same grid ones and before me ones ==//
@@ -311,52 +344,71 @@ std::vector<std::pair<Vector3, Vector3>> QuadTreeManager::CheckCollision(QuadTre
 				CExplosive* nade = dynamic_cast<CExplosive*>(gEntity);
 				if (nade)
 				{
-					if (nade->GetMinAABB().y + nade->GetPosition().y < this->ground->GetPosition().y) {
+					if (nade->collider->GetMinAABB().y < this->ground->GetPosition().y) {
 						nade->SetStatus(false);
 					}
 				}
 			}
-			else
-			{
-				//the normal thing we always do
-				std::list<EntityBase*>::iterator it2 = std::next(it, 1);
-				for (; it2 != node->entityList.end(); ++it2)
-				{
-					CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
-					posOfChecks.push_back(std::make_pair((*it)->GetPosition(), (*it2)->GetPosition()));
-				}
-			}
+			//else
+			//{
+			//	//the normal thing we always do
+			//	std::list<EntityBase*>::iterator it2 = std::next(it, 1);
+			//	for (; it2 != node->entityList.end(); ++it2)
+			//	{
+			//		CollisionManager::GetInstance()->CheckCollision((*it)->collider, (*it2)->collider, dt);
+			//		posOfChecks.push_back(std::make_pair((*it)->GetPosition(), (*it2)->GetPosition()));
+			//	}
+			//}
 
 	}
 
 	return posOfChecks;
 }
 
-std::list<EntityBase*> QuadTreeManager::GetNearbyEntities(GenericEntity * entity, QuadTree * node)
+std::list<EntityBase*> QuadTreeManager::GetNearbyEntities(EntityBase * entity, QuadTree * node, bool addToRender)
 {
 	//returns including my node de
 	std::list<EntityBase*> ret;
 
-	int pointsInside = this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), node);
+	int pointsInside = this->IsAABBInGrid(entity->collider->GetMinAABB(), entity->collider->GetMaxAABB(), node);
 
 	std::vector<QuadTree*> childrens = node->GetAllChildren();
 	if (!childrens.empty())
 	{
 		for (auto child : childrens)
 		{
-			if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), child) >= 1)
+			if (this->IsAABBInGrid(entity->collider->GetMinAABB(), entity->collider->GetMaxAABB(), child) >= 1)
 			{
 				//one pt inside grid
-				std::list<EntityBase*> tempRet(GetNearbyEntities(entity, child));
+				std::list<EntityBase*> tempRet(GetNearbyEntities(entity, child, addToRender));
 				ret.insert(ret.end(), tempRet.begin(), tempRet.end());
+			}
+			else
+			{
+
 			}
 		}
 	}
 	else
 	{
+		//std::cout << "IN" << std::endl;
 		//at leaf node
 		//only here i assign the entities inside the return list
 		ret.assign(node->entityList.begin(), node->entityList.end());
+		if (addToRender)
+		{
+			AOEQuad aoequad;
+			aoequad.dt = 0.1;
+			aoequad.pos = node->position;
+			aoequad.scale = node->GetMaxBoundary() - node->GetMinBoundary();
+
+			if (std::find(renderList.begin(), renderList.end(), aoequad) == renderList.end())
+			{
+				renderList.push_back(aoequad);
+				
+			}
+			//std::cout << "IN" << std::endl;
+		}
 	}
 
 	return ret;
@@ -365,42 +417,42 @@ std::list<EntityBase*> QuadTreeManager::GetNearbyEntities(GenericEntity * entity
 	///==================== BELOW CODE IS THE LESS OPTIMISED TO GET ENTITY LIST ============================//
 	//To use this part, the parameter must not start with root. it should start with its residing node
 
-	QuadTree* curr = node;
-	while (curr)
-	{
-		if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), curr) == 2 //im totally inside
-			|| curr->parent == nullptr) // at root
-		{
-			while (true)
-			{
+	//QuadTree* curr = node;
+	//while (curr)
+	//{
+	//	if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), curr) == 2 //im totally inside
+	//		|| curr->parent == nullptr) // at root
+	//	{
+	//		while (true)
+	//		{
 
-				std::vector<QuadTree*> childrens = curr->GetAllChildren();
-				if (!childrens.empty())
-				{
-					//if i can go down one level, i check from thr
+	//			std::vector<QuadTree*> childrens = curr->GetAllChildren();
+	//			if (!childrens.empty())
+	//			{
+	//				//if i can go down one level, i check from thr
 
-					for (auto child : childrens)
-					{
-						if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), child) >= 1)
-						{
-							//if at least 1 point inside
-							ret.insert(ret.end(), child->entityList.begin(), child->entityList.end());
-						}
+	//				for (auto child : childrens)
+	//				{
+	//					if (this->IsAABBInGrid(entity->GetMinAABB() + entity->GetPosition(), entity->GetMaxAABB() + entity->GetPosition(), child) >= 1)
+	//					{
+	//						//if at least 1 point inside
+	//						ret.insert(ret.end(), child->entityList.begin(), child->entityList.end());
+	//					}
 
-					}
-				}
-				else //at leaf, cant go deeper
-				{
-					ret.assign(curr->entityList.begin(), curr->entityList.end());
-					break;
-				}
-			}
-			break;
-		}
-		curr = curr->parent;
-	}
+	//				}
+	//			}
+	//			else //at leaf, cant go deeper
+	//			{
+	//				ret.assign(curr->entityList.begin(), curr->entityList.end());
+	//				break;
+	//			}
+	//		}
+	//		break;
+	//	}
+	//	curr = curr->parent;
+	//}
 
-	return ret;
+	//return ret;
 }
 
 int QuadTreeManager::IsAABBInGrid(Vector3 min, Vector3 max, QuadTree * node)
@@ -410,7 +462,15 @@ int QuadTreeManager::IsAABBInGrid(Vector3 min, Vector3 max, QuadTree * node)
 	//IMPORTANT NOTE: IGNORING Y FOR NOW
 		//+ ( max < node->maxBoundary);
 
-	return(Vector3(min.x, 0, min.z) > node->minBoundary && Vector3(min.x, 0, min.z) < node->maxBoundary) + (Vector3(max.x, 0, min.z) > node->minBoundary && Vector3(max.x, 0, min.z) < node->maxBoundary) +
+
+	return(Vector3(min.x, 0, min.z) > node->minBoundary && Vector3(min.x, 0, min.z) < node->maxBoundary) + 
+		(Vector3(max.x, 0, min.z) > node->minBoundary && Vector3(max.x, 0, min.z) < node->maxBoundary) +
 		(Vector3(max.x, 0, max.z) > node->minBoundary && Vector3(max.x, 0, max.z) < node->maxBoundary) +
-		(Vector3(min.x, 0, max.z) > node->minBoundary && Vector3(min.x, 0, max.z) < node->maxBoundary);
+		(Vector3(min.x, 0, max.z) > node->minBoundary && Vector3(min.x, 0, max.z) < node->maxBoundary) +
+
+		(Vector3(node->minBoundary.x,0, node->minBoundary.z) > Vector3(min.x, 0, min.z) && Vector3(node->minBoundary.x, 0, node->minBoundary.z) < Vector3(max.x, 0, max.z)) +
+		(Vector3(node->maxBoundary.x, 0, node->minBoundary.z) > Vector3(min.x, 0, min.z) && Vector3(node->maxBoundary.x, 0, node->minBoundary.z) < Vector3(max.x, 0, max.z)) +
+		(Vector3(node->maxBoundary.x, 0, node->maxBoundary.z) > Vector3(min.x, 0, min.z) && Vector3(node->maxBoundary.x, 0, node->maxBoundary.z) < Vector3(max.x, 0, max.z)) +
+		(Vector3(node->minBoundary.x, 0, node->maxBoundary.z) > Vector3(min.x, 0, min.z) && Vector3(node->minBoundary.x, 0, node->maxBoundary.z)  < Vector3(max.x, 0, max.z))
+		;
 }

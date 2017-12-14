@@ -82,6 +82,9 @@ void CLaser::Update(double dt)
 		return;
 	}
 
+	this->collider->SetAABBPosition(this->position);
+	this->collider->SetAABB(this->position + scale * 0.5f, this->position + -scale * 0.5f);
+
 	// Update Position
 	//position.Set(	position.x + (float)(theDirection.x * dt * m_fSpeed),
 	//				position.y + (float)(theDirection.y * dt * m_fSpeed),
@@ -142,8 +145,8 @@ CLaser* Create::Laser(const std::string& _meshName,
 	result->SetCollider(false);
 	/*Min AABB followed by Max AABB.*/
 	Vector3 _maxAABB(0.5f, 0.5f, 0.5f);
-	result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
-		Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
+	//result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
+	//	Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
 	QuadTreeManager::GetInstance()->InsertEntity(result);
 	result->SetIsParent(true);
 
@@ -160,7 +163,7 @@ CLaser* Create::Laser(const std::string& _meshName,
 	/*Set AABB.*/
 	result->SetEntityType(ECEntityTypes::OBJECT);
 	//result->collider = new CCollider(result);
-	result->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//result->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
 	//result->collider->SetMinAABB(Vector3(-result->GetScale() * 0.5f) + result->GetPosition());
 	//result->collider->SetMaxAABB(Vector3(result->GetScale() * 0.5f) + result->GetPosition());
 	result->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(result->GetPosition(), result->GetScale()));

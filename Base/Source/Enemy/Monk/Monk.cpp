@@ -305,7 +305,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Set AABB.*/
 	tempHead->SetEntityType(ECEntityTypes::OBJECT);
 	tempHead->collider = new CCollider(tempHead);
-	tempHead->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//tempHead->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
 	tempHead->collider->SetMinAABB(Vector3(-tempHead->GetScale() * 0.5f) + tempHead->GetPosition());
 	tempHead->collider->SetMaxAABB(Vector3(tempHead->GetScale() * 0.5f) + tempHead->GetPosition());
 	tempHead->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(tempHead->GetPosition(), tempHead->GetScale()));
@@ -318,7 +318,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Set AABB.*/
 	tempBody->SetEntityType(ECEntityTypes::OBJECT);
 	tempBody->collider = new CCollider(tempBody);
-	tempBody->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//tempBody->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
 	tempBody->collider->SetMinAABB(Vector3(-tempBody->GetScale() * 0.5f) + tempBody->GetPosition());
 	tempBody->collider->SetMaxAABB(Vector3(tempBody->GetScale() * 0.5f) + tempBody->GetPosition());
 	tempBody->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(tempBody->GetPosition(), tempBody->GetScale()));
@@ -331,7 +331,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Set AABB.*/
 	tempLeftArm->SetEntityType(ECEntityTypes::OBJECT);
 	tempLeftArm->collider = new CCollider(tempLeftArm);
-	tempLeftArm->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//tempLeftArm->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
 	tempLeftArm->collider->SetMinAABB(Vector3(-tempLeftArm->GetScale() * 0.5f) + tempLeftArm->GetPosition());
 	tempLeftArm->collider->SetMaxAABB(Vector3(tempLeftArm->GetScale() * 0.5f) + tempLeftArm->GetPosition());
 	tempLeftArm->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(tempLeftArm->GetPosition(), tempLeftArm->GetScale()));
@@ -344,7 +344,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Set AABB.*/
 	tempRightArm->SetEntityType(ECEntityTypes::OBJECT);
 	tempRightArm->collider = new CCollider(tempRightArm);
-	tempRightArm->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//tempRightArm->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
 	tempRightArm->collider->SetMinAABB(Vector3(-tempRightArm->GetScale() * 0.5f) + tempRightArm->GetPosition());
 	tempRightArm->collider->SetMaxAABB(Vector3(tempRightArm->GetScale() * 0.5f) + tempRightArm->GetPosition());
 	tempRightArm->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(tempRightArm->GetPosition(), tempRightArm->GetScale()));
@@ -357,7 +357,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Set AABB.*/
 	tempLeftLeg->SetEntityType(ECEntityTypes::OBJECT);
 	tempLeftLeg->collider = new CCollider(tempLeftLeg);
-	tempLeftLeg->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//tempLeftLeg->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
 	tempLeftLeg->collider->SetMinAABB(Vector3(-tempLeftLeg->GetScale() * 0.5f) + tempLeftLeg->GetPosition());
 	tempLeftLeg->collider->SetMaxAABB(Vector3(tempLeftLeg->GetScale() * 0.5f) + tempLeftLeg->GetPosition());
 	tempLeftLeg->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(tempLeftLeg->GetPosition(), tempLeftLeg->GetScale()));
@@ -370,7 +370,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Set AABB.*/
 	tempRightLeg->SetEntityType(ECEntityTypes::OBJECT);
 	tempRightLeg->collider = new CCollider(tempRightLeg);
-	tempRightLeg->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//tempRightLeg->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
 	tempRightLeg->collider->SetMinAABB(Vector3(-tempRightLeg->GetScale() * 0.5f) + tempRightLeg->GetPosition());
 	tempRightLeg->collider->SetMaxAABB(Vector3(tempRightLeg->GetScale() * 0.5f) + tempRightLeg->GetPosition());
 	tempRightLeg->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(tempRightLeg->GetPosition(), tempRightLeg->GetScale()));

@@ -221,7 +221,7 @@ void QuadTree::Update(double dt)
 			GenericEntity* ge = dynamic_cast<GenericEntity*>(e);
 			if (ge)
 			{
-				RenderGrid = CameraManager::GetInstance()->IsAABBInFrustum(ge->GetMinAABB() + ge->GetPosition(), ge->GetMaxAABB() + ge->GetPosition());
+				RenderGrid = CameraManager::GetInstance()->IsAABBInFrustum(ge->collider->GetMinAABB() , ge->collider->GetMaxAABB());
 			}
 
 			//Vector3 min = e->collider->GetMinAABB();

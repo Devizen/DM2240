@@ -60,7 +60,36 @@ void CExplosive::Update(double dt)
 	m_fLifetime -= dt;
 	if (m_fLifetime <= 0.0)
 	{
-		this->SetIsDone(true);
+		//this->SetIsDone(true);
+
+		//static std::vector<std::pair<Vector3, Vector3>> lines;
+
+		if (boom == false)
+		{
+			this->collider->SetAABBPosition(this->position);
+			this->collider->SetAABB(this->position + Vector3(100, 100, 100), this->position - Vector3(100, 100, 100));
+			std::list<EntityBase*> elist(QuadTreeManager::GetInstance()->GetNearbyEntities(this, QuadTreeManager::GetInstance()->GetRoot(), true));
+			//std::cout << "eList Size : " << elist.size() << std::endl;
+			//for (auto e : elist)
+			//{
+			//	if (e == this)
+			//		continue;
+			//	lines.push_back(std::make_pair(this->position, e->GetPosition()));
+			//	//e->SetIsDone(true);
+			//}
+			boom = true;
+
+			//std::cout << "lines Size : " << lines.size() << std::endl;
+		}
+
+		//CollisionManager::GetInstance()->posColliderChecks.insert(CollisionManager::GetInstance()->posColliderChecks.end(), lines.begin(), lines.end());
+
+		//for (auto lp : lines)
+		//	std::cout << "lines " << lp.first << " , " << lp.second << std::endl;
+
+
+		//if (m_fLifetime < 0.0)
+			this->SetIsDone(true);
 	}
 
 	if (m_bStatus == false)
@@ -83,6 +112,7 @@ void CExplosive::Update(double dt)
 		this->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
 
 	this->collider->SetAABBPosition(this->position);
+	this->collider->SetAABB(this->position + scale * 0.5f, this->position + -scale * 0.5f);
 	//this->collider->SetAABB(Vector3(1, 1, 1), Vector3(-1, -1, -1));
 }
 
@@ -140,8 +170,8 @@ CExplosive * Create::Explosive(const std::string & _meshName, const Vector3 & _p
 	result->SetCollider(false);
 	/*Min AABB followed by Max AABB.*/
 	Vector3 _maxAABB(0.5f, 0.5f, 0.5f);
-	result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
-	Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
+	//result->SetAABB(Vector3(-_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f, -_maxAABB.x * 0.5f),
+	//Vector3(_maxAABB.x * 0.5f, _maxAABB.x * 0.5f, _maxAABB.x * 0.5f));
 	QuadTreeManager::GetInstance()->InsertEntity(result);
 	result->SetIsParent(true);
 
@@ -158,7 +188,7 @@ CExplosive * Create::Explosive(const std::string & _meshName, const Vector3 & _p
 	/*Set AABB.*/
 	result->SetEntityType(ECEntityTypes::OBJECT);
 	result->collider = new CCollider(result);
-	result->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
+	//result->SetAABB(Vector3(-2.5f, -2.5f, -2.5f), Vector3(2.5f, 2.5f, 2.5f));
 	result->collider->SetMinAABB(Vector3(-result->GetScale() * 0.5f) + result->GetPosition());
 	result->collider->SetMaxAABB(Vector3(result->GetScale() * 0.5f) + result->GetPosition());
 	result->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(result->GetPosition(), result->GetScale()));

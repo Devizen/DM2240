@@ -6,6 +6,7 @@
 #include "../SpatialPartition/SpatialPartition.h"
 #include "Collider\Collider.h"
 
+
 class CPlayerInfo : public EntityBase//, public CCollider//, public CSpatialPartition,
 {
 protected:

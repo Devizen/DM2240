@@ -442,6 +442,10 @@ void CPlayerInfo::Update(double dt)
 			//primaryWeapon->PrintSelf();
 		}
 	}
+	if (KeyboardController::GetInstance()->IsKeyReleased('H'))
+	{
+		primaryWeapon->hitScan = (primaryWeapon->hitScan ? false : true );
+	}
 	if (primaryWeapon)
 		primaryWeapon->Update(dt);
 	if (secondaryWeapon)
