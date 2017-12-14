@@ -172,7 +172,8 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 					{
 						if (isLineIntersectAABB(e, position, (target - position).Normalized(), outPt))
 						{
-							e->SetIsDone(true);
+							if (e->isStatic == false)
+								e->SetIsDone(true);;
 						}
 
 						std::vector<CSceneNode*> children = e->rootNode->GetChildren();
@@ -180,6 +181,7 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 						{
 							if (isLineIntersectAABB(child->GetEntity(), position, (target - position).Normalized(), outPt))
 							{
+								if (e->isStatic == false)
 								child->GetEntity()->SetIsDone(true);
 							}
 						}
@@ -187,9 +189,13 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 					else
 						if (isLineIntersectAABB(e, position, (target - position).Normalized(), outPt))
 						{
-							e->SetIsDone(true);
+							if (e->isStatic == false)
+								e->SetIsDone(true);
 						}
 
+
+					if (outPt == Vector3(0, 0, 0))
+						outPt.y = -FLT_MAX;
 					QuadTreeManager::AOEQuad aoequad;
 					aoequad.pos = outPt;
 					aoequad.scale.Set(0.1, 0.1, 0.1);

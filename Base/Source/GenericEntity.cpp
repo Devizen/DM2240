@@ -268,6 +268,7 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 		//result->GetSceneGraph()->AddNode(result);
 		result->SetIsParent(true);
 	}
+	result->isStatic = true;
 	return result;
 }
 
@@ -275,7 +276,7 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 #include "Projectile\Projectile.h"
 void GenericEntity::CollisionResponse(EntityBase* other)
 {
-	std::cout << "BOOM : " << other << std::endl;
+	//std::cout << "BOOM : " << other << std::endl;
 
 	if (name == "MONK_HEAD" && dynamic_cast<CProjectile*>(other))
 	{
@@ -288,7 +289,7 @@ void GenericEntity::CollisionResponse(EntityBase* other)
 
 	if (name == "MONK_BODY")
 	{
-		std::cout << "BOM" << std::endl;
+		//std::cout << "BOM" << std::endl;
 	}
 	//if (this->sceneGraph)
 	//{

@@ -132,7 +132,7 @@ void EntityBase::SetCollider(const bool _value)
 void EntityBase::CollisionResponse(EntityBase* other) {
 
 	//inside blue
-	std::cout << "BOOMBOOOMBOOM : " << other << std::endl;
+	//std::cout << "BOOMBOOOMBOOM : " << other << std::endl;
 
 	CProjectile* proj = dynamic_cast<CProjectile*>(other);
 	if (proj)

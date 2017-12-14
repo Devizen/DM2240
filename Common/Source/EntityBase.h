@@ -88,6 +88,8 @@ public:
 	Vector3 rootMinAABB, rootMaxAABB;
 	CSceneNode* rootNode;
 	bool isDone;
+	Vector3 scale;
+	std::string name;
 protected:
 	Vector3 position;
 	/*For offsetting position for rotation when OBJ is not at center.*/
@@ -96,7 +98,7 @@ protected:
 	Vector3 direction;
 	float rotateAngle;
 	Vector3 rotateAxis;
-	Vector3 scale;
+
 	ECEntityTypes entityType;
 	/*Initialise levelOfDetail to low quality.*/
 	//CLevelOfDetail levelOfDetail;
@@ -121,7 +123,7 @@ protected:
 
 	CSceneNode* parentNode;
 
-	std::string name;
+
 };
 
 #endif // ENTITY_BASE_H

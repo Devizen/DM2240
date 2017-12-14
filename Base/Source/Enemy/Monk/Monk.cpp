@@ -85,9 +85,30 @@ void CMonk::UpdatePart(double dt, std::string _part)
 		if ((*it)->isDone)
 		{
 			GenericEntity* del = *it;
-			head->rootNode->DeleteChild(del);
-			it = partList.erase(it);
-			//delete del;
+			del->scale -= Vector3(5, 5, 5) * dt;
+			if (del->scale.LengthSquared() < 0.1f)
+				del->scale.Set(0.01f, 0.01f, 0.01f);
+
+			if (del->scale.LengthSquared() < 0.1f)
+			{
+
+				head->rootNode->DeleteChild(del);
+				it = partList.erase(it);
+				
+				if (del->name == "MONK_LEFT_LEG")
+				{
+					leftLeg = nullptr;
+				}
+				if (del->name == "MONK_RIGHT_LEG")
+				{
+					rightLeg = nullptr;
+				}
+				delete del;
+				del = nullptr;
+			}
+			else
+				++it;
+
 		}
 		else
 			++it;
@@ -219,6 +240,12 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	catch (std::string e) {
 		/*Do nothing when object and player is at same position.*/
 	}
+
+	if ((leftLeg == rightLeg) && rightLeg == nullptr)
+	{
+		core->SetDirection(0, 0, 0);
+		return;
+	}
 	if ((Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()).LengthSquared() > 100.f)
 		core->SetDirection(moveToPlayer * 20.f);
 	else
@@ -226,32 +253,37 @@ void CMonk::UpdatePart(double dt, std::string _part)
 
 	/*Rotate the legs to animate as walking.*/
 
-	if (leftLeg->GetTransformOffset() >= 10.f)
-		leftLeg->SetTransformChange(true);
-	else if (leftLeg->GetTransformOffset() <= leftLeg->GetTimer())
-		leftLeg->SetTransformChange(false);
+	if (leftLeg != nullptr)
+	{
+		if (leftLeg->GetTransformOffset() >= 10.f)
+			leftLeg->SetTransformChange(true);
+		else if (leftLeg->GetTransformOffset() <= leftLeg->GetTimer())
+			leftLeg->SetTransformChange(false);
 
-	if (!leftLeg->GetTransformChange()) {
-		leftLeg->AddTransformOffset(dt * 50.f);
-		leftLeg->SetTimer(-10.f);
+		if (!leftLeg->GetTransformChange()) {
+			leftLeg->AddTransformOffset(dt * 50.f);
+			leftLeg->SetTimer(-10.f);
+		}
+		else
+			leftLeg->AddTransformOffset(-dt * 50.f);
+		leftLeg->SetOffset(leftLeg->GetTransformOffset(), 0.f, 0.f);
 	}
-	else 
-		leftLeg->AddTransformOffset(-dt * 50.f);
-	leftLeg->SetOffset(leftLeg->GetTransformOffset(), 0.f, 0.f);
 
-	if (rightLeg->GetTransformOffset() <= -10.f)
-		rightLeg->SetTransformChange(true);
-	else if (rightLeg->GetTransformOffset() >= rightLeg->GetTimer())
-		rightLeg->SetTransformChange(false);
+	if (rightLeg != nullptr)
+	{
+		if (rightLeg->GetTransformOffset() <= -10.f)
+			rightLeg->SetTransformChange(true);
+		else if (rightLeg->GetTransformOffset() >= rightLeg->GetTimer())
+			rightLeg->SetTransformChange(false);
 
-	if (!rightLeg->GetTransformChange()) {
-		rightLeg->AddTransformOffset(-dt * 50.f);
-		rightLeg->SetTimer(10.f);
+		if (!rightLeg->GetTransformChange()) {
+			rightLeg->AddTransformOffset(-dt * 50.f);
+			rightLeg->SetTimer(10.f);
+		}
+		else
+			rightLeg->AddTransformOffset(dt * 50.f);
+		rightLeg->SetOffset(rightLeg->GetTransformOffset(), 0.f, 0.f);
 	}
-	else
-		rightLeg->AddTransformOffset(dt * 50.f);
-	rightLeg->SetOffset(rightLeg->GetTransformOffset(), 0.f, 0.f);
-
 	if (_part == "MONK_HEAD") {
 
 	}
@@ -412,6 +444,8 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 		part->translateAnimation["MOVE_DOWN"] = Vector3(0.f, -1.f, 0.f);
 		part->translateAnimation["MOVE_LEFT"] = Vector3(-1.f, 0.f, 0.f);
 		part->translateAnimation["MOVE_RIGHT"] = Vector3(1.f, 0.f, 0.f);
+
+		part->isStatic = false;
 	}
 
 	/*Add into Enemy Manager for State Changes Update.*/
