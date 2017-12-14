@@ -55,6 +55,9 @@
     <Filter Include="EntityTypes">
       <UniqueIdentifier>{8571f7d5-9c81-4670-96ce-26d4fdd0f572}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AudioPlayer">
+      <UniqueIdentifier>{c18b5ddd-0408-45d9-9849-f204be72c919}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -161,6 +164,9 @@
     </ClCompile>
     <ClCompile Include="Source\PlayerInfo\ScoreManager.cpp">
       <Filter>PlayerInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AudioPlayer\AudioPlayer.cpp">
+      <Filter>AudioPlayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,5 +275,11 @@
     <ClInclude Include="Source\PlayerInfo\ScoreManager.h">
       <Filter>PlayerInfo</Filter>
     </ClInclude>
+<<<<<<< HEAD
+=======
+    <ClInclude Include="Source\AudioPlayer\AudioPlayer.h">
+      <Filter>AudioPlayer</Filter>
+    </ClInclude>
+>>>>>>> 5b00a9b1b69482e6de43a7c7f085ae6df181b408
   </ItemGroup>
 </Project>

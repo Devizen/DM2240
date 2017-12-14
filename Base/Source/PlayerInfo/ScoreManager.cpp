@@ -6,7 +6,8 @@
 #include "MeshBuilder.h"
 #include <sstream>
 
-CScoreManager* CScoreManager::s_instance = nullptr;
+
+CScoreManager* CScoreManager::s_instance = 0;
 
 CScoreManager::CScoreManager(void)
 {
