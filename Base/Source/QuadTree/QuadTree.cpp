@@ -216,7 +216,7 @@ void QuadTree::Update(double dt)
 			e->GetLoD().SetLevel(CLevelOfDetail::LOW);
 		
 		//e->Update(dt);
-
+		//RenderGrid = true;
 		if (this->RenderGrid == false) {
 			GenericEntity* ge = dynamic_cast<GenericEntity*>(e);
 			if (ge)

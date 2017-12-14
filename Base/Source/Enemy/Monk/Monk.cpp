@@ -296,12 +296,13 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Create root for Scene Graph.*/
 	CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
 	rootNode->GetEntity()->SetPosition(_position);
+
 	/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
 	The entire Scene Graph will be traversed from the root.*/
 	tempHead->SetSceneGraph(Create::SceneGraph(rootNode));
 	Create::SceneNode(rootNode, rootNode, tempHead);
 	/*Init the LoD.*/
-	tempHead->InitLoD("MONK_HEAD", "MONK_HEAD", "MONK_HEAD");
+	tempHead->InitLoD("MONK_HEAD", "MONK_HEAD", "MONK_HEAD_LOW");
 	/*Set AABB.*/
 	tempHead->SetEntityType(ECEntityTypes::OBJECT);
 	tempHead->collider = new CCollider(tempHead);
@@ -399,6 +400,17 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	//monk->collider = new CCollider(monk);
 	//monk->collider->SetAABB(Vector3(10, 0, 10) *0.5f, -Vector3(10, 20, 10) * 0.5f);
 	//QuadTreeManager::GetInstance()->InsertEntity(monk);
+
+	/*Set AABB.*/
+	rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
+	rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
+	rootNode->GetEntity()->collider->SetMinAABB(Vector3(-5.f, 0.f, -5.f));
+	rootNode->GetEntity()->collider->SetMaxAABB(Vector3(5.f, 20.f, 5.f));
+	rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
+	rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
+	rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
+	CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+
 
 	/*Assign player to pointer for tracking position.*/
 	monk->SetPlayer(_player);
