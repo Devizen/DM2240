@@ -453,6 +453,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 		part->translateAnimation["MOVE_RIGHT"] = Vector3(1.f, 0.f, 0.f);
 
 		part->isStatic = false;
+		part->isDestroyable = true;
 	}
 
 	/*Add into Enemy Manager for State Changes Update.*/

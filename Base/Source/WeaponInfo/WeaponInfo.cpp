@@ -172,6 +172,8 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 					{
 						if (isLineIntersectAABB(e, position, (target - position).Normalized(), outPt))
 						{
+							if (e->isDestroyable ==  true)
+								e->SetIsDone(true);
 							if (e->isStatic == false)
 								e->SetIsDone(true);;
 						}
@@ -181,7 +183,7 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 						{
 							if (isLineIntersectAABB(child->GetEntity(), position, (target - position).Normalized(), outPt))
 							{
-								if (e->isStatic == false)
+								if (e->isStatic == false || e->isDestroyable == true)
 								child->GetEntity()->SetIsDone(true);
 							}
 						}

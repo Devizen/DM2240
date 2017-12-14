@@ -90,6 +90,7 @@ public:
 	bool isDone;
 	Vector3 scale;
 	std::string name;
+	bool isDestroyable = false;
 protected:
 	Vector3 position;
 	/*For offsetting position for rotation when OBJ is not at center.*/

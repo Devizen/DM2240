@@ -305,6 +305,8 @@ void GenericEntity::CollisionResponse(EntityBase* other)
 	//	}
 	//}
 
+	if (isDestroyable == true)
+		isDone = true;
 	if (isStatic == false)
 		isDone = true;
 }

@@ -658,6 +658,7 @@ void SceneText::Update(double dt)
 			wall->GetPosition().z + 0.5f));
 		wall->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(wall->GetPosition(), wall->GetScale()));
 		CollisionManager::GetInstance()->AddCollider(wall->collider, wall->GetPartitionPtr());
+		wall->isDestroyable = true;
 
 		/*Set AABB.*/
 		rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
@@ -668,6 +669,7 @@ void SceneText::Update(double dt)
 		rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
 		rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
 		CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+		//rootNode->GetEntity()->isDestroyable = true;
 	}
 
 	/*Display AABB of enemy.*/
