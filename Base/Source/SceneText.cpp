@@ -47,6 +47,7 @@
 
 /*Create tower for enemy to attack.*/
 #include "PlayerInfo\TowerManager.h"
+#include "PlayerInfo\ScoreManager.h"
 
 #include <iostream>
 using namespace std;
@@ -733,6 +734,7 @@ void SceneText::Update(double dt)
 	double aspectRatio = Application::GetInstance().GetWindowWidth() / (double)Application::GetInstance().GetWindowHeight();
 	//std::cout << aspectRatio << std::endl;
 	CameraManager::GetInstance()->SetAspect(aspectRatio);
+	CScoreManager::GetInstance()->AddScore(dt);
 }
 
 void SceneText::Render()
@@ -828,6 +830,7 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	GraphicsManager::GetInstance()->DetachCamera();
 	EntityManager::GetInstance()->RenderUI();
+	CScoreManager::GetInstance()->RenderUI();
 }
 
 void SceneText::RenderWorld(void)

@@ -1,6 +1,8 @@
 #include "EnemyManager.h"
 #include "Monk\Monk.h"
 #include <algorithm>
+#include "../PlayerInfo/ScoreManager.h"
+
 CEnemyManager* CEnemyManager::s_instance = 0;
 CEnemyManager::CEnemyManager(void) :
 	renderAABB(false)
@@ -26,7 +28,10 @@ void CEnemyManager::Update(double dt)
 			++it;
 		}
 		else
+		{
 			it = enemyList.erase(it);
+			CScoreManager::GetInstance()->AddScore(2);
+		}
 	}
 }
 

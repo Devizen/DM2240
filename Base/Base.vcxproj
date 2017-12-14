@@ -25,6 +25,7 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\PlayerInfo\PlayerInfo.cpp" />
+    <ClCompile Include="Source\PlayerInfo\ScoreManager.cpp" />
     <ClCompile Include="Source\PlayerInfo\TowerManager.cpp" />
     <ClCompile Include="Source\Projectile\Explosive.cpp" />
     <ClCompile Include="Source\Projectile\Laser\Laser.cpp" />
@@ -61,6 +62,7 @@
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\PlayerInfo\PlayerInfo.h" />
+    <ClInclude Include="Source\PlayerInfo\ScoreManager.h" />
     <ClInclude Include="Source\PlayerInfo\TowerManager.h" />
     <ClInclude Include="Source\Projectile\Explosive.h" />
     <ClInclude Include="Source\Projectile\Laser\Laser.h" />
@@ -126,7 +128,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_VARIADIC_MAX=10;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glfw/include;$(SolutionDir)/glew/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glfw/include;$(SolutionDir)/glew/include;$(SolutionDir)/irrKlang/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>

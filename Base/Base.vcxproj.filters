@@ -155,9 +155,12 @@
     </ClCompile>
     <ClCompile Include="Source\PlayerInfo\TowerManager.cpp">
       <Filter>PlayerInfo</Filter>
-    </ClCompile>    
+    </ClCompile>
     <ClCompile Include="Source\Projectile\Explosive.cpp">
       <Filter>Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerInfo\ScoreManager.cpp">
+      <Filter>PlayerInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +264,9 @@
       <Filter>Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerInfo\TowerManager.h">
+      <Filter>PlayerInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerInfo\ScoreManager.h">
       <Filter>PlayerInfo</Filter>
     </ClInclude>
   </ItemGroup>

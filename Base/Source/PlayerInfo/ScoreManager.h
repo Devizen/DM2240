@@ -13,8 +13,10 @@ public:
 	void SetScore(float _score) { score = _score; }
 	float GetScore(void) { return score; }
 	void ResetScore(void) { score = 0.f; }
+
+	void RenderUI();
 private:
-	float score;
+	float score = 0.f;
 protected:
 };
 
