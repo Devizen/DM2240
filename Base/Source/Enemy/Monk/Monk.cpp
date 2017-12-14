@@ -362,7 +362,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	tempHead->SetSceneGraph(Create::SceneGraph(rootNode));
 	Create::SceneNode(rootNode, rootNode, tempHead);
 	/*Init the LoD.*/
-	tempHead->InitLoD("MONK_HEAD", "MONK_HEAD", "MONK_HEAD_LOW");
+	tempHead->InitLoD("MONK_HEAD", "MONK_HEAD_MID", "MONK_HEAD_LOW");
 	/*Set AABB.*/
 	tempHead->SetEntityType(ECEntityTypes::OBJECT);
 	tempHead->collider = new CCollider(tempHead);
@@ -375,7 +375,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Create node and bind it to parent and root.*/
 	Create::SceneNode(rootNode, rootNode, tempBody);
 	/*Body.*/
-	tempBody->InitLoD("MONK_BODY", "MONK_BODY", "MONK_BODY");
+	tempBody->InitLoD("MONK_BODY", "MONK_BODY_MID", "MONK_BODY_LOW");
 	/*Set AABB.*/
 	tempBody->SetEntityType(ECEntityTypes::OBJECT);
 	tempBody->collider = new CCollider(tempBody);
@@ -388,7 +388,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Create node and bind it to parent and root.*/
 	Create::SceneNode(rootNode, rootNode, tempLeftArm);
 	/*Left Arm.*/
-	tempLeftArm->InitLoD("MONK_LEFT_ARM", "MONK_LEFT_ARM", "MONK_LEFT_ARM");
+	tempLeftArm->InitLoD("MONK_LEFT_ARM", "MONK_LEFT_ARM_MID", "MONK_LEFT_ARM_LOW");
 	/*Set AABB.*/
 	tempLeftArm->SetEntityType(ECEntityTypes::OBJECT);
 	tempLeftArm->collider = new CCollider(tempLeftArm);
@@ -401,7 +401,7 @@ CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerI
 	/*Create node and bind it to parent and root.*/
 	Create::SceneNode(rootNode, rootNode, tempRightArm);
 	/*Right Arm.*/
-	tempRightArm->InitLoD("MONK_RIGHT_ARM", "MONK_RIGHT_ARM", "MONK_RIGHT_ARM");
+	tempRightArm->InitLoD("MONK_RIGHT_ARM", "MONK_RIGHT_ARM_MID", "MONK_RIGHT_ARM_LOW");
 	/*Set AABB.*/
 	tempRightArm->SetEntityType(ECEntityTypes::OBJECT);
 	tempRightArm->collider = new CCollider(tempRightArm);

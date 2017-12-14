@@ -52,7 +52,7 @@ GenericEntity* Create::Tower(const Vector3 & _position, const Vector3 & _scale)
 	tower->collider->SetMaxAABB(Vector3(tower->GetPosition().x + 5.f, tower->GetPosition().y + 50.f, tower->GetPosition().z + 5.f));
 	tower->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(tower->GetPosition(), tower->GetScale()));
 	CollisionManager::GetInstance()->AddCollider(tower->collider, tower->GetPartitionPtr());
-	tower->InitLoD("TOWER", "TOWER", "TOWER");
+	tower->InitLoD("TOWER", "TOWER_MID", "TOWER_LOW");
 
 	/*Set AABB.*/
 	rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);

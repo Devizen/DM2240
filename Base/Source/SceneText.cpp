@@ -258,16 +258,35 @@ void SceneText::Init()
 	/*Enemy*/
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD", "OBJ//MONK//MONK_HEAD.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD_LOW", "OBJ//MONK//MONK_HEAD.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD_MID", "OBJ//MONK//MONK_HEAD_MID.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD_LOW", "OBJ//MONK//MONK_HEAD_LOW.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_ao.tga");
+
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_BODY", "OBJ//MONK//MONK_BODY.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_BODY")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_BODY_MID", "OBJ//MONK//MONK_BODY_MID.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_BODY_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_BODY_LOW", "OBJ//MONK//MONK_BODY_LOW.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_BODY_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_ao.tga");
+
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_ARM", "OBJ//MONK//MONK_LEFT_ARM.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_ARM")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_ARM_MID", "OBJ//MONK//MONK_LEFT_ARM_MID.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_ARM_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_ARM_LOW", "OBJ//MONK//MONK_LEFT_ARM_LOW.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_ARM_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_ao.tga");
+
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_ARM", "OBJ//MONK//MONK_RIGHT_ARM.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_ARM")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_ARM_MID", "OBJ//MONK//MONK_RIGHT_ARM_MID.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_ARM_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_ARM_LOW", "OBJ//MONK//MONK_RIGHT_ARM_LOW.obj");
+	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_ARM_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_ao.tga");
+
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_LEG", "OBJ//MONK//MONK_LEFT_LEG.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_LEG", "OBJ//MONK//MONK_RIGHT_LEG.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
 
@@ -278,8 +297,20 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateOBJ("TOWER", "OBJ//TOWER.obj");
 	MeshBuilder::GetInstance()->GetMesh("TOWER")->textureID[0] = LoadTGA("Image//TOWER.tga");
 
+	MeshBuilder::GetInstance()->GenerateOBJ("TOWER_MID", "OBJ//TOWER_MID.obj");
+	MeshBuilder::GetInstance()->GetMesh("TOWER_MID")->textureID[0] = LoadTGA("Image//TOWER.tga");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("TOWER_LOW", "OBJ//TOWER_LOW.obj");
+	MeshBuilder::GetInstance()->GetMesh("TOWER_LOW")->textureID[0] = LoadTGA("Image//TOWER.tga");
+
 	MeshBuilder::GetInstance()->GenerateOBJ("CRATE", "OBJ//CRATE.obj");
 	MeshBuilder::GetInstance()->GetMesh("CRATE")->textureID[0] = LoadTGA("Image//CRATE.tga");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("CRATE_MID", "OBJ//CRATE_MID.obj");
+	MeshBuilder::GetInstance()->GetMesh("CRATE_MID")->textureID[0] = LoadTGA("Image//ORANGE.tga");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("CRATE_LOW", "OBJ//CRATE_LOW.obj");
+	MeshBuilder::GetInstance()->GetMesh("CRATE_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");
 
 	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_0", "OBJ//BUILDING_0.obj");
 	MeshBuilder::GetInstance()->GetMesh("BUILDING_0")->textureID[0] = LoadTGA("Image//BUILDING_0.tga");
@@ -287,8 +318,20 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1", "OBJ//BUILDING_1.obj");
 	MeshBuilder::GetInstance()->GetMesh("BUILDING_1")->textureID[0] = LoadTGA("Image//BUILDING_1.tga");
 
+	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1_MID", "OBJ//BUILDING_1_MID.obj");
+	MeshBuilder::GetInstance()->GetMesh("BUILDING_1_MID")->textureID[0] = LoadTGA("Image//ORANGE.tga");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1_LOW", "OBJ//BUILDING_1_LOW.obj");
+	MeshBuilder::GetInstance()->GetMesh("BUILDING_1_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");
+
 	MeshBuilder::GetInstance()->GenerateOBJ("WALL", "OBJ//WALL.obj");
 	MeshBuilder::GetInstance()->GetMesh("WALL")->textureID[0] = LoadTGA("Image//WALL.tga");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("WALL_MID", "OBJ//WALL_MID.obj");
+	MeshBuilder::GetInstance()->GetMesh("WALL_MID")->textureID[0] = LoadTGA("Image//ORANGE.tga");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("WALL_LOW", "OBJ//WALL_LOW.obj");
+	MeshBuilder::GetInstance()->GetMesh("WALL_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");
 
 	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
 	MeshBuilder::GetInstance()->GenerateSphere("nade", Color(0.3, 0.4, 0.3), 10, 10, .5f);
@@ -360,53 +403,6 @@ void SceneText::Init()
 	// Create entities into the scene
 	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	//Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
-
-	/*We will take this aCube as an example of Parent Node which will destroy all children if collided.*/
-	GenericEntity* aCube = Create::Asset("cube", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
-	/*Create root for Scene Graph.*/
-	CSceneNode* rootNodeForCube = Create::SceneNode(nullptr, nullptr, nullptr);
-	/*Create an empty Scene Graph for aCube which will be rendered and updated in QuadTreeManager.
-	The entire Scene Graph will be traversed from the root.*/
-	aCube->SetSceneGraph(Create::SceneGraph(rootNodeForCube));
-	CSceneNode* aCubeNode = Create::SceneNode(rootNodeForCube, rootNodeForCube, aCube);
-	/*Init the LoD.*/
-	aCube->InitLoD("cube", "cube", "cube");
-	
-	GenericEntity* bCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f));
-	bCube->InitLoD("cubeSG", "cubeSG", "cubeSG");
-	/*Create node and bind it to parent and root.*/
-	CSceneNode* bCubeNode = Create::SceneNode(rootNodeForCube, rootNodeForCube, bCube);
-	bCubeNode->ApplyTranslate(0.f, 5.f, 0.f);
-
-	GenericEntity* cCube = Create::Asset("cubeSG", Vector3(0.f, 0.f, 0.f), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f));
-	cCube->InitLoD("cubeSG", "cubeSG", "cubeSG");
-	CSceneNode* cCubeNode = Create::SceneNode(rootNodeForCube, rootNodeForCube, cCube);
-	cCubeNode->ApplyTranslate(0.f, 5.f, 5.f);
-
-	rootNodeForCube->PrintSelf();
-	Create::Monk(Vector3(200.f, -10.f, 0.f), Vector3(5.f, 5.f, 5.f), playerInfo);
-
-	aCube->SetEntityType(ECEntityTypes::OBJECT);
-	aCube->collider = new CCollider(aCube);
-	aCube->collider->SetMinAABB((-aCube->GetScale() * 0.5f) + aCube->GetPosition());
-	aCube->collider->SetMaxAABB((aCube->GetScale() * 0.5f) + aCube->GetPosition());
-	aCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(aCube->GetPosition(), aCube->GetScale()));
-	CollisionManager::GetInstance()->AddCollider(aCube->collider, aCube->GetPartitionPtr());
-
-	//this cube is on 4 partitions, 6,7,11,12.
-	bCube->SetEntityType(ECEntityTypes::OBJECT);
-	bCube->collider = new CCollider(bCube);
-	bCube->collider->SetMinAABB((-bCube->GetScale() * 0.5f) + bCube->GetPosition());
-	bCube->collider->SetMaxAABB((bCube->GetScale() * 0.5f) + bCube->GetPosition());
-	bCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(bCube->GetPosition(), bCube->GetScale()));
-	CollisionManager::GetInstance()->AddCollider(bCube->collider, bCube->GetPartitionPtr());
-
-	cCube->SetEntityType(ECEntityTypes::OBJECT);
-	cCube->collider = new CCollider(cCube);
-	cCube->collider->SetMinAABB((-cCube->GetScale() * 0.5f) + cCube->GetPosition());
-	cCube->collider->SetMaxAABB((cCube->GetScale() * 0.5f) + cCube->GetPosition());
-	cCube->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(cCube->GetPosition(), cCube->GetScale()));
-	CollisionManager::GetInstance()->AddCollider(cCube->collider, cCube->GetPartitionPtr());
 
 
 //	Create::Text3DObject("text", Vector3(0.0f, 0.0f, 0.0f), "DM2210", Vector3(10.0f, 10.0f, 10.0f), Color(0, 1, 1));
@@ -546,7 +542,7 @@ void SceneText::Update(double dt)
 	/*Randomly spawn an enemy on the map.*/
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_BACK))
 	{
-		Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f, 
+		Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
 	}
 
@@ -562,7 +558,7 @@ void SceneText::Update(double dt)
 	{
 		GenericEntity* crate = Create::Asset("CRATE", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
-		crate->InitLoD("CRATE", "CRATE", "CRATE");
+		crate->InitLoD("CRATE", "CRATE_MID", "CRATE_LOW");
 		/*Create root for Scene Graph.*/
 		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
 		rootNode->GetEntity()->SetPosition(crate->GetPosition());
@@ -596,7 +592,7 @@ void SceneText::Update(double dt)
 	{
 		GenericEntity* building = Create::Asset("BUILDING_1", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(0.2f, 0.2f, 0.2f), Vector3(5.f, 5.f, 5.f), true);
-		building->InitLoD("BUILDING_1", "BUILDING_1", "BUILDING_1");
+		building->InitLoD("BUILDING_1", "BUILDING_1_MID", "BUILDING_1_LOW");
 		/*Create root for Scene Graph.*/
 		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
 		rootNode->GetEntity()->SetPosition(building->GetPosition());
@@ -610,10 +606,10 @@ void SceneText::Update(double dt)
 		building->SetEntityType(ECEntityTypes::OBJECT);
 		building->collider = new CCollider(building);
 		building->collider->SetMinAABB(Vector3(building->GetPosition().x - 13.5f,
-			building->GetPosition().y, 
+			building->GetPosition().y,
 			building->GetPosition().z - 12.5f));
 		building->collider->SetMaxAABB(Vector3(building->GetPosition().x + 13.5f,
-			building->GetPosition().y + 45.f, 
+			building->GetPosition().y + 45.f,
 			building->GetPosition().z + 12.5f));
 		building->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(building->GetPosition(), building->GetScale()));
 		CollisionManager::GetInstance()->AddCollider(building->collider, building->GetPartitionPtr());
@@ -634,7 +630,7 @@ void SceneText::Update(double dt)
 	{
 		GenericEntity* wall = Create::Asset("WALL", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
-		wall->InitLoD("WALL", "WALL", "WALL");
+		wall->InitLoD("WALL", "WALL_MID", "WALL_LOW");
 		/*Create root for Scene Graph.*/
 		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
 		rootNode->GetEntity()->SetPosition(wall->GetPosition());
@@ -657,8 +653,8 @@ void SceneText::Update(double dt)
 			wall->GetPosition().y + 35.f,
 			wall->GetPosition().z + 0.5f));
 		wall->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(wall->GetPosition(), wall->GetScale()));
-		CollisionManager::GetInstance()->AddCollider(wall->collider, wall->GetPartitionPtr());
 		wall->isDestroyable = true;
+		CollisionManager::GetInstance()->AddCollider(wall->collider, wall->GetPartitionPtr());
 
 		/*Set AABB.*/
 		rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
@@ -669,7 +665,6 @@ void SceneText::Update(double dt)
 		rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
 		rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
 		CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
-		//rootNode->GetEntity()->isDestroyable = true;
 	}
 
 	/*Display AABB of enemy.*/
