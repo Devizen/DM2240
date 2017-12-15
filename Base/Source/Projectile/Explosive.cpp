@@ -8,7 +8,7 @@
 #include "RenderHelper.h"
 #include "../EntityTypes/EntityTypes.h"
 #include "MeshBuilder.h"
-
+#include "../AudioPlayer/AudioPlayer.h"
 CExplosive::CExplosive(void) : GenericEntity(nullptr)
 , m_bStatus(false)
 , theDirection(0, 0, 0)
@@ -66,6 +66,8 @@ void CExplosive::Update(double dt)
 
 		if (boom == false)
 		{
+			CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/EXPLODE.ogg", false);
+
 			this->collider->SetAABBPosition(this->position);
 			this->collider->SetAABB(this->position + Vector3(100, 100, 100), this->position - Vector3(100, 100, 100));
 			std::list<EntityBase*> elist(QuadTreeManager::GetInstance()->GetNearbyEntities(this, QuadTreeManager::GetInstance()->GetRoot(), true));
