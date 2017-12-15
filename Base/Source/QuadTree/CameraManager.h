@@ -39,4 +39,7 @@ public:
 	void SetAspect(double fov) { frustum.aspectRatio = fov; }
 
 	bool IsAABBInFrustum(Vector3 min, Vector3 max);
+
+	const float defaultSpeedUp = 2.f;
+	float speedUp;
 };

@@ -7,6 +7,7 @@
 #include "../Projectile/Projectile.h"
 #include "../WeaponInfo/Pistol.h"
 #include "../Projectile/Explosive.h"
+#include "../QuadTree/CameraManager.h"
 
 // Allocating and initializing CPlayerInfo's static data member.  
 // The pointer is allocated but not the object's constructor.
@@ -311,27 +312,27 @@ void CPlayerInfo::Update(double dt)
 		{
 			Vector3 temp(viewVector);
 			temp.y = 0;
-			position += temp.Normalized() * (float)m_dSpeed * (float)dt;
+			position += temp.Normalized() * (float)m_dSpeed * (float)dt * CameraManager::GetInstance()->speedUp;
 		}
 		else if (KeyboardController::GetInstance()->IsKeyDown('S'))
 		{
 			Vector3 temp(viewVector);
 			temp.y = 0;
-			position -= temp.Normalized() * (float)m_dSpeed * (float)dt;
+			position -= temp.Normalized() * (float)m_dSpeed * (float)dt * CameraManager::GetInstance()->speedUp;
 		}
 		if (KeyboardController::GetInstance()->IsKeyDown('A'))
 		{
 			rightUV = (viewVector.Normalized()).Cross(up);
 			rightUV.y = 0;
 			rightUV.Normalize();
-			position -= rightUV * (float)m_dSpeed * (float)dt;
+			position -= rightUV * (float)m_dSpeed * (float)dt * CameraManager::GetInstance()->speedUp;
 		}
 		else if (KeyboardController::GetInstance()->IsKeyDown('D'))
 		{
 			rightUV = (viewVector.Normalized()).Cross(up);
 			rightUV.y = 0;
 			rightUV.Normalize();
-			position += rightUV * (float)m_dSpeed * (float)dt;
+			position += rightUV * (float)m_dSpeed * (float)dt * CameraManager::GetInstance()->speedUp;
 		}
 		// Constrain the position
 		Constrain();

@@ -157,7 +157,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-vc2015;$(SolutionDir)/glew/lib;$(SolutionDir)/irrKlang/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-vc2015;$(SolutionDir)/glew/lib;$(SolutionDir)/irrKlang/lib/Win32-visualStudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>legacy_stdio_definitions.lib;Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;glfw3dll.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

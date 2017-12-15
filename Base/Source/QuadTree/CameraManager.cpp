@@ -13,6 +13,8 @@ CameraManager::CameraManager() : playerCam (nullptr), birdEyeCam(nullptr)
 	frustum.aspectRatio = 4.0 / 3.0;
 	frustum.nearPlane = 0.1;
 	frustum.farPlane = 1000.0;
+
+	speedUp = 1.f;
 }
 
 CameraManager::~CameraManager()

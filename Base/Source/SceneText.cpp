@@ -71,6 +71,9 @@ SceneText::~SceneText()
 
 void SceneText::Init()
 {
+	// White background
+	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Shadow.vertexshader", "Shader//Shadow.fragmentshader");
 	m_gPassShaderID = GraphicsManager::GetInstance()->LoadShader("gpass", "Shader//GPass.vertexshader", "Shader//GPass.fragmentshader");
 
@@ -110,7 +113,7 @@ void SceneText::Init()
 	currProg->AddUniform("colorTexture");
 	currProg->AddUniform("textEnabled");
 	currProg->AddUniform("textColor");
-	
+
 	// Tell the graphics manager to use the shader we just loaded
 	GraphicsManager::GetInstance()->SetActiveShader("default");
 
@@ -202,7 +205,7 @@ void SceneText::Init()
 	//MeshBuilder::GetInstance()->GenerateLine
 	// Load all the meshes
 	MeshBuilder::GetInstance()->GenerateAxes("reference");
-	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
+	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair", 0.f, 0.f, 0.f, 3.f);
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GenerateQuad("oquad", Color(1, 0.8, 0.4), 1.f);
 	//MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
@@ -345,35 +348,7 @@ void SceneText::Init()
 	CSpatialPartitionManager::GetInstance()->Init(numOfPartitionXZ, static_cast<unsigned>(groundScale), playerInfo);
 
 	playerInfo->SetSpatialPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(playerInfo->GetPos()));
-	//playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
-	/*playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMinBoundary());
-	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMaxBoundary());*/
 
-
-	/*Create the same amount of entity manager for each partition.*/
-	//CMasterEntityManager::GetInstance()->Init(CSpatialPartitionManager::GetInstance()->GetPartitionCount());
-	//CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
-
-	//for (size_t i = 0; i < CSpatialPartitionManager::GetInstance()->GetPartitionCount(); ++i)
-	//{
-	//	Vector3 position = CSpatialPartitionManager::GetInstance()->GetPartition(i)->GetSPPosition();
-	//	position.x += 10.f;
-	//	position.y += 20.f;
-	//	EntityBase* chair = Create::Asset("GREENSPHERE", position, Vector3(1.f, 1.f, 1.f));
-	//	chair->SetEntityType(ECEntityTypes::OBJECT);
-	//	chair->InitLoD("GREENSPHERE", "BLUESPHERE", "REDSPHERE");
-
-	//	chair->collider = new CCollider(chair);
-	//	chair->collider->SetMinAABB(Vector3(-10.f, 0.f, -10.f) + position);
-	//	chair->collider->SetMaxAABB(Vector3(10.f, 30.f, 10.f) + position);
-	//	chair->SetPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(position)->GetIndex());
-	//	CollisionManager::GetInstance()->AddCollider(chair->collider, chair->GetPartitionPtr());
-
-	//	QuadTreeManager::GetInstance()->InsertEntity(chair);
-	//	//CMasterEntityManager::GetInstance()->AddEntity(chair);
-	//}
-
-	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 	groundEntity = Create::Ground("COMGROUND", "COMGROUND");
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, -10, 0));
@@ -386,47 +361,19 @@ void SceneText::Init()
 	terrain->SetEntityType(ECEntityTypes::STATIC);
 	terrain->SetScale(Vector3(2000.f, 350.f, 2000.f));
 
-	/*Shadow Quad.*/
-	//MeshBuilder::GetInstance()->GenerateQuad("LIGHT_DEPTH_TEXTURE", Color(1, 1, 1), 1.f);
-	//MeshBuilder::GetInstance()->GetMesh("LIGHT_DEPTH_TEXTURE")->textureID[0] = DepthFBO::GetInstance()->GetTexture();
-	//GenericEntity* shadowQuad = Create::Entity("LIGHT_DEPTH_TEXTURE", Vector3(50.f, 0.f, 0.f));
-	//shadowQuad->SetScale(Vector3(20.f, 20.f, 1.f));
-	//shadowQuad->SetEntityType(ECEntityTypes::TERRAIN);
-
-	//GenericEntity* aSphere = Create::Entity("sphere", Vector3(0.f, 20.f, 0.f));
-
-	//MeshBuilder::GetInstance()->GenerateQuad("floor", Color(1, 1, 1), 1.f);
-	//MeshBuilder::GetInstance()->GetMesh("floor")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
-	//GenericEntity* aQuad = Create::Entity("floor", Vector3(0.f, -5.f, 0.f));
-	//aQuad->SetScale(Vector3(100.f, 100.f, 1.f));
-	//aQuad->SetRotateAngle(-90.f);
-	//aQuad->SetRotateAxis(Vector3(1.f, 0.f, 0.f));
-
-	// Create entities into the scene
-	//Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
-	//Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
-
-
-//	Create::Text3DObject("text", Vector3(0.0f, 0.0f, 0.0f), "DM2210", Vector3(10.0f, 10.0f, 10.0f), Color(0, 1, 1));
 	Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
-
-	//SkyBoxEntity* theSkyBox = Create::SkyBox("SKYBOX_FRONT", "SKYBOX_BACK",
-	//										 "SKYBOX_LEFT", "SKYBOX_RIGHT",
-	//										 "SKYBOX_TOP", "SKYBOX_BOTTOM");
-	//theSkyBox->SetEntityType(ECEntityTypes::STATIC);
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
 	float fontSize = (halfWindowWidth / halfWindowHeight) * 20.f;
 	float halfFontSize = fontSize * 0.5f;
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 25; ++i)
 	{
-		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,0.0f,0.0f));
+		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 		textObj[i]->SetEntityType(ECEntityTypes::STATIC);
 	}
-	textObj[0]->SetText("HELLO WORLD");
-
+	textObj[0]->SetText("Assignment 1");
 
 	QuadTreeManager::GetInstance()->ground = groundEntity;
 	//CameraManager::GetInstance()->AttachPlayerCam(&this->camera);
@@ -436,9 +383,10 @@ void SceneText::Init()
 	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
 	//birdEyeCam->
 
-	Create::Tower(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
-		Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(2.f, 2.f, 2.f));
-
+	/*Spawn randomly 5 enemies.*/
+	for (unsigned i = 0; i < 5; ++i) {
+		Spawner("MONK");
+	}
 	/*Audio Initialisation.*/
 	audioPlayer = CAudioPlayer::GetInstance()->GetISoundEngine();
 	audioPlayer->play2D("Audio/BGM/GAME.ogg", true);
@@ -449,6 +397,19 @@ void SceneText::Update(double dt)
 	static float horizontal = lights[0]->position.x;
 	static float vertical = lights[0]->position.y;
 	static float frontback = lights[0]->position.z;
+
+	/*Spawner.*/
+	static float spawnTimer = 5.f;
+	static float spawnCooldown = 0.f;
+	spawnCooldown += static_cast<float>(dt);
+	if (spawnTimer <= 2.f)
+		spawnTimer = 2.f;
+	if (spawnTimer - spawnCooldown < 0.f) {
+		std::string spawnType[] = { "MONK", "TOWER", "CRATE", "BUILDING_1", "WALL" };
+		Spawner(spawnType[Math::RandIntMinMax(0, 4)]);
+		spawnCooldown = 0.f;
+		spawnTimer -= 0.01f;
+	}
 
 	/*Update the text object position and scale when the screen size is different. Example, Windowed Mode to Fullscreen Mode.*/
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -546,7 +507,7 @@ void SceneText::Update(double dt)
 	// <THERE>
 
 	/*Randomly spawn an enemy on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyPressed(VK_BACK))
+	if (KeyboardController::GetInstance()->IsKeyDown(VK_BACK))
 	{
 		Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
@@ -560,7 +521,7 @@ void SceneText::Update(double dt)
 	}
 
 	/*Randomly spawn a crate on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyPressed('I'))
+	if (KeyboardController::GetInstance()->IsKeyDown('I'))
 	{
 		GenericEntity* crate = Create::Asset("CRATE", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
@@ -594,7 +555,7 @@ void SceneText::Update(double dt)
 	}
 
 	/*Randomly spawn a Building_0 on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyPressed('O'))
+	if (KeyboardController::GetInstance()->IsKeyDown('O'))
 	{
 		GenericEntity* building = Create::Asset("BUILDING_1", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(0.2f, 0.2f, 0.2f), Vector3(5.f, 5.f, 5.f), true);
@@ -632,7 +593,7 @@ void SceneText::Update(double dt)
 	}
 
 	/*Randomly spawn a Wall on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyPressed('P'))
+	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 	{
 		GenericEntity* wall = Create::Asset("WALL", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
@@ -687,6 +648,29 @@ void SceneText::Update(double dt)
 		else
 			Application::GetInstance().MakeFullScreen();
 	}
+	/*Run for character.*/
+	static bool activateDefaultSpeedUp = true;
+	if (KeyboardController::GetInstance()->IsKeyDown(VK_LSHIFT)) {
+		if (activateDefaultSpeedUp) {
+			CameraManager::GetInstance()->speedUp = CameraManager::GetInstance()->defaultSpeedUp;
+			activateDefaultSpeedUp = false;
+		}
+	}
+	if (!activateDefaultSpeedUp)
+		CameraManager::GetInstance()->speedUp += static_cast<float>(dt);
+	if (KeyboardController::GetInstance()->IsKeyUp(VK_LSHIFT)) {
+		activateDefaultSpeedUp = true;
+		CameraManager::GetInstance()->speedUp = 1.f;
+	}
+	/*Reset the entire scene.*/
+	if (KeyboardController::GetInstance()->IsKeyPressed('G')) {
+		CScoreManager::GetInstance()->ResetScore();
+		std::deque<EntityBase*>entityList = QuadTreeManager::GetInstance()->GetAllEntities();
+		for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it)
+		{
+			(*it)->SetIsDone(true);
+		}
+	}
 	// Update the player position and other details based on keyboard and mouse inputs
 	playerInfo->Update(dt);
 
@@ -716,28 +700,25 @@ void SceneText::Update(double dt)
 	if (playerInfo->GetSpatialPartition()->CheckBoundary(playerInfo->GetPos()))
 		playerInfo->SetSpatialPartition(CSpatialPartitionManager::GetInstance()->UpdateGridInfo(playerInfo->GetPos()));
 
-	//std::ostringstream ss2;
-	//ss2 << "Player in Partition:" << playerInfo->GetSpatialPartition()->GetIndex();
-	//if (playerInfo->CheckBoundary(playerInfo->GetPos()))
-	//{
-	//	playerInfo->ClearPartition();
-	//	playerInfo->SetPartition(CSpatialPartitionManager::GetInstance()->GetPlayerGrid());
-	//	playerInfo->SetMinBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMinBoundary());
-	//	playerInfo->SetMaxBoundary(CSpatialPartitionManager::GetInstance()->GetPartition(playerInfo->GetPartition().front())->GetMaxBoundary());
-	//	CMasterEntityManager::GetInstance()->SetPartitionNum(playerInfo->GetPartition().front());
-	//}
+	if (CSpatialPartitionManager::GetInstance()->toggle && !QuadTreeManager::GetInstance()->toggle) {
+		std::ostringstream ss2;
+		ss2 << "Player in Partition:" << playerInfo->GetSpatialPartition()->GetIndex();
+		textObj[3]->SetText(ss2.str());
+	}
+	else {
+		ss1.str("");
+		ss1 << "Entity Count:" << QuadTreeManager::GetInstance()->GetAllEntities().size();
+		textObj[3]->SetText(ss1.str());
+	}
 
-	std::ostringstream ss2;
-	ss2 << "Player in Partition:" << playerInfo->GetSpatialPartition()->GetIndex();
-	textObj[3]->SetText(ss2.str());
+	ss1.str("");
+	ss1 << "Hitscan: " << (playerInfo->GetPrimaryWeapon()->hitScan ? "ON" : "OFF");
+	textObj[4]->SetText(ss1.str());
 
-	//std::ostringstream ss3;
-	//string toggle = CMasterEntityManager::GetInstance()->GetToggle() ? "ON" : "OFF";
-	//ss3 << "Spatial Partition [Numpad 5]:" << toggle;
-	//textObj[4]->SetText(ss3.str());
-
+	ss1.str("");
+	ss1 << "Score: " << std::to_string(static_cast<int>(CScoreManager::GetInstance()->GetScore()));
+	textObj[21]->SetText(ss1.str());
 	double aspectRatio = Application::GetInstance().GetWindowWidth() / (double)Application::GetInstance().GetWindowHeight();
-	//std::cout << aspectRatio << std::endl;
 	CameraManager::GetInstance()->SetAspect(aspectRatio);
 	CScoreManager::GetInstance()->AddScore(dt);
 }
@@ -827,7 +808,6 @@ void SceneText::RenderPassMain(void)
 
 	QuadTreeManager::GetInstance()->RenderGrid();
 	CameraManager::GetInstance()->RenderPlayerFrustum();
-	//QuadTreeManager::GetInstance()->RenderObj();
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
@@ -835,9 +815,139 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	GraphicsManager::GetInstance()->DetachCamera();
 	EntityManager::GetInstance()->RenderUI();
-	CScoreManager::GetInstance()->RenderUI();
+	//CScoreManager::GetInstance()->RenderUI();
 }
 
 void SceneText::RenderWorld(void)
 {
+}
+
+void SceneText::Spawner(std::string _name)
+{
+	if (_name == "MONK")
+	{
+		Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
+	}
+
+	/*Randomly spawn a tower on the map.*/
+	if (_name == "TOWER")
+	{
+		Create::Tower(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(2.f, 2.f, 2.f));
+	}
+
+	/*Randomly spawn a crate on the map.*/
+	if (_name == "CRATE")
+	{
+		GenericEntity* crate = Create::Asset("CRATE", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
+		crate->InitLoD("CRATE", "CRATE_MID", "CRATE_LOW");
+		/*Create root for Scene Graph.*/
+		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
+		rootNode->GetEntity()->SetPosition(crate->GetPosition());
+
+		/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
+		The entire Scene Graph will be traversed from the root.*/
+		crate->SetSceneGraph(Create::SceneGraph(rootNode));
+		Create::SceneNode(rootNode, rootNode, crate);
+
+		/*Set AABB.*/
+		crate->SetEntityType(ECEntityTypes::OBJECT);
+		crate->collider = new CCollider(crate);
+		crate->collider->SetMinAABB(Vector3(crate->GetPosition().x - 5.f, crate->GetPosition().y, crate->GetPosition().z - 5.f));
+		crate->collider->SetMaxAABB(Vector3(crate->GetPosition().x + 5.f, crate->GetPosition().y + 10.f, crate->GetPosition().z + 5.f));
+		crate->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(crate->GetPosition(), crate->GetScale()));
+		CollisionManager::GetInstance()->AddCollider(crate->collider, crate->GetPartitionPtr());
+
+		/*Set AABB.*/
+		rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
+		rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
+		rootNode->GetEntity()->collider->SetMaxAABB(crate->collider->GetMaxAABB() - crate->GetPosition());
+		rootNode->GetEntity()->collider->SetMinAABB(crate->collider->GetMinAABB() - crate->GetPosition());
+		rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
+		rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
+		rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
+		CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+	}
+
+	/*Randomly spawn a Building_0 on the map.*/
+	if (_name == "BUILDING_1")
+	{
+		GenericEntity* building = Create::Asset("BUILDING_1", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(0.2f, 0.2f, 0.2f), Vector3(5.f, 5.f, 5.f), true);
+		building->InitLoD("BUILDING_1", "BUILDING_1_MID", "BUILDING_1_LOW");
+		/*Create root for Scene Graph.*/
+		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
+		rootNode->GetEntity()->SetPosition(building->GetPosition());
+
+		/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
+		The entire Scene Graph will be traversed from the root.*/
+		building->SetSceneGraph(Create::SceneGraph(rootNode));
+		Create::SceneNode(rootNode, rootNode, building);
+
+		/*Set AABB.*/
+		building->SetEntityType(ECEntityTypes::OBJECT);
+		building->collider = new CCollider(building);
+		building->collider->SetMinAABB(Vector3(building->GetPosition().x - 13.5f,
+			building->GetPosition().y,
+			building->GetPosition().z - 12.5f));
+		building->collider->SetMaxAABB(Vector3(building->GetPosition().x + 13.5f,
+			building->GetPosition().y + 45.f,
+			building->GetPosition().z + 12.5f));
+		building->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(building->GetPosition(), building->GetScale()));
+		CollisionManager::GetInstance()->AddCollider(building->collider, building->GetPartitionPtr());
+
+		/*Set AABB.*/
+		rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
+		rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
+		rootNode->GetEntity()->collider->SetMaxAABB(building->collider->GetMaxAABB() - building->GetPosition());
+		rootNode->GetEntity()->collider->SetMinAABB(building->collider->GetMinAABB() - building->GetPosition());
+		rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
+		rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
+		rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
+		CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+	}
+
+	/*Randomly spawn a Wall on the map.*/
+	if (_name == "WALL")
+	{
+		GenericEntity* wall = Create::Asset("WALL", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
+		wall->InitLoD("WALL", "WALL_MID", "WALL_LOW");
+		/*Create root for Scene Graph.*/
+		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
+		rootNode->GetEntity()->SetPosition(wall->GetPosition());
+
+		/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
+		The entire Scene Graph will be traversed from the root.*/
+		wall->SetSceneGraph(Create::SceneGraph(rootNode));
+		Create::SceneNode(rootNode, rootNode, wall);
+
+		/*Set AABB.*/
+		wall->SetEntityType(ECEntityTypes::OBJECT);
+		wall->collider = new CCollider(wall);
+		/*Set AABB.*/
+		wall->SetEntityType(ECEntityTypes::OBJECT);
+		wall->collider = new CCollider(wall);
+		wall->collider->SetMinAABB(Vector3(wall->GetPosition().x - 40.f,
+			wall->GetPosition().y,
+			wall->GetPosition().z - 0.5f));
+		wall->collider->SetMaxAABB(Vector3(wall->GetPosition().x + 40.f,
+			wall->GetPosition().y + 35.f,
+			wall->GetPosition().z + 0.5f));
+		wall->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(wall->GetPosition(), wall->GetScale()));
+		wall->isDestroyable = true;
+		CollisionManager::GetInstance()->AddCollider(wall->collider, wall->GetPartitionPtr());
+
+		/*Set AABB.*/
+		rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
+		rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
+		rootNode->GetEntity()->collider->SetMaxAABB(wall->collider->GetMaxAABB() - wall->GetPosition());
+		rootNode->GetEntity()->collider->SetMinAABB(wall->collider->GetMinAABB() - wall->GetPosition());
+		rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
+		rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
+		rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
+		CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+	}
 }

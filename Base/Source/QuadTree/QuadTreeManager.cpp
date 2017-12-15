@@ -168,7 +168,7 @@ void QuadTreeManager::RenderGrid()
 	ms.Translate(0 + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().x,
 		800.f + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().y,
 		0 + CameraManager::GetInstance()->GetPlayerCam()->GetCameraPos().z);
-	//RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SKYPLANE"));
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SKYPLANE"));
 	ms.PopMatrix();
 
 	//for (std::deque<EntityBase*>::iterator it = entityList.begin(); it != entityList.end(); ++it) {

@@ -101,6 +101,9 @@ public:
 	void SetSpatialPartition(CSpatialPartition* _spatitionPartition) { spatialPartition = _spatitionPartition; }
 	/*Get the spatial partition object to optimise collision check.*/
 	CSpatialPartition* GetSpatialPartition(void) { return spatialPartition; }
+
+	/*For checking if hitscan is on.*/
+	CWeaponInfo* GetPrimaryWeapon(void) { return primaryWeapon; }
 private:
 	Vector3 defaultPosition, defaultTarget, defaultUp;
 	Vector3 position, target, up;

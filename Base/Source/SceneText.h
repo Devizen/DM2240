@@ -31,6 +31,7 @@ public:
 	void RenderPassGPass(void);
 	void RenderPassMain(void);
 	void RenderWorld(void);
+	void Spawner(std::string _name);
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager
 
@@ -41,7 +42,7 @@ private:
 	CPlayerInfo* playerInfo;
 	GroundEntity* groundEntity;
 	FPSCamera* camera;
-	TextEntity* textObj[5];
+	TextEntity* textObj[25];
 	Light* lights[2];
 
 	GenericEntity* theCube;

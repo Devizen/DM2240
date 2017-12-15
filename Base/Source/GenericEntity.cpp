@@ -9,6 +9,7 @@
 #include "LevelOfDetail\LevelOfDetail.h"
 #include "QuadTree\QuadTreeManager.h"
 #include "Enemy\EnemyManager.h"
+#include "AudioPlayer\AudioPlayer.h"
 GenericEntity::GenericEntity()
 {
 }
@@ -286,11 +287,17 @@ void GenericEntity::CollisionResponse(EntityBase* other)
 		if (rootNode)
 		{
 			rootNode->GetEntity()->isStatic = false;
+			//CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DEATH.ogg", false);
 		}
 	}
 
-	if (name == "MONK_BODY")
+	if (name == "MONK_BODY" ||
+		name == "MONK_LEFT_ARM" ||
+		name == "MONK_RIGHT_ARM" ||
+		name == "MONK_LEFT_LEG" ||
+		name == "MONK_RIGHT_LEG")
 	{
+		//CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DAMAGED.ogg", false);
 		//std::cout << "BOM" << std::endl;
 	}
 	//if (this->sceneGraph)

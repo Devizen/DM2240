@@ -5,6 +5,7 @@
 #include "../../EntityTypes/EntityTypes.h"
 #include "../EnemyManager.h"
 #include "../../QuadTree/QuadTreeManager.h"
+#include "../../AudioPlayer/AudioPlayer.h"
 
 CMonk::CMonk() : head(nullptr)
 , body(nullptr)
@@ -315,6 +316,16 @@ void CMonk::CollisionResponse(EntityBase * other)
 {
 	std::cout << "BOOOM " << std::endl;
 
+	if (name == "MONK_BODY" ||
+		name == "MONK_LEFT_ARM" ||
+		name == "MONK_RIGHT_ARM" ||
+		name == "MONK_LEFT_LEG" ||
+		name == "MONK_RIGHT_LEG")
+	{
+		CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DAMAGED.ogg", false);
+	}
+	else if (name == "MONK_HEAD")
+		CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DEATH.ogg", false);
 
 	CollisionManager::GetInstance()->CheckCollision(other->collider, head->collider, 1.0/6.0);
 	CollisionManager::GetInstance()->CheckCollision(other->collider, body->collider, 1.0 / 6.0);
