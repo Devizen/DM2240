@@ -274,6 +274,7 @@ GenericEntity * Create::Asset(const std::string & _meshName, const Vector3 & con
 
 #include "Manager\CollisionManager.h"
 #include "Projectile\Projectile.h"
+#include "PlayerInfo\ScoreManager.h"
 //#include "Enemy\Monk\Monk.h"
 void GenericEntity::CollisionResponse(EntityBase* other)
 {
@@ -306,7 +307,19 @@ void GenericEntity::CollisionResponse(EntityBase* other)
 	//}
 
 	if (isDestroyable == true)
+	{
+		if (name == "MONK_HEAD" && dynamic_cast<GenericEntity*>(other))
+		{
+			CScoreManager::GetInstance()->AddScore(-5.0);
+		}
 		isDone = true;
+	}
 	if (isStatic == false)
+	{
+		if (name == "MONK_HEAD" && dynamic_cast<GenericEntity*>(other))
+		{
+			CScoreManager::GetInstance()->AddScore(-5.0);
+		}
 		isDone = true;
+	}
 }
