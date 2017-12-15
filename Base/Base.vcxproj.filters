@@ -275,11 +275,8 @@
     <ClInclude Include="Source\PlayerInfo\ScoreManager.h">
       <Filter>PlayerInfo</Filter>
     </ClInclude>
-<<<<<<< HEAD
-=======
     <ClInclude Include="Source\AudioPlayer\AudioPlayer.h">
       <Filter>AudioPlayer</Filter>
     </ClInclude>
->>>>>>> 5b00a9b1b69482e6de43a7c7f085ae6df181b408
   </ItemGroup>
 </Project>

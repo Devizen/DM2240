@@ -110,6 +110,17 @@ void CMonk::UpdatePart(double dt, std::string _part)
 				{
 					rightLeg = nullptr;
 				}
+
+				if (del->name == "MONK_BODY" ||
+					del->name == "MONK_LEFT_ARM" ||
+					del->name == "MONK_RIGHT_ARM" ||
+					del->name == "MONK_LEFT_LEG" ||
+					del->name == "MONK_RIGHT_LEG")
+				{
+					CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DAMAGED.ogg", false);
+				}
+				else if (del->name == "MONK_HEAD")
+					CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DEATH.ogg", false);
 				delete del;
 				del = nullptr;
 			}
@@ -315,18 +326,6 @@ void CMonk::UpdatePart(double dt, std::string _part)
 void CMonk::CollisionResponse(EntityBase * other)
 {
 	std::cout << "BOOOM " << std::endl;
-
-	if (name == "MONK_BODY" ||
-		name == "MONK_LEFT_ARM" ||
-		name == "MONK_RIGHT_ARM" ||
-		name == "MONK_LEFT_LEG" ||
-		name == "MONK_RIGHT_LEG")
-	{
-		CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DAMAGED.ogg", false);
-	}
-	else if (name == "MONK_HEAD")
-		CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DEATH.ogg", false);
-
 	CollisionManager::GetInstance()->CheckCollision(other->collider, head->collider, 1.0/6.0);
 	CollisionManager::GetInstance()->CheckCollision(other->collider, body->collider, 1.0 / 6.0);
 	CollisionManager::GetInstance()->CheckCollision(other->collider, leftArm->collider, 1.0 / 6.0);

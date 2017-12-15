@@ -118,6 +118,7 @@ void CollisionManager::CheckCollision(CCollider * left, CCollider * right, doubl
 		{
 			//line to AABB
 			if (isCollideLine_AABB(line, right, dt)) {
+
 				line->GetOwner()->CollisionResponse(right->GetOwner());
 				right->GetOwner()->CollisionResponse(line->GetOwner());
 			}
