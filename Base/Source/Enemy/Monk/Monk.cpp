@@ -82,9 +82,11 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	/*Update the main big invisible part*/
 	//this->collider->SetAABBPosition(this->position);
 	bool deleteTheRest = false;
+	bool deleteTheLeg = false;
+	bool deleteTheLegAndArm = false;
 	for (std::vector<GenericEntity*>::iterator it = partList.begin(); it != partList.end(); )
 	{
-		if ((*it)->isDone || deleteTheRest == true)
+		if (((*it)->isDone || deleteTheRest == true) && !deleteTheLegAndArm)
 		{
 			GenericEntity* del = *it;
 			del->scale -= Vector3(5, 5, 5) * dt;
@@ -101,6 +103,10 @@ void CMonk::UpdatePart(double dt, std::string _part)
 				{
 					deleteTheRest = true;
 					head = nullptr;
+				}
+				else if (del->name == "MONK_BODY") {
+					deleteTheLegAndArm = true;
+					body = nullptr;
 				}
 				else if (del->name == "MONK_LEFT_LEG")
 				{
@@ -124,9 +130,40 @@ void CMonk::UpdatePart(double dt, std::string _part)
 				delete del;
 				del = nullptr;
 			}
+			
 			else
 				++it;
-
+		}
+		else if (deleteTheLegAndArm) {
+			GenericEntity* del = *it;
+			if (del->name == "MONK_LEFT_LEG") {
+				leftLeg = nullptr;
+				head->rootNode->DeleteChild(del);
+				it = partList.erase(it);
+				delete del;
+				del = nullptr;
+			}
+			else if (del->name == "MONK_RIGHT_LEG") {
+				rightLeg = nullptr;
+				head->rootNode->DeleteChild(del);
+				it = partList.erase(it);
+				delete del;
+				del = nullptr;
+			}
+			else if (del->name == "MONK_LEFT_ARM") {
+				leftArm = nullptr;
+				head->rootNode->DeleteChild(del);
+				it = partList.erase(it);
+				delete del;
+				del = nullptr;
+			}
+			else if (del->name == "MONK_RIGHT_ARM") {
+				rightArm = nullptr;
+				head->rootNode->DeleteChild(del);
+				it = partList.erase(it);
+				delete del;
+				del = nullptr;
+			}
 		}
 		else
 			++it;
