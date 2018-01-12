@@ -50,3 +50,6 @@
 Base\Release\*
 .vs/NYP_Framework/v14/.suo
 *.mtl
+*.ipdb
+*.iobj
+*.ipdb

@@ -89,16 +89,8 @@ void CMonk::UpdatePart(double dt, std::string _part)
 		if (((*it)->isDone || deleteTheRest == true) && !deleteTheLegAndArm)
 		{
 			GenericEntity* del = *it;
-			del->scale -= Vector3(5, 5, 5) * dt;
-			if (del->scale.LengthSquared() < 0.1f)
-				del->scale.Set(0.01f, 0.01f, 0.01f);
-
-			if (del->scale.LengthSquared() < 0.1f)
-			{
-
-				head->rootNode->DeleteChild(del);
+			if (del == nullptr) {
 				it = partList.erase(it);
-				
 				if (del->name == "MONK_HEAD")
 				{
 					deleteTheRest = true;
@@ -167,6 +159,83 @@ void CMonk::UpdatePart(double dt, std::string _part)
 		}
 		else
 			++it;
+		//	GenericEntity* del = *it;
+		//	del->scale -= Vector3(5, 5, 5) * dt;
+		//	if (del->scale.LengthSquared() < 0.1f)
+		//		del->scale.Set(0.01f, 0.01f, 0.01f);
+
+		//	if (del->scale.LengthSquared() < 0.1f)
+		//	{
+
+		//		head->rootNode->DeleteChild(del);
+		//		it = partList.erase(it);
+		//		
+		//		if (del->name == "MONK_HEAD")
+		//		{
+		//			deleteTheRest = true;
+		//			head = nullptr;
+		//		}
+		//		else if (del->name == "MONK_BODY") {
+		//			deleteTheLegAndArm = true;
+		//			body = nullptr;
+		//		}
+		//		else if (del->name == "MONK_LEFT_LEG")
+		//		{
+		//			leftLeg = nullptr;
+		//		}
+		//		else if (del->name == "MONK_RIGHT_LEG")
+		//		{
+		//			rightLeg = nullptr;
+		//		}
+
+		//		if (del->name == "MONK_BODY" ||
+		//			del->name == "MONK_LEFT_ARM" ||
+		//			del->name == "MONK_RIGHT_ARM" ||
+		//			del->name == "MONK_LEFT_LEG" ||
+		//			del->name == "MONK_RIGHT_LEG")
+		//		{
+		//			CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DAMAGED.ogg", false);
+		//		}
+		//		else if (del->name == "MONK_HEAD")
+		//			CAudioPlayer::GetInstance()->GetISoundEngine()->play2D("Audio/SFX/DEATH.ogg", false);
+		//		delete del;
+		//		del = nullptr;
+		//	}
+		//	
+		//	else
+		//		++it;
+		//}
+		//else if (deleteTheLegAndArm) {
+		//	GenericEntity* del = *it;
+		//	if (del->name == "MONK_LEFT_LEG") {
+		//		leftLeg = nullptr;
+		//		head->rootNode->DeleteChild(del);
+		//		it = partList.erase(it);
+		//		delete del;
+		//		del = nullptr;
+		//	}
+		//	else if (del->name == "MONK_RIGHT_LEG") {
+		//		rightLeg = nullptr;
+		//		head->rootNode->DeleteChild(del);
+		//		it = partList.erase(it);
+		//		delete del;
+		//		del = nullptr;
+		//	}
+		//	else if (del->name == "MONK_LEFT_ARM") {
+		//		leftArm = nullptr;
+		//		head->rootNode->DeleteChild(del);
+		//		it = partList.erase(it);
+		//		delete del;
+		//		del = nullptr;
+		//	}
+		//	else if (del->name == "MONK_RIGHT_ARM") {
+		//		rightArm = nullptr;
+		//		head->rootNode->DeleteChild(del);
+		//		it = partList.erase(it);
+		//		delete del;
+		//		del = nullptr;
+		//	}
+
 	}
 	if (partList.empty() || head == nullptr)
 		return;
