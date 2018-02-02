@@ -41,6 +41,8 @@ public:
 	/*Current ID of Waypoint.*/
 	int m_iWaypointIndex;
 	double m_speed;
+	/*Waypoint ID*/
+	int currWaypointID, nextWaypointID;
 private:
 	Mesh* headModelMesh;
 	Mesh* bodyModelMesh;

@@ -16,6 +16,8 @@ CMonk::CMonk() : head(nullptr)
 , rightLeg(nullptr)
 , player(nullptr)
 , m_iWaypointIndex(-1)
+, currWaypointID(-1)
+, nextWaypointID(-1)
 {
 	listOfWaypoints.clear();
 }
@@ -364,24 +366,87 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	static float timer = 0.f;
 	static bool translateSwitch = false;
 	timer += static_cast<float>(dt);
+	static float moveSpeed = 20.f;
 
-	Vector3 moveToPlayer = (Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()) * 2.f;
-	try {
-		moveToPlayer = moveToPlayer.Normalized();
-	}
-	catch (std::string e) {
-		/*Do nothing when object and player is at same position.*/
-	}
-
+	//cant move
 	if ((leftLeg == rightLeg) && rightLeg == nullptr)
 	{
 		core->SetDirection(0, 0, 0);
 		return;
 	}
-	if ((Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()).LengthSquared() > 100.f)
-		core->SetDirection(moveToPlayer * 20.f);
+
+	//Movement
+	Vector3 moveToPlayer;
+	if ((player->GetPos() - this->position).Length() < 10)
+	{
+		//closer than 10units
+		moveToPlayer = (Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()) * 2.f;
+
+		try {
+			moveToPlayer = moveToPlayer.Normalized();
+		}
+		catch (std::string e) {
+			/*Do nothing when object and player is at same position.*/
+		}
+
+
+		if ((Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()).LengthSquared() > 100.f)
+			core->SetDirection(moveToPlayer * 20.f);
+		else
+			core->SetDirection(0.f, 0.f, 0.f);
+	}
 	else
-		core->SetDirection(0.f, 0.f, 0.f);
+	{
+		CWaypoint* currentWaypoint = nullptr;
+		CWaypoint* nextWaypoint = nullptr;
+		if (currWaypointID >= 0)
+			currentWaypoint = CWaypointManager::GetInstance()->GetWaypoint(currWaypointID);
+		if (nextWaypointID >= 0)
+			nextWaypoint = CWaypointManager::GetInstance()->GetWaypoint(nextWaypointID);
+		else
+		{
+			//get nearest waypoint
+			nextWaypoint = CWaypointManager::GetInstance()->GetNearestWaypoint(core->GetPosition());
+			nextWaypointID = nextWaypoint->GetID();
+		}
+
+		//move to nextwaypoint
+		Vector3 dir = -core->GetPosition() + Vector3(nextWaypoint->GetPosition().x, core->GetPosition().y, nextWaypoint->GetPosition().z);
+		Vector3 ndir;
+		try {
+			ndir = dir.Normalized();
+		}
+		catch (DivideByZero) {
+			ndir.Set(0, 0, 0);
+		}
+		if (dir.Length() <= (ndir * moveSpeed * dt).Length())
+		{
+			moveToPlayer = nextWaypoint->GetPosition(); // snap to the positiob
+			
+			//core->SetDirection(moveToPlayer * moveSpeed);
+			core->SetPosition(Vector3(nextWaypoint->GetPosition().x, core->GetPosition().y, nextWaypoint->GetPosition().z));
+
+
+			//SetNextWayPoint
+			//select a new nextwaypoint id
+			//NOTE: currWayPointID is the prevID at this point
+			nextWaypoint = nextWaypoint->GetNearestWaypoint(currWaypointID);
+			std::cout << "curr: " <<currWaypointID << "   next: " << nextWaypointID << std::endl;
+
+			currWaypointID = nextWaypointID;
+
+			if (nextWaypoint)
+				nextWaypointID = nextWaypoint->GetID();
+		}
+		else
+		{
+			moveToPlayer = ndir;
+			core->SetDirection(moveToPlayer * moveSpeed);
+		}
+
+	}
+
+
 
 	/*Rotate the legs to animate as walking.*/
 

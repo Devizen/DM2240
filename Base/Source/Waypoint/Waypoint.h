@@ -25,7 +25,8 @@ public:
 	// Remove related waypoint
 	bool RemoveRelatedWaypoint(const int m_iID);
 	// Get nearest waypoint amongst related Waypoints
-	CWaypoint* GetNearestWaypoint(void);
+
+	CWaypoint* GetNearestWaypoint(int prevWaypointID = -1);
 	// Get the number of related Waypoints
 	int GetNumberOfWaypoints(void) const;
 

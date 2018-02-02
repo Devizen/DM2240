@@ -151,7 +151,35 @@ void Application::Init()
 
 void Application::Run()
 {
-	SceneManager::GetInstance()->SetActiveScene("Start");
+	//[this](Scene* _scene) -> void
+	//{
+	//	InitDisplay();
+	//	
+	//	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
+	//	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
+	//	{
+	//		glfwPollEvents();
+	//		UpdateInput();
+
+	//		double elapsedTime = m_timer.getElapsedTime();
+	//		elapsedTime = elapsedTime > 0.16 ? 0.16 : elapsedTime;
+	//		_scene->Update(elapsedTime);
+	//		_scene->Render();
+
+	//		//Swap buffers
+	//		glfwSwapBuffers(m_window);
+	//		//Get and organize events, like keyboard and mouse input, window resizing, etc...
+
+	//		PostInputUpdate();
+	//		m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
+
+	//	}
+	//	SceneManager::GetInstance()->Exit();
+	//}
+
+	InitDisplay();
+	SceneManager::GetInstance()->SetActiveScene("Intro");
+
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
 	{
@@ -264,4 +292,91 @@ void Application::MakeWindowedMode(void)
 	//glfwSetWindowSize(m_window, m_window_width, m_window_height);
 	glfwSetWindowMonitor(m_window, NULL, 0, 0, m_window_width, m_window_height, mode->refreshRate);
 	screenMode = false;
+}
+
+#include "Light.h"
+void Application::InitDisplay(void)
+{
+	glClearColor(1.0f, 0.0f, 1.0f, 0.0f);
+	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Shadow.vertexshader", "Shader//Shadow.fragmentshader");
+
+	// Tell the shader program to store these uniform locations
+	currProg->AddUniform("MVP");
+	currProg->AddUniform("MV");
+	currProg->AddUniform("MV_inverse_transpose");
+	currProg->AddUniform("material.kAmbient");
+	currProg->AddUniform("material.kDiffuse");
+	currProg->AddUniform("material.kSpecular");
+	currProg->AddUniform("material.kShininess");
+	currProg->AddUniform("lightEnabled");
+	currProg->AddUniform("numLights");
+	currProg->AddUniform("lights[0].type");
+	currProg->AddUniform("lights[0].position_cameraspace");
+	currProg->AddUniform("lights[0].color");
+	currProg->AddUniform("lights[0].power");
+	currProg->AddUniform("lights[0].kC");
+	currProg->AddUniform("lights[0].kL");
+	currProg->AddUniform("lights[0].kQ");
+	currProg->AddUniform("lights[0].spotDirection");
+	currProg->AddUniform("lights[0].cosCutoff");
+	currProg->AddUniform("lights[0].cosInner");
+	currProg->AddUniform("lights[0].exponent");
+	currProg->AddUniform("lights[1].type");
+	currProg->AddUniform("lights[1].position_cameraspace");
+	currProg->AddUniform("lights[1].color");
+	currProg->AddUniform("lights[1].power");
+	currProg->AddUniform("lights[1].kC");
+	currProg->AddUniform("lights[1].kL");
+	currProg->AddUniform("lights[1].kQ");
+	currProg->AddUniform("lights[1].spotDirection");
+	currProg->AddUniform("lights[1].cosCutoff");
+	currProg->AddUniform("lights[1].cosInner");
+	currProg->AddUniform("lights[1].exponent");
+	currProg->AddUniform("colorTextureEnabled");
+	currProg->AddUniform("colorTexture");
+	currProg->AddUniform("textEnabled");
+	currProg->AddUniform("textColor");
+
+	// Tell the graphics manager to use the shader we just loaded
+	GraphicsManager::GetInstance()->SetActiveShader("default");
+
+	Light* lights[2];
+
+	lights[0] = new Light();
+	GraphicsManager::GetInstance()->AddLight("lights[0]", lights[0]);
+	lights[0]->type = Light::LIGHT_DIRECTIONAL;
+	lights[0]->position.Set(-1, 1, 0);
+	lights[0]->color.Set(1, 1, 1);
+	lights[0]->power = 1;
+	lights[0]->kC = 1.f;
+	lights[0]->kL = 0.01f;
+	lights[0]->kQ = 0.001f;
+	lights[0]->cosCutoff = cos(Math::DegreeToRadian(45));
+	lights[0]->cosInner = cos(Math::DegreeToRadian(30));
+	lights[0]->exponent = 3.f;
+	lights[0]->name = "lights[0]";
+
+	lights[1] = new Light();
+	GraphicsManager::GetInstance()->AddLight("lights[1]", lights[1]);
+	lights[1]->type = Light::LIGHT_DIRECTIONAL;
+	lights[1]->position.Set(1, 1, 0);
+	lights[1]->color.Set(1, 1, 0.5f);
+	lights[1]->power = 0.4f;
+	lights[1]->name = "lights[1]";
+
+	currProg->UpdateInt("numLights", 1);
+	currProg->UpdateInt("textEnabled", 0);
+
+	Vector3 fogColor(0.5f, 0.5f, 0.5f); //Vec3 Color
+	currProg->UpdateVector3("fogParam.color", &fogColor.x);
+	currProg->UpdateFloat("fogParam.start", 0);
+	currProg->UpdateFloat("fogParam.end", 1000);
+	currProg->UpdateFloat("fogParam.density", 0.002f);
+
+	currProg->UpdateInt("fogParam.type", 1);
+	currProg->UpdateInt("fogParam.enabled", 0);
+
+	/*Shadow*/
+	currProg->AddUniform("lightDepthMVP");
+	currProg->AddUniform("shadowMap");
 }

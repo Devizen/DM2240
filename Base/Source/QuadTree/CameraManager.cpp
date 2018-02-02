@@ -134,14 +134,22 @@ bool CameraManager::IsAABBInFrustum(Vector3 min, Vector3 max)
 		{
 			for (int i = 0; i < 4; ++i)
 			{
+				//Vector3 planeNormalized = forward.Normalized();
 				Vector3 planeNormalized = frustumPlanes[i].Normalized();
 				Vector3 pointRelativeToCam = -playerCam->GetCameraPos() + bp;
 				Vector3 pointProjection = pointRelativeToCam.Dot(planeNormalized) * planeNormalized;
 
 
 				double NormDotResult = pointRelativeToCam.Normalized().Dot(planeNormalized);
+				//Vector3 NormCrossResult = pointRelativeToCam.Normalized().Cross(planeNormalized);
 				if (NormDotResult > cosFov && pointProjection.Length() > nearHypotenuse && pointProjection.Length() < farHypotenuse)
 					insideFrustum = true;
+				//else
+				//{
+				//	insideFrustum = false;
+				//	break;
+				//}
+				
 			}
 
 		}

@@ -68,10 +68,12 @@ bool CWaypoint::RemoveRelatedWaypoint(const int m_iID)
 }
 
 // Get nearest waypoint amongst related Waypoints
-CWaypoint* CWaypoint::GetNearestWaypoint(void)
+
+CWaypoint* CWaypoint::GetNearestWaypoint(int prevWaypointID)
 {
 	CWaypoint* theNearestWaypoint = NULL;
 	float m_fDistance = numeric_limits<float>::max();
+	CWaypoint* prevWaypoint = nullptr;
 
 	// If Waypoints has related Waypoints, then we proceed to search.
 	if (relatedWaypoints.size() != 0)
@@ -80,6 +82,14 @@ CWaypoint* CWaypoint::GetNearestWaypoint(void)
 		std::vector<CWaypoint*>::iterator it = relatedWaypoints.begin();
 		while (it != relatedWaypoints.end())
 		{
+
+			if ((*it)->GetID() == prevWaypointID)
+			{
+				//prioritze other waypoints
+				prevWaypoint = (CWaypoint*)(*it);
+				++it;
+				continue;
+			}
 			Vector3 aRelatedWaypoint = (*it)->GetPosition();
 
 			float xDistance = position.x - aRelatedWaypoint.x;
@@ -88,9 +98,15 @@ CWaypoint* CWaypoint::GetNearestWaypoint(void)
 			if (m_fDistance > distanceSquared)
 			{
 				m_fDistance = distanceSquared;
+
 				theNearestWaypoint = (CWaypoint*)(*it);
 			}
 			it++;
+		}
+		if (theNearestWaypoint == nullptr && prevWaypoint)
+		{
+			//try to assign to prev waypoint if bobian
+			theNearestWaypoint = prevWaypoint;
 		}
 	}
 	return theNearestWaypoint;

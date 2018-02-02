@@ -53,12 +53,7 @@ Base\Release\*
 *.ipdb
 *.iobj
 *.ipdb
-*.iobj
-*.iobj
 *.db
-*.iobj
-*.iobj
-*.db
-*.ipdb
 NYP_Framework.VC.db
 NYP_Framework.VC.db
+.vs/NYP_Framework/v14/.suo

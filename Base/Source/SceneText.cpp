@@ -48,25 +48,28 @@
 /*Create tower for enemy to attack.*/
 #include "PlayerInfo\TowerManager.h"
 #include "PlayerInfo\ScoreManager.h"
+#include "ShaderProgram.h"
 
 /*Lua Interface.*/
 #include "LuaInterface.h"
 /*Real-time Lua Script Editor.*/
 #include "LuaEditor\LuaEditor.h"
+/*Waypoint*/
+#include "Waypoint\WaypointManager.h"
 
 #include <iostream>
 using namespace std;
 
-SceneText* SceneText::sInstance = new SceneText(SceneManager::GetInstance());
+//SceneText* SceneText::sInstance = new SceneText(SceneManager::GetInstance());
 
 SceneText::SceneText()
 {
 }
 
-SceneText::SceneText(SceneManager* _sceneMgr)
-{
-	_sceneMgr->AddScene("Start", this);
-}
+//SceneText::SceneText(SceneManager* _sceneMgr)
+//{
+//	_sceneMgr->AddScene("Start", this);
+//}
 
 SceneText::~SceneText()
 {
@@ -79,45 +82,8 @@ void SceneText::Init()
 	// White background
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
-	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Shadow.vertexshader", "Shader//Shadow.fragmentshader");
+	//Load shader for shadow here. cause this is the only place where we need shadow
 	m_gPassShaderID = GraphicsManager::GetInstance()->LoadShader("gpass", "Shader//GPass.vertexshader", "Shader//GPass.fragmentshader");
-
-	// Tell the shader program to store these uniform locations
-	currProg->AddUniform("MVP");
-	currProg->AddUniform("MV");
-	currProg->AddUniform("MV_inverse_transpose");
-	currProg->AddUniform("material.kAmbient");
-	currProg->AddUniform("material.kDiffuse");
-	currProg->AddUniform("material.kSpecular");
-	currProg->AddUniform("material.kShininess");
-	currProg->AddUniform("lightEnabled");
-	currProg->AddUniform("numLights");
-	currProg->AddUniform("lights[0].type");
-	currProg->AddUniform("lights[0].position_cameraspace");
-	currProg->AddUniform("lights[0].color");
-	currProg->AddUniform("lights[0].power");
-	currProg->AddUniform("lights[0].kC");
-	currProg->AddUniform("lights[0].kL");
-	currProg->AddUniform("lights[0].kQ");
-	currProg->AddUniform("lights[0].spotDirection");
-	currProg->AddUniform("lights[0].cosCutoff");
-	currProg->AddUniform("lights[0].cosInner");
-	currProg->AddUniform("lights[0].exponent");
-	currProg->AddUniform("lights[1].type");
-	currProg->AddUniform("lights[1].position_cameraspace");
-	currProg->AddUniform("lights[1].color");
-	currProg->AddUniform("lights[1].power");
-	currProg->AddUniform("lights[1].kC");
-	currProg->AddUniform("lights[1].kL");
-	currProg->AddUniform("lights[1].kQ");
-	currProg->AddUniform("lights[1].spotDirection");
-	currProg->AddUniform("lights[1].cosCutoff");
-	currProg->AddUniform("lights[1].cosInner");
-	currProg->AddUniform("lights[1].exponent");
-	currProg->AddUniform("colorTextureEnabled");
-	currProg->AddUniform("colorTexture");
-	currProg->AddUniform("textEnabled");
-	currProg->AddUniform("textColor");
 
 	// Tell the graphics manager to use the shader we just loaded
 	GraphicsManager::GetInstance()->SetActiveShader("default");
@@ -159,9 +125,11 @@ void SceneText::Init()
 	lights[1]->power = 0.4f;
 	lights[1]->name = "lights[1]";
 
-	currProg->UpdateInt("numLights", 1);
-	currProg->UpdateInt("textEnabled", 0);
+	//currProg->UpdateInt("numLights", 1);
+	//currProg->UpdateInt("textEnabled", 0);
 
+	ShaderProgram* currProg = Application::GetInstance().GetCurrProg();
+	
 	/*Fog*/
 	Color fogColor(0.5f, 0.5f, 0.5f); //Vec3 Color
 	currProg->UpdateVector3("fogParam.color", &fogColor.r);
@@ -363,7 +331,7 @@ void SceneText::Init()
 	CameraManager::GetInstance()->AttachPlayerCam(this->camera);
 
 	FPSCamera* birdEyeCam = CameraManager::GetInstance()->GetBirdEyeCam();
-	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
+	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, -1));
 	//birdEyeCam->
 
 	/*Spawn randomly 5 enemies.*/
@@ -373,6 +341,15 @@ void SceneText::Init()
 	/*Audio Initialisation.*/
 	audioPlayer = CAudioPlayer::GetInstance()->GetISoundEngine();
 	audioPlayer->play2D("Audio/BGM/GAME.ogg", true);
+
+
+	int thisID = 
+	CWaypointManager::GetInstance()->AddWaypoint(Vector3(-50, 0, -50));
+	thisID= CWaypointManager::GetInstance()->AddWaypoint(thisID, Vector3(50, 0, -50));
+	thisID = CWaypointManager::GetInstance()->AddWaypoint(thisID, Vector3(50, 0, 50));
+	thisID = CWaypointManager::GetInstance()->AddWaypoint(thisID, Vector3(-50, 0, 50));
+
+
 }
 
 void SceneText::Update(double dt)
@@ -380,7 +357,7 @@ void SceneText::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD5))
 		LuaEditor::GetInstance()->SetIsToggle(!LuaEditor::GetInstance()->GetIsToggle());
 
-	if (KeyboardController::GetInstance()->)
+	//if (KeyboardController::GetInstance()->)
 
 	static float horizontal = lights[0]->position.x;
 	static float vertical = lights[0]->position.y;
@@ -777,6 +754,7 @@ void SceneText::RenderPassMain(void)
 
 	//pass light depth texture 
 	DepthFBO::GetInstance()->BindForReading(GL_TEXTURE8);
+	ShaderProgram* currProg = Application::GetInstance().GetCurrProg();
 	currProg->UpdateInt("shadowMap", 8);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -829,6 +807,8 @@ void SceneText::RenderPassMain(void)
 	else
 		EntityManager::GetInstance()->RenderUI();
 	//CScoreManager::GetInstance()->RenderUI();
+	//std::cout << (*camera).GetCameraPos() << std::endl;
+
 }
 
 void SceneText::RenderWorld(void)

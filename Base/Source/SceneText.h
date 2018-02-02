@@ -35,7 +35,7 @@ public:
 private:
 	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager
 
-	ShaderProgram* currProg;
+	//ShaderProgram* currProg;
 	/*Shadow*/
 	ShaderProgram* m_gPassShaderID;
 
@@ -47,7 +47,7 @@ private:
 
 	GenericEntity* theCube;
 
-	static SceneText* sInstance; // The pointer to the object that gets registered
+	//static SceneText* sInstance; // The pointer to the object that gets registered
 
 	std::vector<unsigned char>heightMap;
 

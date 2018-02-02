@@ -2,7 +2,7 @@
 #define APPLICATION_H
 
 #include "timer.h"
-
+#include "ShaderProgram.h"
 struct GLFWwindow;
 
 class Application
@@ -32,6 +32,8 @@ public:
 
 	int m_window_width;
 	int m_window_height;
+
+	ShaderProgram* GetCurrProg() { return currProg; }
 private:
 	Application();
 	~Application();
@@ -40,6 +42,9 @@ private:
 
 	//Declare a window object
 	StopWatch m_timer;
+
+	void InitDisplay(void);
+	ShaderProgram* currProg;
 };
 
 #endif
