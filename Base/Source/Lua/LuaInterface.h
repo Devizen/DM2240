@@ -6,6 +6,9 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <vector>
+#include "FunctionPointerWrapper.h"
+
 class CLuaInterface
 {
 public:
@@ -15,6 +18,7 @@ public:
 		INIT = 0,
 		RUN,
 		DROP,
+		OBJECT,
 		TOTAL
 	};
 	virtual ~CLuaInterface();
@@ -22,7 +26,8 @@ public:
 	static CLuaInterface* GetInstance();
 	static bool DropInstance();
 
-	std::map<FUNCTIONCALL, std::function<void(void)>>functionMap;
+	bool Init(void);
+	std::map<FUNCTIONCALL, TFunction*>functionMap;
 	/*Pointer to Lua State*/
 	lua_State* luaState;
 	/*Get Int Value.*/
@@ -35,6 +40,12 @@ public:
 	void SaveIntValue(const char* _varName, const int _value, const bool _overwrite = NULL);
 	/*Save an float value using the Lua Interface Class.*/
 	void SaveFloatValue(const char* _varName, const float _value, const bool _overwrite = NULL);
+
+	int Calculate(std::vector<int>&_test);
+	friend int luaAdd(lua_State* _state);
+	friend int LuaGenerateObj(lua_State * _state);
+	friend int LuaGetMesh(lua_State * _state);
+
 	/*Boolean to check if Lua Interface is initialised.*/
 	bool isInit;
 private:

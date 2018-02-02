@@ -177,6 +177,14 @@ void SceneText::Init()
 
 	//MeshBuilder::GetInstance()->GenerateLine
 	// Load all the meshes
+	std::vector<std::string>object;
+	std::vector<std::string>text;
+
+	TFunction* ObjectGeneration = CLuaInterface::GetInstance()->functionMap[CLuaInterface::FUNCTIONCALL::OBJECT];
+	dynamic_cast<FunctionPointerWrapper<void(std::vector<std::string>&, std::vector<std::string>)>*>(ObjectGeneration);
+	ObjectGeneration->Run(object, text);
+	std::deque<std::string>check = LuaEditor::GetInstance()->list;
+
 	MeshBuilder::GetInstance()->GenerateAxes("reference");
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair", 0.f, 0.f, 0.f, 3.f);
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
@@ -253,7 +261,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("SKYPLANE")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 
 	/*Tower for enemy to target.*/
-	MeshBuilder::GetInstance()->GenerateOBJ("TOWER", "OBJ//TOWER.obj");
+	/*MeshBuilder::GetInstance()->GenerateOBJ("TOWER", "OBJ//TOWER.obj");
 	MeshBuilder::GetInstance()->GetMesh("TOWER")->textureID[0] = LoadTGA("Image//TOWER.tga");
 
 	MeshBuilder::GetInstance()->GenerateOBJ("TOWER_MID", "OBJ//TOWER_MID.obj");
@@ -287,7 +295,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("WALL_MID")->textureID[0] = LoadTGA("Image//ORANGE.tga");
 
 	MeshBuilder::GetInstance()->GenerateOBJ("WALL_LOW", "OBJ//WALL_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("WALL_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");
+	MeshBuilder::GetInstance()->GetMesh("WALL_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");*/
 
 	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
 	MeshBuilder::GetInstance()->GenerateSphere("nade", Color(0.3, 0.4, 0.3), 10, 10, .5f);
@@ -357,7 +365,15 @@ void SceneText::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD5))
 		LuaEditor::GetInstance()->SetIsToggle(!LuaEditor::GetInstance()->GetIsToggle());
 
-	//if (KeyboardController::GetInstance()->)
+	if (KeyboardController::GetInstance()->IsKeyPressed('A'))
+	{
+		(*LuaEditor::GetInstance()->GetLine()[2]) += 'A';
+	}
+
+	else if (KeyboardController::GetInstance()->IsKeyPressed(VK_BACK))
+	{
+		(*LuaEditor::GetInstance()->GetLine()[2]).erase((*LuaEditor::GetInstance()->GetLine()[2]).length() - 1);
+	}
 
 	static float horizontal = lights[0]->position.x;
 	static float vertical = lights[0]->position.y;
@@ -472,11 +488,11 @@ void SceneText::Update(double dt)
 	// <THERE>
 
 	/*Randomly spawn an enemy on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyDown(VK_BACK))
+	/*if (KeyboardController::GetInstance()->IsKeyDown(VK_BACK))
 	{
 		Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
-	}
+	}*/
 
 	/*Randomly spawn a tower on the map.*/
 	if (KeyboardController::GetInstance()->IsKeyPressed('L'))

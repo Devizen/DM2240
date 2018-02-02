@@ -69,6 +69,7 @@
     <ClInclude Include="Source\LevelOfDetail\LevelOfDetail.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\LuaEditor\LuaEditor.h" />
+    <ClInclude Include="Source\Lua\FunctionPointerWrapper.h" />
     <ClInclude Include="Source\Lua\LuaInterface.h" />
     <ClInclude Include="Source\Lua\lauxlib.h" />
     <ClInclude Include="Source\Lua\lua.h" />

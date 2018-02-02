@@ -22,3 +22,6 @@ moveForward = "W"
 moveBackward = "S"
 moveLeft = "A"
 moveRight = "D"
+
+hello = luaAdd(100, 100, 100)
+print(hello)

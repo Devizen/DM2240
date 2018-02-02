@@ -93,12 +93,13 @@ void Application::Init()
 	*/
 
 	CLuaInterface* luaState = CLuaInterface::GetInstance();
-	luaState->functionMap[CLuaInterface::INIT]();
+	luaState->Init();
+	luaState->functionMap[CLuaInterface::INIT]->Run();
 
 	m_window_width = luaState->GetIntValue("width");
 	m_window_height = luaState->GetIntValue("height");
 
-	luaState->functionMap[CLuaInterface::RUN]();
+	luaState->functionMap[CLuaInterface::RUN]->Run();
 	luaState->SaveFloatValue("Player1", 200.1, true);
 	luaState->SaveIntValue("Player2", 150);
 
