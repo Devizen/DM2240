@@ -89,8 +89,18 @@ void QuadTreeManager::PostUpdate(double dt)
 {
 	for (int i = 0; i < entityList.size();)
 	{
-		if (entityList[i]->IsDone())
+		if (entityList[i]->IsDone()) {
+			if (entityList[i]->GetChildren().size() > 0) {
+				std::vector<CSceneNode*>childrenList = entityList[i]->GetChildren();
+				for (auto child : childrenList) {
+					this->RemoveEntity(child->GetEntity());
+					EntityBase* eChild = child->GetEntity();
+					delete eChild;
+					eChild = nullptr;
+				}
+			}
 			this->RemoveEntity(entityList[i]);
+		}
 		else
 			++i;
 	}
