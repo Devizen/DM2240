@@ -30,6 +30,9 @@ public:
 
 	int GetPartSize() { return partList.size(); }
 	//EntityBase* root;
+
+	/*Waypoint ID*/
+	int currWaypointID, nextWaypointID;
 private:
 	Mesh* headModelMesh;
 	Mesh* bodyModelMesh;

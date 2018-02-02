@@ -39,12 +39,16 @@
     <ClCompile Include="Source\SceneGraph\Transform.cpp" />
     <ClCompile Include="Source\SceneGraph\UpdateTransformation.cpp" />
     <ClCompile Include="Source\SceneText.cpp" />
+    <ClCompile Include="Source\Scene\CIntroScene.cpp" />
+    <ClCompile Include="Source\Scene\CMenuScene.cpp" />
     <ClCompile Include="Source\SkyBox\SkyBoxEntity.cpp" />
     <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp" />
     <ClCompile Include="Source\SpatialPartition\SpatialPartitionManager.cpp" />
     <ClCompile Include="Source\SpriteEntity.cpp" />
     <ClCompile Include="Source\Terrain\LoadHmap.cpp" />
     <ClCompile Include="Source\TextEntity.cpp" />
+    <ClCompile Include="Source\Waypoint\Waypoint.cpp" />
+    <ClCompile Include="Source\Waypoint\WaypointManager.cpp" />
     <ClCompile Include="Source\WeaponInfo\Pistol.cpp" />
     <ClCompile Include="Source\WeaponInfo\WeaponInfo.cpp" />
   </ItemGroup>
@@ -77,12 +81,16 @@
     <ClInclude Include="Source\SceneGraph\Transform.h" />
     <ClInclude Include="Source\SceneGraph\UpdateTransformation.h" />
     <ClInclude Include="Source\SceneText.h" />
+    <ClInclude Include="Source\Scene\CIntroScene.h" />
+    <ClInclude Include="Source\Scene\CMenuScene.h" />
     <ClInclude Include="Source\SkyBox\SkyBoxEntity.h" />
     <ClInclude Include="Source\SpatialPartition\SpatialPartition.h" />
     <ClInclude Include="Source\SpatialPartition\SpatialPartitionManager.h" />
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\Terrain\LoadHmap.h" />
     <ClInclude Include="Source\TextEntity.h" />
+    <ClInclude Include="Source\Waypoint\Waypoint.h" />
+    <ClInclude Include="Source\Waypoint\WaypointManager.h" />
     <ClInclude Include="Source\WeaponInfo\Pistol.h" />
     <ClInclude Include="Source\WeaponInfo\WeaponInfo.h" />
   </ItemGroup>

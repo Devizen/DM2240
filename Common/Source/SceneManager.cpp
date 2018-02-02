@@ -1,8 +1,15 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
+#include "SceneText.h"
+#include "Scene\CIntroScene.h"
+#include "Scene\CMenuScene.h"
+
 SceneManager::SceneManager() : activeScene(nullptr), nextScene(nullptr)
 {
+	sceneMap["Start"] = new SceneText();
+	sceneMap["Intro"] = new CIntroScene();
+	sceneMap["Menu"] = new CMenuScene();
 }
 
 SceneManager::~SceneManager()

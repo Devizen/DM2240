@@ -1,6 +1,6 @@
 #ifndef AUDIOPLAYER_H
 #define AUDIOPLAYER_H
-#include "irrKlang.h"
+#include "../../irrKlang/include/irrKlang.h"
 class CAudioPlayer
 {
 	static CAudioPlayer* s_instance;

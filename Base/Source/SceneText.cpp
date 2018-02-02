@@ -48,21 +48,24 @@
 /*Create tower for enemy to attack.*/
 #include "PlayerInfo\TowerManager.h"
 #include "PlayerInfo\ScoreManager.h"
+#include "ShaderProgram.h"
 
+/*Waypoint*/
+#include "Waypoint\WaypointManager.h"
 
 #include <iostream>
 using namespace std;
 
-SceneText* SceneText::sInstance = new SceneText(SceneManager::GetInstance());
+//SceneText* SceneText::sInstance = new SceneText(SceneManager::GetInstance());
 
 SceneText::SceneText()
 {
 }
 
-SceneText::SceneText(SceneManager* _sceneMgr)
-{
-	_sceneMgr->AddScene("Start", this);
-}
+//SceneText::SceneText(SceneManager* _sceneMgr)
+//{
+//	_sceneMgr->AddScene("Start", this);
+//}
 
 SceneText::~SceneText()
 {
@@ -74,45 +77,8 @@ void SceneText::Init()
 	// White background
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
-	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Shadow.vertexshader", "Shader//Shadow.fragmentshader");
+	//Load shader for shadow here. cause this is the only place where we need shadow
 	m_gPassShaderID = GraphicsManager::GetInstance()->LoadShader("gpass", "Shader//GPass.vertexshader", "Shader//GPass.fragmentshader");
-
-	// Tell the shader program to store these uniform locations
-	currProg->AddUniform("MVP");
-	currProg->AddUniform("MV");
-	currProg->AddUniform("MV_inverse_transpose");
-	currProg->AddUniform("material.kAmbient");
-	currProg->AddUniform("material.kDiffuse");
-	currProg->AddUniform("material.kSpecular");
-	currProg->AddUniform("material.kShininess");
-	currProg->AddUniform("lightEnabled");
-	currProg->AddUniform("numLights");
-	currProg->AddUniform("lights[0].type");
-	currProg->AddUniform("lights[0].position_cameraspace");
-	currProg->AddUniform("lights[0].color");
-	currProg->AddUniform("lights[0].power");
-	currProg->AddUniform("lights[0].kC");
-	currProg->AddUniform("lights[0].kL");
-	currProg->AddUniform("lights[0].kQ");
-	currProg->AddUniform("lights[0].spotDirection");
-	currProg->AddUniform("lights[0].cosCutoff");
-	currProg->AddUniform("lights[0].cosInner");
-	currProg->AddUniform("lights[0].exponent");
-	currProg->AddUniform("lights[1].type");
-	currProg->AddUniform("lights[1].position_cameraspace");
-	currProg->AddUniform("lights[1].color");
-	currProg->AddUniform("lights[1].power");
-	currProg->AddUniform("lights[1].kC");
-	currProg->AddUniform("lights[1].kL");
-	currProg->AddUniform("lights[1].kQ");
-	currProg->AddUniform("lights[1].spotDirection");
-	currProg->AddUniform("lights[1].cosCutoff");
-	currProg->AddUniform("lights[1].cosInner");
-	currProg->AddUniform("lights[1].exponent");
-	currProg->AddUniform("colorTextureEnabled");
-	currProg->AddUniform("colorTexture");
-	currProg->AddUniform("textEnabled");
-	currProg->AddUniform("textColor");
 
 	// Tell the graphics manager to use the shader we just loaded
 	GraphicsManager::GetInstance()->SetActiveShader("default");
@@ -154,9 +120,11 @@ void SceneText::Init()
 	lights[1]->power = 0.4f;
 	lights[1]->name = "lights[1]";
 
-	currProg->UpdateInt("numLights", 1);
-	currProg->UpdateInt("textEnabled", 0);
+	//currProg->UpdateInt("numLights", 1);
+	//currProg->UpdateInt("textEnabled", 0);
 
+	ShaderProgram* currProg = Application::GetInstance().GetCurrProg();
+	
 	/*Fog*/
 	Color fogColor(0.5f, 0.5f, 0.5f); //Vec3 Color
 	currProg->UpdateVector3("fogParam.color", &fogColor.r);
@@ -207,14 +175,12 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateAxes("reference");
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair", 0.f, 0.f, 0.f, 3.f);
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("oquad", Color(1, 0.8, 0.4), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("oquad", Color(1.0f, 0.0f, 1.f), 1.f);
 	//MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GenerateLine("redline", Color(1, 0, 0));
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
 	MeshBuilder::GetInstance()->GetMesh("text")->textureID[0] = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
-	MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
-	MeshBuilder::GetInstance()->GetMesh("Chair")->textureID[0] = LoadTGA("Image//chair.tga");
 	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
 	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
 	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
@@ -222,12 +188,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("cone")->material.kDiffuse.Set(0.99f, 0.99f, 0.99f);
 	MeshBuilder::GetInstance()->GetMesh("cone")->material.kSpecular.Set(0.f, 0.f, 0.f);
 	MeshBuilder::GetInstance()->GenerateCube("cube", Color(1.0f, 1.0f, 1.0f), 1.0f);
-	MeshBuilder::GetInstance()->GenerateQuad("GRASS_DARKGREEN", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("GRASS_DARKGREEN")->textureID[0] = LoadTGA("Image//grass_darkgreen.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("GEO_GRASS_LIGHTGREEN", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("GEO_GRASS_LIGHTGREEN")->textureID[0] = LoadTGA("Image//grass_lightgreen.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("W_GRASS", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("W_GRASS")->textureID[0] = LoadTGA("Image//WORLD//W_GRASS.tga");
+
 	/*Generate Ray.*/
 	MeshBuilder::GetInstance()->GenerateRay("RAY", 1.f);
 
@@ -241,18 +202,6 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateSphere("BLUESPHERE", Color(0, 0, 1), 18, 36, 5.f);
 	MeshBuilder::GetInstance()->GenerateSphere("REDSPHERE", Color(1, 0, 0), 18, 36, 5.f);
 
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_FRONT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BACK", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_LEFT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_RIGHT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_TOP", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BOTTOM", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_FRONT")->textureID[0] = LoadTGA("Image//SkyBox//skybox_front.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BACK")->textureID[0] = LoadTGA("Image//SkyBox//skybox_back.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_LEFT")->textureID[0] = LoadTGA("Image//SkyBox//skybox_left.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_RIGHT")->textureID[0] = LoadTGA("Image//SkyBox//skybox_right.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_TOP")->textureID[0] = LoadTGA("Image//SkyBox//skybox_top.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BOTTOM")->textureID[0] = LoadTGA("Image//SkyBox//skybox_bottom.tga");
 
 	/*Terrain.*/
 	MeshBuilder::GetInstance()->GenerateTerrain("TERRAIN", "Image//TERRAIN//heightMap.raw", heightMap);
@@ -317,9 +266,6 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateOBJ("CRATE_LOW", "OBJ//CRATE_LOW.obj");
 	MeshBuilder::GetInstance()->GetMesh("CRATE_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");
 
-	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_0", "OBJ//BUILDING_0.obj");
-	MeshBuilder::GetInstance()->GetMesh("BUILDING_0")->textureID[0] = LoadTGA("Image//BUILDING_0.tga");
-
 	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1", "OBJ//BUILDING_1.obj");
 	MeshBuilder::GetInstance()->GetMesh("BUILDING_1")->textureID[0] = LoadTGA("Image//BUILDING_1.tga");
 
@@ -380,7 +326,7 @@ void SceneText::Init()
 	CameraManager::GetInstance()->AttachPlayerCam(this->camera);
 
 	FPSCamera* birdEyeCam = CameraManager::GetInstance()->GetBirdEyeCam();
-	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
+	birdEyeCam->Init(Vector3(0, 500, 0), Vector3(0, 0, 0), Vector3(0, 0, -1));
 	//birdEyeCam->
 
 	/*Spawn randomly 5 enemies.*/
@@ -390,6 +336,15 @@ void SceneText::Init()
 	/*Audio Initialisation.*/
 	audioPlayer = CAudioPlayer::GetInstance()->GetISoundEngine();
 	audioPlayer->play2D("Audio/BGM/GAME.ogg", true);
+
+
+	int thisID = 
+	CWaypointManager::GetInstance()->AddWaypoint(Vector3(-50, 0, -50));
+	thisID= CWaypointManager::GetInstance()->AddWaypoint(thisID, Vector3(50, 0, -50));
+	thisID = CWaypointManager::GetInstance()->AddWaypoint(thisID, Vector3(50, 0, 50));
+	thisID = CWaypointManager::GetInstance()->AddWaypoint(thisID, Vector3(-50, 0, 50));
+
+
 }
 
 void SceneText::Update(double dt)
@@ -789,6 +744,7 @@ void SceneText::RenderPassMain(void)
 
 	//pass light depth texture 
 	DepthFBO::GetInstance()->BindForReading(GL_TEXTURE8);
+	ShaderProgram* currProg = Application::GetInstance().GetCurrProg();
 	currProg->UpdateInt("shadowMap", 8);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -816,6 +772,8 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->DetachCamera();
 	EntityManager::GetInstance()->RenderUI();
 	//CScoreManager::GetInstance()->RenderUI();
+	//std::cout << (*camera).GetCameraPos() << std::endl;
+
 }
 
 void SceneText::RenderWorld(void)

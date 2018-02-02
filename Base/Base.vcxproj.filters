@@ -58,15 +58,18 @@
     <Filter Include="AudioPlayer">
       <UniqueIdentifier>{c18b5ddd-0408-45d9-9849-f204be72c919}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{d69e11b0-fa44-4f77-a403-6a1c135d6bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Waypoint">
+      <UniqueIdentifier>{46d2a60e-0269-4af5-a2ce-5ebb25048af4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\FPSCamera.cpp">
@@ -168,12 +171,24 @@
     <ClCompile Include="Source\AudioPlayer\AudioPlayer.cpp">
       <Filter>AudioPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SceneText.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\CIntroScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\CMenuScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Waypoint\Waypoint.cpp">
+      <Filter>Waypoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Waypoint\WaypointManager.cpp">
+      <Filter>Waypoint</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\FPSCamera.h">
@@ -277,6 +292,21 @@
     </ClInclude>
     <ClInclude Include="Source\AudioPlayer\AudioPlayer.h">
       <Filter>AudioPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneText.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\CIntroScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\CMenuScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Waypoint\Waypoint.h">
+      <Filter>Waypoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Waypoint\WaypointManager.h">
+      <Filter>Waypoint</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
