@@ -40,6 +40,10 @@ GenericEntity::~GenericEntity()
 {
 }
 
+void GenericEntity::Init(void)
+{
+}
+
 void GenericEntity::Update(double _dt)
 {
 	/*Translate as a whole based on individual parts.*/

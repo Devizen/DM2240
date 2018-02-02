@@ -27,6 +27,10 @@ CPlayerInfo::CPlayerInfo(void)
 	, primaryWeapon(NULL)
 	, secondaryWeapon(NULL)
 	, spatialPartition(nullptr)
+	, keyMoveForward('W')
+	, keyMoveBackward('S')
+	, keyMoveLeft('A')
+	, keyMoveRight('D')
 {
 }
 

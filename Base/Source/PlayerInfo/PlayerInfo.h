@@ -130,4 +130,9 @@ private:
 
 	/*Spatial Partitioning Info.*/
 	CSpatialPartition* spatialPartition;
+
+	char keyMoveForward;
+	char keyMoveBackward;
+	char keyMoveLeft;
+	char keyMoveRight;
 };

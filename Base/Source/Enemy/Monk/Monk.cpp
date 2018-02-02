@@ -6,6 +6,7 @@
 #include "../EnemyManager.h"
 #include "../../QuadTree/QuadTreeManager.h"
 #include "../../AudioPlayer/AudioPlayer.h"
+#include "../../Waypoint/WaypointManager.h"
 
 CMonk::CMonk() : head(nullptr)
 , body(nullptr)
@@ -14,10 +15,16 @@ CMonk::CMonk() : head(nullptr)
 , leftLeg(nullptr)
 , rightLeg(nullptr)
 , player(nullptr)
+, m_iWaypointIndex(-1)
 {
+	listOfWaypoints.clear();
 }
 
 CMonk::~CMonk()
+{
+}
+
+void CMonk::Init(void)
 {
 }
 

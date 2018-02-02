@@ -58,6 +58,15 @@
     <Filter Include="AudioPlayer">
       <UniqueIdentifier>{c18b5ddd-0408-45d9-9849-f204be72c919}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Waypoint">
+      <UniqueIdentifier>{8b411336-234a-4f99-814b-1da37743f3e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua">
+      <UniqueIdentifier>{b0e9e358-2bcd-49d7-9acc-f9bb57e06fd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaEditor">
+      <UniqueIdentifier>{cabe90a8-190f-40f0-8df3-34745bd9cc92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -168,6 +177,18 @@
     <ClCompile Include="Source\AudioPlayer\AudioPlayer.cpp">
       <Filter>AudioPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Waypoint\Waypoint.cpp">
+      <Filter>Waypoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Waypoint\WaypointManager.cpp">
+      <Filter>Waypoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lua\LuaInterface.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LuaEditor\LuaEditor.cpp">
+      <Filter>LuaEditor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -277,6 +298,33 @@
     </ClInclude>
     <ClInclude Include="Source\AudioPlayer\AudioPlayer.h">
       <Filter>AudioPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Waypoint\Waypoint.h">
+      <Filter>Waypoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Waypoint\WaypointManager.h">
+      <Filter>Waypoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lua\lauxlib.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lua\lua.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lua\lua.hpp">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lua\luaconf.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lua\lualib.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lua\LuaInterface.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LuaEditor\LuaEditor.h">
+      <Filter>LuaEditor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

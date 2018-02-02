@@ -49,6 +49,10 @@
 #include "PlayerInfo\TowerManager.h"
 #include "PlayerInfo\ScoreManager.h"
 
+/*Lua Interface.*/
+#include "LuaInterface.h"
+/*Real-time Lua Script Editor.*/
+#include "LuaEditor\LuaEditor.h"
 
 #include <iostream>
 using namespace std;
@@ -71,6 +75,7 @@ SceneText::~SceneText()
 
 void SceneText::Init()
 {
+	LuaEditor::GetInstance()->ReadLuaScript("Image//DM2240.lua");
 	// White background
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
@@ -211,7 +216,7 @@ void SceneText::Init()
 	//MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GenerateLine("redline", Color(1, 0, 0));
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
-	MeshBuilder::GetInstance()->GetMesh("text")->textureID[0] = LoadTGA("Image//calibri.tga");
+	MeshBuilder::GetInstance()->GetMesh("text")->textureID[0] = LoadTGA("Image//TEXT.tga");
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
 	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
 	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
@@ -242,7 +247,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[2] = LoadTGA("Image//WORLD//W_WATER.tga");
 
 	/*Enemy*/
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD", "OBJ//MONK//MONK_HEAD.obj");
+	/*MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD", "OBJ//MONK//MONK_HEAD.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD_MID", "OBJ//MONK//MONK_HEAD_MID.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
@@ -274,7 +279,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
 
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_LEG", "OBJ//MONK//MONK_RIGHT_LEG.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
+	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");*/
 
 	MeshBuilder::GetInstance()->GenerateSkyPlane("SKYPLANE", Color(1, 1, 1), 128, 400.0f, 1000.0f, 1.0f, 1.0f);
 	MeshBuilder::GetInstance()->GetMesh("SKYPLANE")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
@@ -362,9 +367,9 @@ void SceneText::Init()
 	//birdEyeCam->
 
 	/*Spawn randomly 5 enemies.*/
-	for (unsigned i = 0; i < 5; ++i) {
-		Spawner("MONK");
-	}
+	//for (unsigned i = 0; i < 5; ++i) {
+	//	Spawner("MONK");
+	//}
 	/*Audio Initialisation.*/
 	audioPlayer = CAudioPlayer::GetInstance()->GetISoundEngine();
 	audioPlayer->play2D("Audio/BGM/GAME.ogg", true);
@@ -372,6 +377,11 @@ void SceneText::Init()
 
 void SceneText::Update(double dt)
 {
+	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD5))
+		LuaEditor::GetInstance()->SetIsToggle(!LuaEditor::GetInstance()->GetIsToggle());
+
+	if (KeyboardController::GetInstance()->)
+
 	static float horizontal = lights[0]->position.x;
 	static float vertical = lights[0]->position.y;
 	static float frontback = lights[0]->position.z;
@@ -383,8 +393,8 @@ void SceneText::Update(double dt)
 	if (spawnTimer <= 2.f)
 		spawnTimer = 2.f;
 	if (spawnTimer - spawnCooldown < 0.f) {
-		std::string spawnType[] = { "MONK", "TOWER", "CRATE", "BUILDING_1", "WALL" };
-		Spawner(spawnType[Math::RandIntMinMax(0, 4)]);
+		std::string spawnType[] = { /*"MONK", */"TOWER", "CRATE", "BUILDING_1", "WALL" };
+		Spawner(spawnType[Math::RandIntMinMax(0, /*4*/3)]);
 		spawnCooldown = 0.f;
 		spawnTimer -= 0.01f;
 	}
@@ -780,19 +790,44 @@ void SceneText::RenderPassMain(void)
 	GraphicsManager::GetInstance()->AttachCamera(CameraManager::GetInstance()->GetActiveCam());
 	//EntityManager::GetInstance()->Render();
 
-	CollisionManager::GetInstance()->RenderGrid();
+	if (!LuaEditor::GetInstance()->GetIsToggle())
+	{
+		CollisionManager::GetInstance()->RenderGrid();
 	
-	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+		MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 
-	QuadTreeManager::GetInstance()->RenderGrid();
-	CameraManager::GetInstance()->RenderPlayerFrustum();
-
+		QuadTreeManager::GetInstance()->RenderGrid();
+		CameraManager::GetInstance()->RenderPlayerFrustum();
+	}
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
 	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	GraphicsManager::GetInstance()->DetachCamera();
-	EntityManager::GetInstance()->RenderUI();
+
+	if (LuaEditor::GetInstance()->GetIsToggle())
+	{
+		/*Render Lua Script out.*/
+		float fontSize = (halfWindowWidth / halfWindowHeight) * 20.f;
+		float halfFontSize = fontSize * 0.5f;
+		/*Make the position start from left top.*/
+		Vector3 startPosition(-halfWindowWidth * 0.95f, +halfWindowHeight * 0.95f, 0.f);
+
+		size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
+
+		for (size_t i = 0; i < tempSize; ++i)
+		{
+			MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+			modelStack.PushMatrix();
+			modelStack.Translate(startPosition);
+			modelStack.Scale(fontSize, fontSize, fontSize);
+			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), (*LuaEditor::GetInstance()->GetLine()[i]), Color(1.f, 0.f, 0.f));
+			modelStack.PopMatrix();
+			startPosition.y -= (halfWindowHeight * 0.1f);
+		}
+	}
+	else
+		EntityManager::GetInstance()->RenderUI();
 	//CScoreManager::GetInstance()->RenderUI();
 }
 

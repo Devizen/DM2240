@@ -15,6 +15,7 @@ public:
 	EntityBase();
 	virtual ~EntityBase();
 
+	virtual void Init(void);
 	virtual void Update(double _dt);
 	virtual void Render();
 	virtual void RenderUI();

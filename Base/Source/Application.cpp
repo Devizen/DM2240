@@ -16,6 +16,9 @@
 
 #include "SceneText.h"
 
+/*Lua Interface.*/
+#include "LuaInterface.h"
+
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
@@ -46,6 +49,8 @@ bool Application::IsKeyPressed(unsigned short key)
 
 Application::Application() :
 	screenMode(false)
+	, m_window_width(800)
+	, m_window_height(600)
 {
 }
 
@@ -82,8 +87,20 @@ void Application::Init()
 	//Create a window and create its OpenGL context
 	//m_window_width = mode->width;
 	//m_window_height = mode->height;
-	m_window_width = 800;
-	m_window_height = 600;
+	/*
+	print(arg[counter])
+	counter = counter + 1
+	*/
+
+	CLuaInterface* luaState = CLuaInterface::GetInstance();
+	luaState->functionMap[CLuaInterface::INIT]();
+
+	m_window_width = luaState->GetIntValue("width");
+	m_window_height = luaState->GetIntValue("height");
+
+	luaState->functionMap[CLuaInterface::RUN]();
+	luaState->SaveFloatValue("Player1", 200.1, true);
+	luaState->SaveIntValue("Player2", 150);
 
 	/*glfwGetPrimaryMonitor() to set full screen.*/
 	//m_window = glfwCreateWindow(m_window_width, m_window_height, "DM2240", glfwGetPrimaryMonitor(), NULL);

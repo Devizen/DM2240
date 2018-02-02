@@ -23,6 +23,8 @@
     <ClCompile Include="Source\GroundEntity.cpp" />
     <ClCompile Include="Source\LevelOfDetail\LevelOfDetail.cpp" />
     <ClCompile Include="Source\Light.cpp" />
+    <ClCompile Include="Source\LuaEditor\LuaEditor.cpp" />
+    <ClCompile Include="Source\Lua\LuaInterface.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\PlayerInfo\PlayerInfo.cpp" />
@@ -45,6 +47,8 @@
     <ClCompile Include="Source\SpriteEntity.cpp" />
     <ClCompile Include="Source\Terrain\LoadHmap.cpp" />
     <ClCompile Include="Source\TextEntity.cpp" />
+    <ClCompile Include="Source\Waypoint\Waypoint.cpp" />
+    <ClCompile Include="Source\Waypoint\WaypointManager.cpp" />
     <ClCompile Include="Source\WeaponInfo\Pistol.cpp" />
     <ClCompile Include="Source\WeaponInfo\WeaponInfo.cpp" />
   </ItemGroup>
@@ -62,6 +66,13 @@
     <ClInclude Include="Source\GroundEntity.h" />
     <ClInclude Include="Source\LevelOfDetail\LevelOfDetail.h" />
     <ClInclude Include="Source\Light.h" />
+    <ClInclude Include="Source\LuaEditor\LuaEditor.h" />
+    <ClInclude Include="Source\Lua\LuaInterface.h" />
+    <ClInclude Include="Source\Lua\lauxlib.h" />
+    <ClInclude Include="Source\Lua\lua.h" />
+    <ClInclude Include="Source\Lua\lua.hpp" />
+    <ClInclude Include="Source\Lua\luaconf.h" />
+    <ClInclude Include="Source\Lua\lualib.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\PlayerInfo\PlayerInfo.h" />
     <ClInclude Include="Source\PlayerInfo\ScoreManager.h" />
@@ -83,6 +94,8 @@
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\Terrain\LoadHmap.h" />
     <ClInclude Include="Source\TextEntity.h" />
+    <ClInclude Include="Source\Waypoint\Waypoint.h" />
+    <ClInclude Include="Source\Waypoint\WaypointManager.h" />
     <ClInclude Include="Source\WeaponInfo\Pistol.h" />
     <ClInclude Include="Source\WeaponInfo\WeaponInfo.h" />
   </ItemGroup>
@@ -130,15 +143,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_VARIADIC_MAX=10;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glfw/include;$(SolutionDir)/glew/include;$(SolutionDir)/irrKlang/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glfw/include;$(SolutionDir)/glew/include;$(SolutionDir)/irrKlang/include;$(SolutionDir)/Base/Source/Lua;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-vc2015;$(SolutionDir)/glew/lib;$(SolutionDir)/irrKlang/lib/Win32-visualStudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>legacy_stdio_definitions.lib;Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;glfw3dll.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-vc2015;$(SolutionDir)/glew/lib;$(SolutionDir)/irrKlang/lib/Win32-visualStudio;$(SolutionDir)/Lua/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;glfw3dll.lib;irrKlang.lib;lua5.1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -150,15 +163,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_VARIADIC_MAX=10;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glew/include;$(SolutionDir)/glfw/include;$(SolutionDir)/irrKlang/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glew/include;$(SolutionDir)/glfw/include;$(SolutionDir)/irrKlang/include;$(SolutionDir)/Base/Source/Lua;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-vc2015;$(SolutionDir)/glew/lib;$(SolutionDir)/irrKlang/lib/Win32-visualStudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>legacy_stdio_definitions.lib;Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;glfw3dll.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-vc2015;$(SolutionDir)/glew/lib;$(SolutionDir)/irrKlang/lib/Win32-visualStudio;$(SolutionDir)/Lua/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;glfw3dll.lib;irrKlang.lib;lua5.1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

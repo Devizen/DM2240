@@ -37,6 +37,10 @@ EntityBase::~EntityBase()
 	}
 }
 
+void EntityBase::Init(void)
+{
+}
+
 void EntityBase::Update(double _dt)
 {
 	position += direction * _dt;

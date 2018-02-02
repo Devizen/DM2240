@@ -16,7 +16,7 @@ public:
 	GenericEntity();
 	GenericEntity(Mesh* _modelMesh);
 	virtual ~GenericEntity();
-
+	virtual void Init(void);
 	virtual void Update(double _dt);
 	void UpdateChildren(double _dt);
 	virtual void Render();

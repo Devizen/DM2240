@@ -4,12 +4,14 @@
 #include "Vector3.h"
 #include <vector>
 #include "../../PlayerInfo/PlayerInfo.h"
+#include "../../Waypoint/Waypoint.h"
 
 class CMonk : public GenericEntity{
 public:
 	CMonk();
 	~CMonk();
 
+	void Init(void);
 	void SetModelMeshes(Mesh* _head, Mesh* _body, Mesh* _leftArm, Mesh* _rightArm, Mesh* _leftLeg, Mesh* _rightLeg);
 	GenericEntity* GetEntityPart(std::string _part);
 	void SetEntityPart(std::string _part, GenericEntity* _entity);
@@ -30,6 +32,15 @@ public:
 
 	int GetPartSize() { return partList.size(); }
 	//EntityBase* root;
+
+	/*Waypoints.*/
+	/*Get the next waypoint.*/
+	CWaypoint* GetNextWaypoint(void);
+	/*Vector containing IDs of waypoints.*/
+	std::vector<int>listOfWaypoints;
+	/*Current ID of Waypoint.*/
+	int m_iWaypointIndex;
+	double m_speed;
 private:
 	Mesh* headModelMesh;
 	Mesh* bodyModelMesh;
