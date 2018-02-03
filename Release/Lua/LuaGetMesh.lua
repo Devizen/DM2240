@@ -12,6 +12,3 @@ GetMesh10("WALL_MID", 0, "Image//ORANGE.tga")
 GetMesh11("WALL_LOW", 0, "Image//GREEN.tga")
 GetMesh12("SKYPLANE", 0, "Image//SKYPLANE.tga")
 GetMesh13("TEXT", 0, "Image//TEXT.tga")
-GetMesh14("COMGROUND", 0, "Image//WORLD//W_GRASS.tga")
-GetMesh15("COMGROUND", 1, "Image//WORLD//W_SNOW.tga")
-GetMesh16("QUAD", 0, "Image//calibri.tga");

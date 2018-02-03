@@ -100,8 +100,8 @@ void Application::Init()
 	m_window_height = luaState->GetIntValue("height");
 
 	luaState->functionMap[CLuaInterface::RUN]->Run();
-	luaState->SaveFloatValue("Player1", 200.1, true);
-	luaState->SaveIntValue("Player2", 150);
+	//luaState->SaveFloatValue("Player1", 200.1, true);
+	//luaState->SaveIntValue("Player2", 150);
 
 	/*glfwGetPrimaryMonitor() to set full screen.*/
 	//m_window = glfwCreateWindow(m_window_width, m_window_height, "DM2240", glfwGetPrimaryMonitor(), NULL);
@@ -380,4 +380,13 @@ void Application::InitDisplay(void)
 	/*Shadow*/
 	currProg->AddUniform("lightDepthMVP");
 	currProg->AddUniform("shadowMap");
+}
+
+void Application::Iterate()
+{
+	//Scene->Update(m_timer.getElapsedTime());
+	SceneManager::GetInstance()->Render();
+	SceneManager::GetInstance()->Render();
+	glfwSwapBuffers(m_window);
+	glfwPollEvents();
 }

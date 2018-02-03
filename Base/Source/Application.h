@@ -16,6 +16,7 @@ public:
 	void Init();
 	void Run();
 	void Exit();
+	void Iterate();
 
 	void UpdateInput();
 	void PostInputUpdate();

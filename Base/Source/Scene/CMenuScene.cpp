@@ -10,7 +10,8 @@
 #include "MouseController.h"
 #include "SceneManager.h"
 #include "../QuadTree/CameraManager.h"
-
+#include "../LuaEditor/LuaEditor.h"
+#include "../Lua/LuaInterface.h"
 CMenuScene::CMenuScene()
 {
 }
@@ -26,6 +27,9 @@ void CMenuScene::Init()
 
 	MeshBuilder::GetInstance()->GenerateQuad("INTRO_BG", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
+
+	MeshBuilder::GetInstance()->GenerateText("TEXT", 16.f, 16.f);
+	MeshBuilder::GetInstance()->GetMesh("TEXT")->textureID[0] = LoadTGA("Image//TEXT.tga");
 }
 
 void CMenuScene::Update(double dt)
@@ -33,6 +37,7 @@ void CMenuScene::Update(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(0))
 	{
 		std::cout << "Loading Game" << std::endl;
+		CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
 		SceneManager::GetInstance()->SetActiveScene("Start");
 	}
 }
@@ -48,18 +53,38 @@ void CMenuScene::Render()
 
 	//Render all 3D
 
-	GraphicsManager::GetInstance()->SetOrthographicProjection(0, Application::GetInstance().GetWindowWidth(), 0, Application::GetInstance().GetWindowHeight(), -10, 10);
-	GraphicsManager::GetInstance()->DetachCamera();
+	//GraphicsManager::GetInstance()->SetOrthographicProjection(0, Application::GetInstance().GetWindowWidth(), 0, Application::GetInstance().GetWindowHeight(), -10, 10);
+	//GraphicsManager::GetInstance()->DetachCamera();
 
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
 
-	ms.PushMatrix();
-	ms.Translate(halfWindowWidth, halfWindowHeight, 0);
-	ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
-	ms.PopMatrix();
+	//ms.PushMatrix();
+	//ms.Translate(halfWindowWidth, halfWindowHeight, 0);
+	//ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
+	//RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
+	//ms.PopMatrix();
+
+
+	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
+	GraphicsManager::GetInstance()->DetachCamera();
+	/*Render loading text out.*/
+	/*Render Lua Script out.*/
+	float fontSize = (halfWindowWidth / halfWindowHeight) * 10.f;
+	float halfFontSize = fontSize * 0.5f;
+	/*Make the position start from left top.*/
+	Vector3 startPosition(-halfWindowWidth, 0, 0.f);
+
+	size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
+
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+	modelStack.PushMatrix();
+	modelStack.Translate(startPosition);
+	modelStack.Scale(fontSize, fontSize, fontSize);
+	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
+	std::cout << "RENDER" << std::endl;
+	modelStack.PopMatrix();
 }
 
 void CMenuScene::Exit()

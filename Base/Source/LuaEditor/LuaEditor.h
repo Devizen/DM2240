@@ -31,6 +31,9 @@ public:
 
 	/*Get input field.*/
 	std::deque<std::string>list;
+
+	std::string* GetMesage(void) { return message; }
+	void SetMessage(std::string _message) { *message = _message; }
 	//std::function<std::string(unsigned int)>& GetInputField());
 private:
 	/*Instance of LuaEditor in private so that no one can access directly.*/
@@ -45,6 +48,8 @@ private:
 	std::deque<std::string*>line;
 
 	std::function<std::string(unsigned int)>inputSelection;
+
+	std::string* message;
 protected:
 };
 

@@ -27,7 +27,7 @@ private:
 	~SceneManager();
 
 	std::map<std::string, Scene*> sceneMap;
-	Scene* activeScene, *nextScene;
+	Scene* activeScene, *nextScene, *previousScene;
 };
 
 #endif // SCENE_MANAGER_H

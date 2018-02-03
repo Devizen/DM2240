@@ -42,8 +42,21 @@ public:
 	void SaveFloatValue(const char* _varName, const float _value, const bool _overwrite = NULL);
 
 	int Calculate(std::vector<int>&_test);
+
+	/*Generating Object(s).*/
 	friend int luaAdd(lua_State* _state);
 	friend int LuaGenerateObj(lua_State * _state);
+	friend int LuaGenerateQuad(lua_State * _state);
+	friend int LuaGenerateSphere(lua_State* _state);
+	friend int LuaGenerateCube(lua_State* _state);
+	friend int LuaGenerateCone(lua_State* _state);
+	friend int LuaGenerateRing(lua_State* _state);
+	friend int LuaGenerateTerrain(lua_State* _state);
+	friend int LuaGenerateRay(lua_State* _state);
+	friend int LuaGenerateSkyplane(lua_State* _state);
+	friend int LuaGenerateAxes(lua_State* _state);
+	friend int LuaGenerateCrossHair(lua_State* _state);
+	friend int LuaGenerateText(lua_State* _state);
 	friend int LuaGetMesh(lua_State * _state);
 
 	/*Boolean to check if Lua Interface is initialised.*/

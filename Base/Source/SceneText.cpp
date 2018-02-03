@@ -180,20 +180,15 @@ void SceneText::Init()
 	std::vector<std::string>object;
 	std::vector<std::string>text;
 
-	TFunction* ObjectGeneration = CLuaInterface::GetInstance()->functionMap[CLuaInterface::FUNCTIONCALL::OBJECT];
-	dynamic_cast<FunctionPointerWrapper<void(std::vector<std::string>&, std::vector<std::string>)>*>(ObjectGeneration);
-	ObjectGeneration->Run(object, text);
-	std::deque<std::string>check = LuaEditor::GetInstance()->list;
-
-	MeshBuilder::GetInstance()->GenerateAxes("reference");
+	//TFunction* ObjectGeneration = CLuaInterface::GetInstance()->functionMap[CLuaInterface::FUNCTIONCALL::OBJECT];
+	//dynamic_cast<FunctionPointerWrapper<void(std::vector<std::string>&, std::vector<std::string>)>*>(ObjectGeneration);
+	//ObjectGeneration->Run(object, text);
+	//std::deque<std::string>check = LuaEditor::GetInstance()->list;
+	//CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
+	
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair", 0.f, 0.f, 0.f, 3.f);
-	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("oquad", Color(1.0f, 0.0f, 1.f), 1.f);
-	//MeshBuilder::GetInstance()->GetMesh("quad")->textureID[0] = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GenerateLine("redline", Color(1, 0, 0));
-	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
-	MeshBuilder::GetInstance()->GetMesh("text")->textureID[0] = LoadTGA("Image//TEXT.tga");
-	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
+	MeshBuilder::GetInstance()->GetMesh("TEXT")->material.kAmbient.Set(1, 0, 0);
 	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
 	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
 	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
@@ -204,11 +199,6 @@ void SceneText::Init()
 
 	/*Generate Ray.*/
 	MeshBuilder::GetInstance()->GenerateRay("RAY", 1.f);
-
-	/*Combination Ground Tile.*/
-	MeshBuilder::GetInstance()->GenerateQuad("COMGROUND", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("COMGROUND")->textureID[0] = LoadTGA("Image//WORLD//W_GRASS.tga");
-	MeshBuilder::GetInstance()->GetMesh("COMGROUND")->textureID[1] = LoadTGA("Image//WORLD//W_SNOW.tga");
 
 	/*3 different spheres to show Level of Detail.*/
 	MeshBuilder::GetInstance()->GenerateSphere("GREENSPHERE", Color(0, 1, 0), 18, 36, 5.f);
@@ -257,46 +247,6 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_LEG", "OBJ//MONK//MONK_RIGHT_LEG.obj");
 	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");*/
 
-	MeshBuilder::GetInstance()->GenerateSkyPlane("SKYPLANE", Color(1, 1, 1), 128, 400.0f, 1000.0f, 1.0f, 1.0f);
-	MeshBuilder::GetInstance()->GetMesh("SKYPLANE")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
-
-	/*Tower for enemy to target.*/
-	/*MeshBuilder::GetInstance()->GenerateOBJ("TOWER", "OBJ//TOWER.obj");
-	MeshBuilder::GetInstance()->GetMesh("TOWER")->textureID[0] = LoadTGA("Image//TOWER.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("TOWER_MID", "OBJ//TOWER_MID.obj");
-	MeshBuilder::GetInstance()->GetMesh("TOWER_MID")->textureID[0] = LoadTGA("Image//TOWER.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("TOWER_LOW", "OBJ//TOWER_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("TOWER_LOW")->textureID[0] = LoadTGA("Image//TOWER.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("CRATE", "OBJ//CRATE.obj");
-	MeshBuilder::GetInstance()->GetMesh("CRATE")->textureID[0] = LoadTGA("Image//CRATE.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("CRATE_MID", "OBJ//CRATE_MID.obj");
-	MeshBuilder::GetInstance()->GetMesh("CRATE_MID")->textureID[0] = LoadTGA("Image//ORANGE.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("CRATE_LOW", "OBJ//CRATE_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("CRATE_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1", "OBJ//BUILDING_1.obj");
-	MeshBuilder::GetInstance()->GetMesh("BUILDING_1")->textureID[0] = LoadTGA("Image//BUILDING_1.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1_MID", "OBJ//BUILDING_1_MID.obj");
-	MeshBuilder::GetInstance()->GetMesh("BUILDING_1_MID")->textureID[0] = LoadTGA("Image//ORANGE.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("BUILDING_1_LOW", "OBJ//BUILDING_1_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("BUILDING_1_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("WALL", "OBJ//WALL.obj");
-	MeshBuilder::GetInstance()->GetMesh("WALL")->textureID[0] = LoadTGA("Image//WALL.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("WALL_MID", "OBJ//WALL_MID.obj");
-	MeshBuilder::GetInstance()->GetMesh("WALL_MID")->textureID[0] = LoadTGA("Image//ORANGE.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("WALL_LOW", "OBJ//WALL_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("WALL_LOW")->textureID[0] = LoadTGA("Image//GREEN.tga");*/
-
 	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
 	MeshBuilder::GetInstance()->GenerateSphere("nade", Color(0.3, 0.4, 0.3), 10, 10, .5f);
 	/*Number of partitions for each X-axis and Z-axis.*/
@@ -329,10 +279,10 @@ void SceneText::Init()
 	float halfFontSize = fontSize * 0.5f;
 	for (int i = 0; i < 25; ++i)
 	{
-		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
+		textObj[i] = Create::Text2DObject("TEXT", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 0.0f, 0.0f));
 		textObj[i]->SetEntityType(ECEntityTypes::STATIC);
 	}
-	textObj[0]->SetText("Assignment 1");
+	textObj[0]->SetText("Assignment 2");
 
 	QuadTreeManager::GetInstance()->ground = groundEntity;
 	//CameraManager::GetInstance()->AttachPlayerCam(&this->camera);
@@ -815,7 +765,7 @@ void SceneText::RenderPassMain(void)
 			modelStack.PushMatrix();
 			modelStack.Translate(startPosition);
 			modelStack.Scale(fontSize, fontSize, fontSize);
-			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), (*LuaEditor::GetInstance()->GetLine()[i]), Color(1.f, 0.f, 0.f));
+			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
 			modelStack.PopMatrix();
 			startPosition.y -= (halfWindowHeight * 0.1f);
 		}
