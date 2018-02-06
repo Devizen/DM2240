@@ -11,6 +11,7 @@
 /*Audio Player for music.*/
 #include "../AudioPlayer\AudioPlayer.h"
 //#include "../SpriteEntity.h"
+#include "../UI/UIObj.h"
 
 //class ShaderProgram;
 //class SceneManager;
@@ -30,6 +31,8 @@ public:
 private:
 	FPSCamera camera;
 	//SpriteEntity* background;
+	typedef std::vector<UIObj*> UILIST;
+	UILIST uiObjList;
 };
 
 #endif

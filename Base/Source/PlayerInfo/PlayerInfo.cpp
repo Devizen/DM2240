@@ -408,7 +408,7 @@ void CPlayerInfo::Update(double dt)
 		Vector3 rightUV;
 
 		{
-			float yaw = (float)(-m_dSpeed * camera_yaw * (float)dt);
+			float yaw = (float)(-m_dSpeed * 2.0f *camera_yaw * (float)dt);
 			Mtx44 rotation;
 			rotation.SetToRotation(yaw, 0, 1, 0);
 			viewUV = rotation * viewUV;
@@ -419,7 +419,7 @@ void CPlayerInfo::Update(double dt)
 			up = rightUV.Cross(viewUV).Normalized();
 		}
 		{
-			float pitch = (float)(-m_dSpeed * camera_pitch * (float)dt);
+			float pitch = (float)(-m_dSpeed * 2.0f * camera_pitch * (float)dt);
 			rightUV = viewUV.Cross(up);
 			rightUV.y = 0;
 			rightUV.Normalize();

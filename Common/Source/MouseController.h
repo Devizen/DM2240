@@ -43,6 +43,7 @@ public:
 	inline bool GetKeepMouseCentered(){ return keepMouseCentered; };
 	inline void SetKeepMouseCentered(bool _value){ keepMouseCentered = _value; };
 
+
 private:
 	MouseController();
 	~MouseController();

@@ -98,6 +98,8 @@
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\Terrain\LoadHmap.h" />
     <ClInclude Include="Source\TextEntity.h" />
+    <ClInclude Include="Source\UI\Button.h" />
+    <ClInclude Include="Source\UI\UIObj.h" />
     <ClInclude Include="Source\Waypoint\Waypoint.h" />
     <ClInclude Include="Source\Waypoint\WaypointManager.h" />
     <ClInclude Include="Source\WeaponInfo\Pistol.h" />

@@ -380,3 +380,17 @@ void Application::InitDisplay(void)
 	currProg->AddUniform("lightDepthMVP");
 	currProg->AddUniform("shadowMap");
 }
+
+//void Application::LockMouse(bool b)
+//{
+//	if (b)
+//		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//}
+
+void Application::ShowMouse(bool b)
+{
+	if (b)
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	else
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}

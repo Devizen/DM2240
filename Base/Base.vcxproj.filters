@@ -66,12 +66,15 @@
     </Filter>
     <Filter Include="LuaEditor">
       <UniqueIdentifier>{cabe90a8-190f-40f0-8df3-34745bd9cc92}</UniqueIdentifier>
-      </Filter>
+    </Filter>
     <Filter Include="Scenes">
       <UniqueIdentifier>{d69e11b0-fa44-4f77-a403-6a1c135d6bea}</UniqueIdentifier>
     </Filter>
     <Filter Include="Waypoint">
       <UniqueIdentifier>{46d2a60e-0269-4af5-a2ce-5ebb25048af4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{173f99a3-3579-4f50-8677-491b59f9ec94}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -180,7 +183,6 @@
     <ClCompile Include="Source\AudioPlayer\AudioPlayer.cpp">
       <Filter>AudioPlayer</Filter>
     </ClCompile>
-
     <ClCompile Include="Source\SceneText.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
@@ -196,7 +198,6 @@
     <ClCompile Include="Source\Waypoint\WaypointManager.cpp">
       <Filter>Waypoint</Filter>
     </ClCompile>
-
     <ClCompile Include="Source\Lua\LuaInterface.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
@@ -345,6 +346,12 @@
     </ClInclude>
     <ClInclude Include="Source\LuaEditor\LuaEditor.h">
       <Filter>LuaEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\UIObj.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\Button.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

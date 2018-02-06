@@ -34,6 +34,9 @@ public:
 	int m_window_height;
 
 	ShaderProgram* GetCurrProg() { return currProg; }
+
+	//void LockMouse(bool b);
+	void ShowMouse(bool b);
 private:
 	Application();
 	~Application();
