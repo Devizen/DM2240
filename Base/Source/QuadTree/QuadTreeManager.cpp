@@ -240,6 +240,15 @@ void QuadTreeManager::RenderObj()
 	//}
 }
 
+void QuadTreeManager::Clear()
+{
+	ClearEntities();
+	renderList.clear();
+	hitScanList.clear();
+	ground = nullptr;
+	toggle = true;
+}
+
 
 void QuadTreeManager::RenderObj(QuadTree * node)
 {

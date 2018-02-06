@@ -49,7 +49,7 @@ void CIntroScene::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_SPACE))
 	{
 		std::cout << "Loading Menu" << std::endl;
-		SceneManager::GetInstance()->SetActiveScene("Menu");
+		SceneManager::GetInstance()->PopnPushScene("Menu");
 	}
 }
 

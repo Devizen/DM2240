@@ -174,6 +174,13 @@ void CWaypointManager::PrintSelf(void)
 	cout << "================================================================================" << endl;
 }
 
+void CWaypointManager::ClearWaypoints()
+{
+	for (auto& wp : listOfWaypoints)
+		delete wp;
+	listOfWaypoints.clear();
+}
+
 // Remove related waypoint
 void CWaypointManager::RemoveRelatedWaypoint(const int m_iID)
 {

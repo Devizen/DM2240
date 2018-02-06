@@ -42,7 +42,7 @@ void CMenuScene::Init()
 	startButton->image = MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND");
 	uiObjList.push_back(startButton);
 
-	MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
+	//MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
 
 	MeshBuilder::GetInstance()->GenerateText("TEXT", 16.f, 16.f);
 	MeshBuilder::GetInstance()->GetMesh("TEXT")->textureID[0] = LoadTGA("Image//TEXT.tga");
@@ -52,6 +52,10 @@ void CMenuScene::Init()
 
 void CMenuScene::Update(double dt)
 {
+	MouseController::GetInstance()->SetKeepMouseCentered(false);
+	Application::GetInstance().ShowMouse(true);
+	isLoadingGame = false;
+
 	float cursor_x, cursor_y;
 	MouseController::GetInstance()->GetMousePosition(cursor_x, cursor_y);
 	//std::cout << cursor_x << " , " <<  cursor_y << std::endl;
@@ -77,8 +81,8 @@ void CMenuScene::Update(double dt)
 						std::cout << "Loading Game" << std::endl;
 						isLoadingGame = true;
 						CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
-						SceneManager::GetInstance()->SetActiveScene("Start");
-
+						SceneManager::GetInstance()->PushScene("Start");
+						
 					}
 				}
 
@@ -150,7 +154,7 @@ void CMenuScene::Render()
 		modelStack.Translate(startPosition);
 		modelStack.Scale(fontSize, fontSize, fontSize);
 		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
-		std::cout << "RENDER" << std::endl;
+		//std::cout << "RENDER" << std::endl;
 		modelStack.PopMatrix();
 	}
 
@@ -164,4 +168,6 @@ void CMenuScene::Exit()
 
 	MouseController::GetInstance()->SetKeepMouseCentered(true);
 	Application::GetInstance().ShowMouse(false);
+	
+	isLoadingGame = false;
 }

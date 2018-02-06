@@ -204,6 +204,12 @@
     <ClCompile Include="Source\LuaEditor\LuaEditor.cpp">
       <Filter>LuaEditor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\CPauseScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\COptionScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -352,9 +358,15 @@
     </ClInclude>
     <ClInclude Include="Source\UI\Button.h">
       <Filter>UI</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Source\Lua\FunctionPointerWrapper.h">
       <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\CPauseScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\COptionScene.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

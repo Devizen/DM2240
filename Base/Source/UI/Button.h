@@ -16,8 +16,8 @@ public:
 
 	bool CheckCollision(float x, float y)
 	{
-		std::cout << -scale_x + this->x << " , " << x << " , " << scale_x + this->x << std::endl;
-		std::cout << -scale_y + this->y << " , " << y << " , " << scale_y + this->y << std::endl;
+		//std::cout << -scale_x + this->x << " , " << x << " , " << scale_x + this->x << std::endl;
+		//std::cout << -scale_y + this->y << " , " << y << " , " << scale_y + this->y << std::endl;
 
 		if (-scale_x + this->x < x && x < scale_x + this->x &&
 			-scale_y + this->y < y && y < scale_y + this->y)

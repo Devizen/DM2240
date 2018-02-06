@@ -296,8 +296,9 @@ void GraphicsManager::RemoveLight(const std::string& _name)
 	if (lightMap.count(_name) == 0)
 		return;
 
-	delete lightMap[_name];
+	LightBase* light = lightMap[_name];
 	lightMap.erase(_name);
+	delete light;
 }
 
 void GraphicsManager::UpdateLights(double _dt)
