@@ -368,5 +368,8 @@
     <ClInclude Include="Source\Scene\COptionScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Source\UI\TextField.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -32,6 +32,8 @@ public:
 	void PopToScene(const std::string& _name);
 
 	void PrintSceneStackInfo();
+
+	bool IsSceneAtBottom(Scene* scene) { if (sceneStack.empty()) return false; return (sceneStack.front() == scene); }
 private:
 	SceneManager();
 	~SceneManager();

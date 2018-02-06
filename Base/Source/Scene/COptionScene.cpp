@@ -15,6 +15,14 @@
 #include "../LuaEditor/LuaEditor.h"
 #include "../Lua/LuaInterface.h"
 
+#include "../UI/TextField.h"
+
+struct InputKeyConfig : public UIObj
+{
+	TextField* keyname;
+	TextField* keyinput;
+	Button* keyinputbutton;
+};
 
 COptionScene::COptionScene()
 {
@@ -37,6 +45,7 @@ void COptionScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("OPTION_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("OPTION_OPTION_BUTTON", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("OPTION_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("TEXTFIELD_BG", Color(1, 1, 1), 1.f);
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
 
@@ -49,6 +58,17 @@ void COptionScene::Init()
 	optionButton->set_scale_x(50).set_scale_y(50).set_x(0).set_y(0);
 	optionButton->image = MeshBuilder::GetInstance()->GetMesh("OPTION_OPTION_BUTTON");
 	uiObjList.push_back(optionButton);
+
+	float aspectXRatio = Application::GetInstance().GetWindowWidth() / 800.f;
+	float aspectYRatio = Application::GetInstance().GetWindowHeight() / 600.f;
+	float textSize = 15.f;
+	Mesh* textfieldbg = MeshBuilder::GetInstance()->GetMesh("TEXTFIELD_BG");
+	float textfieldscaleX = 20;
+	float textfieldscaleY= 15;
+
+	TextField* textField = new TextField("textfield", textfieldbg, "Move Forward", Color(0, 0, 0), textSize);
+	textField->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(-halfWindowWidth * 0.25f).set_y(halfWindowHeight * 0.75f);
+	uiObjList.push_back(textField);
 }
 
 void COptionScene::Update(double dt)
@@ -92,7 +112,9 @@ void COptionScene::Update(double dt)
 
 void COptionScene::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (SceneManager::GetInstance()->IsSceneAtBottom(this))
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(CameraManager::GetInstance()->GetFrustumFoV(),
 		CameraManager::GetInstance()->GetFrustumAspect(), CameraManager::GetInstance()->GetNearPlane(), CameraManager::GetInstance()->GetFarPlane());
@@ -126,6 +148,21 @@ void COptionScene::Render()
 			RenderHelper::RenderMesh(button->image);
 			ms.PopMatrix();
 		}
+		TextField* tf = dynamic_cast<TextField*>(*it);
+		if (tf)
+		{
+			ms.PushMatrix();
+			ms.Translate(tf->x, tf->y, 2);
+			ms.Scale(tf->scale_x, tf->scale_y, 1);
+			RenderHelper::RenderMesh(tf->background);
+			ms.PopMatrix();
+
+			ms.PushMatrix();
+			ms.Translate(tf->x, tf->y, 2);
+			ms.Scale(tf->textScale, tf->textScale, 1);
+			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), tf->text, tf->textColor);
+			ms.PopMatrix();
+		}
 	}
 }
 
@@ -134,6 +171,7 @@ void COptionScene::Exit()
 	MeshBuilder::GetInstance()->RemoveMesh("OPTION_BACKGROUND");
 	MeshBuilder::GetInstance()->RemoveMesh("OPTION_CLOSE_BUTTON");
 	MeshBuilder::GetInstance()->RemoveMesh("OPTION_OPTION_BUTTON");
+	MeshBuilder::GetInstance()->RemoveMesh("TEXTFIELD_BG");
 
 	for (auto & uiobj : uiObjList)
 		delete uiobj;

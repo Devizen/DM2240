@@ -31,7 +31,7 @@ void CPauseScene::Init()
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	MeshBuilder::GetInstance()->GenerateQuad("PAUSE_BACKGROUND", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("PAUSE_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
+	MeshBuilder::GetInstance()->GetMesh("PAUSE_BACKGROUND")->textureID[0] = LoadTGA("Image//UI//pausequad.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("PAUSE_CLOSE_BUTTON", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("PAUSE_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("PAUSE_OPTION_BUTTON", Color(1, 1, 1), 1.f);
@@ -110,7 +110,8 @@ void CPauseScene::Update(double dt)
 
 void CPauseScene::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (SceneManager::GetInstance()->IsSceneAtBottom(this))
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(CameraManager::GetInstance()->GetFrustumFoV(),
 		CameraManager::GetInstance()->GetFrustumAspect(), CameraManager::GetInstance()->GetNearPlane(), CameraManager::GetInstance()->GetFarPlane());
