@@ -204,7 +204,7 @@ void QuadTreeManager::RenderGrid()
 
 
 		//std::cout << "pos " << (*it).pos << " scale " << (*it).scale << std::endl;
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("oquad"));
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("OQUAD"));
 		//RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("MONK_HEAD"));
 		ms.PopMatrix();
 

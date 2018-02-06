@@ -3,6 +3,7 @@
 
 #include <string>
 #include <deque>
+#include <functional>
 
 /*
 Done by Lai Wei Jing, Eugene and Ow Hong Yu.
@@ -28,6 +29,12 @@ public:
 	/*Set Status of LuaEditor.*/
 	void SetIsToggle(bool _isToggle) { isToggle = _isToggle; }
 
+	/*Get input field.*/
+	std::deque<std::string>list;
+
+	std::string* GetMesage(void) { return message; }
+	void SetMessage(std::string _message) { *message = _message; }
+	//std::function<std::string(unsigned int)>& GetInputField());
 private:
 	/*Instance of LuaEditor in private so that no one can access directly.*/
 	static LuaEditor* s_instance;
@@ -39,6 +46,10 @@ private:
 	bool isToggle;
 
 	std::deque<std::string*>line;
+
+	std::function<std::string(unsigned int)>inputSelection;
+
+	std::string* message;
 protected:
 };
 

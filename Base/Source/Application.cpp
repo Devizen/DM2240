@@ -93,14 +93,15 @@ void Application::Init()
 	*/
 
 	CLuaInterface* luaState = CLuaInterface::GetInstance();
-	luaState->functionMap[CLuaInterface::INIT]();
+	luaState->Init();
+	luaState->functionMap[CLuaInterface::INIT]->Run();
 
 	m_window_width = luaState->GetIntValue("width");
 	m_window_height = luaState->GetIntValue("height");
 
-	luaState->functionMap[CLuaInterface::RUN]();
-	luaState->SaveFloatValue("Player1", 200.1, true);
-	luaState->SaveIntValue("Player2", 150);
+	luaState->functionMap[CLuaInterface::RUN]->Run();
+	//luaState->SaveFloatValue("Player1", 200.1, true);
+	//luaState->SaveIntValue("Player2", 150);
 
 	/*glfwGetPrimaryMonitor() to set full screen.*/
 	//m_window = glfwCreateWindow(m_window_width, m_window_height, "DM2240", glfwGetPrimaryMonitor(), NULL);
@@ -381,6 +382,7 @@ void Application::InitDisplay(void)
 	currProg->AddUniform("shadowMap");
 }
 
+<<<<<<< HEAD
 //void Application::LockMouse(bool b)
 //{
 //	if (b)
@@ -394,3 +396,13 @@ void Application::ShowMouse(bool b)
 	else
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
+=======
+void Application::Iterate()
+{
+	//Scene->Update(m_timer.getElapsedTime());
+	SceneManager::GetInstance()->Render();
+	SceneManager::GetInstance()->Render();
+	glfwSwapBuffers(m_window);
+	glfwPollEvents();
+}
+>>>>>>> faba2d541099b1dcec869c90411a17190de552e0
