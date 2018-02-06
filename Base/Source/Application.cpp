@@ -382,7 +382,6 @@ void Application::InitDisplay(void)
 	currProg->AddUniform("shadowMap");
 }
 
-<<<<<<< HEAD
 //void Application::LockMouse(bool b)
 //{
 //	if (b)
@@ -396,7 +395,6 @@ void Application::ShowMouse(bool b)
 	else
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
-=======
 void Application::Iterate()
 {
 	//Scene->Update(m_timer.getElapsedTime());
@@ -405,4 +403,3 @@ void Application::Iterate()
 	glfwSwapBuffers(m_window);
 	glfwPollEvents();
 }
->>>>>>> faba2d541099b1dcec869c90411a17190de552e0

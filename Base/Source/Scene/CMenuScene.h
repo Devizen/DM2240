@@ -33,6 +33,8 @@ private:
 	//SpriteEntity* background;
 	typedef std::vector<UIObj*> UILIST;
 	UILIST uiObjList;
+
+	bool isLoadingGame;
 };
 
 #endif

@@ -352,6 +352,7 @@
     </ClInclude>
     <ClInclude Include="Source\UI\Button.h">
       <Filter>UI</Filter>
+	</ClInclude>
     <ClInclude Include="Source\Lua\FunctionPointerWrapper.h">
       <Filter>Lua</Filter>
     </ClInclude>

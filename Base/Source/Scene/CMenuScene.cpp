@@ -10,14 +10,10 @@
 #include "MouseController.h"
 #include "SceneManager.h"
 #include "../QuadTree/CameraManager.h"
-<<<<<<< HEAD
 #include "../UI/Button.h"
 
-
-=======
 #include "../LuaEditor/LuaEditor.h"
 #include "../Lua/LuaInterface.h"
->>>>>>> faba2d541099b1dcec869c90411a17190de552e0
 CMenuScene::CMenuScene()
 {
 }
@@ -34,7 +30,6 @@ void CMenuScene::Init()
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	MeshBuilder::GetInstance()->GenerateQuad("INTRO_BG", Color(1, 1, 1), 1.f);
-<<<<<<< HEAD
 	MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("BUTTON_BACKGROUND", Color(0.8, 0.8, 0.8), 1.f);
 	//MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
@@ -47,12 +42,12 @@ void CMenuScene::Init()
 	startButton->image = MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND");
 	uiObjList.push_back(startButton);
 
-=======
 	MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
 
 	MeshBuilder::GetInstance()->GenerateText("TEXT", 16.f, 16.f);
 	MeshBuilder::GetInstance()->GetMesh("TEXT")->textureID[0] = LoadTGA("Image//TEXT.tga");
->>>>>>> faba2d541099b1dcec869c90411a17190de552e0
+
+	isLoadingGame = false;
 }
 
 void CMenuScene::Update(double dt)
@@ -70,7 +65,6 @@ void CMenuScene::Update(double dt)
 
 	for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
 	{
-<<<<<<< HEAD
 		Button* button = dynamic_cast<Button*>(*it);
 		if (button)
 		{
@@ -81,17 +75,16 @@ void CMenuScene::Update(double dt)
 					if (MouseController::GetInstance()->IsButtonReleased(0))
 					{
 						std::cout << "Loading Game" << std::endl;
+						isLoadingGame = true;
+						CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
 						SceneManager::GetInstance()->SetActiveScene("Start");
+
 					}
 				}
 
 			}
 		}
-=======
-		std::cout << "Loading Game" << std::endl;
-		CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
-		SceneManager::GetInstance()->SetActiveScene("Start");
->>>>>>> faba2d541099b1dcec869c90411a17190de552e0
+		
 	}
 	//if (MouseController::GetInstance()->IsButtonReleased(0))
 	//{
@@ -110,13 +103,8 @@ void CMenuScene::Render()
 	GraphicsManager::GetInstance()->AttachCamera(CameraManager::GetInstance()->GetActiveCam());
 
 	//Render all 3D
-
-<<<<<<< HEAD
-
-=======
 	//GraphicsManager::GetInstance()->SetOrthographicProjection(0, Application::GetInstance().GetWindowWidth(), 0, Application::GetInstance().GetWindowHeight(), -10, 10);
 	//GraphicsManager::GetInstance()->DetachCamera();
->>>>>>> faba2d541099b1dcec869c90411a17190de552e0
 
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
@@ -124,53 +112,49 @@ void CMenuScene::Render()
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	GraphicsManager::GetInstance()->DetachCamera();
 
-
-<<<<<<< HEAD
-	ms.PushMatrix();
-	ms.Translate(0, 0, 0);
-	ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
-	ms.PopMatrix();
-
-	for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
+	if (!isLoadingGame)
 	{
-		Button* button = dynamic_cast<Button*>(*it);
-		if (button)
+		ms.PushMatrix();
+		ms.Translate(0, 0, 0);
+		ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
+		ms.PopMatrix();
+
+		for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
 		{
-			ms.PushMatrix();
-			ms.Translate(button->x, button->y, 2);
-			ms.Scale(button->scale_x, button->scale_y, 1);
-			RenderHelper::RenderMesh(button->image);
-			ms.PopMatrix();
+			Button* button = dynamic_cast<Button*>(*it);
+			if (button)
+			{
+				ms.PushMatrix();
+				ms.Translate(button->x, button->y, 2);
+				ms.Scale(button->scale_x, button->scale_y, 1);
+				RenderHelper::RenderMesh(button->image);
+				ms.PopMatrix();
+			}
 		}
+
 	}
-=======
-	//ms.PushMatrix();
-	//ms.Translate(halfWindowWidth, halfWindowHeight, 0);
-	//ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
-	//RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
-	//ms.PopMatrix();
+	else
+	{
+		/*Render loading text out.*/
+		/*Render Lua Script out.*/
+		float fontSize = (halfWindowWidth / halfWindowHeight) * 10.f;
+		float halfFontSize = fontSize * 0.5f;
+		/*Make the position start from left top.*/
+		Vector3 startPosition(-halfWindowWidth, 0, 0.f);
+
+		size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
+
+		MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+		modelStack.PushMatrix();
+		modelStack.Translate(startPosition);
+		modelStack.Scale(fontSize, fontSize, fontSize);
+		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
+		std::cout << "RENDER" << std::endl;
+		modelStack.PopMatrix();
+	}
 
 
-	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
-	GraphicsManager::GetInstance()->DetachCamera();
-	/*Render loading text out.*/
-	/*Render Lua Script out.*/
-	float fontSize = (halfWindowWidth / halfWindowHeight) * 10.f;
-	float halfFontSize = fontSize * 0.5f;
-	/*Make the position start from left top.*/
-	Vector3 startPosition(-halfWindowWidth, 0, 0.f);
-
-	size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
-
-	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-	modelStack.PushMatrix();
-	modelStack.Translate(startPosition);
-	modelStack.Scale(fontSize, fontSize, fontSize);
-	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
-	std::cout << "RENDER" << std::endl;
-	modelStack.PopMatrix();
->>>>>>> faba2d541099b1dcec869c90411a17190de552e0
 }
 
 void CMenuScene::Exit()

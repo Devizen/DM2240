@@ -105,3 +105,13 @@ bool SceneManager::CheckSceneExist(const std::string& _name)
 {
 	return sceneMap.count(_name) != 0;
 }
+
+void SceneManager::AddToSceneStack(const std::string & _name)
+{
+	if (!CheckSceneExist(_name)) // Scene does not exist
+		throw std::exception("Scene does not exist");
+
+	Scene* scene = sceneMap[_name];
+	scene->Init();
+	sceneStack.push_back(scene);
+}

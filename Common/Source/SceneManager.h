@@ -4,6 +4,7 @@
 #include "SingletonTemplate.h"
 #include <map>
 #include <string>
+#include <deque>
 
 class Scene;
 
@@ -22,12 +23,14 @@ public:
 	void SetActiveScene(const std::string& _name);
 	bool CheckSceneExist(const std::string& _name);
 
+	void AddToSceneStack(const std::string& _name);
 private:
 	SceneManager();
 	~SceneManager();
 
 	std::map<std::string, Scene*> sceneMap;
 	Scene* activeScene, *nextScene, *previousScene;
+	std::deque<Scene*> sceneStack;
 };
 
 #endif // SCENE_MANAGER_H
