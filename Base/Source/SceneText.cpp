@@ -57,6 +57,8 @@
 /*Waypoint*/
 #include "Waypoint\WaypointManager.h"
 
+#include "Component\Option.h"
+
 #include <iostream>
 using namespace std;
 
@@ -313,12 +315,21 @@ void SceneText::Init()
 void SceneText::Update(double dt)
 {
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD5))
-		LuaEditor::GetInstance()->SetIsToggle(!LuaEditor::GetInstance()->GetIsToggle());
+		playerInfo->SetOptimiseUpdate(!*playerInfo->GetOptimiseUpdate());
+	//static OptionBase<Key>* test = new OptionBase<Key>();
 
-	if (KeyboardController::GetInstance()->IsKeyPressed('A'))
-	{
-		(*LuaEditor::GetInstance()->GetLine()[2]) += 'A';
-	}
+	//if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD0))
+	//{
+	//	test->Update("HELLO", 'a');
+	//	std::cout << "SAVED" << std::endl;
+	//}
+	//if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD5))
+	//	LuaEditor::GetInstance()->SetIsToggle(!LuaEditor::GetInstance()->GetIsToggle());
+
+	//if (KeyboardController::GetInstance()->IsKeyPressed('A'))
+	//{
+	//	(*LuaEditor::GetInstance()->GetLine()[2]) += 'A';
+	//}
 
 	else if (KeyboardController::GetInstance()->IsKeyPressed(VK_BACK))
 	{

@@ -35,6 +35,16 @@ public:
 	std::string* GetMesage(void) { return message; }
 	void SetMessage(std::string _message) { *message = _message; }
 	//std::function<std::string(unsigned int)>& GetInputField());
+
+
+	const float GetCurrentLoadProgress(void) { return currentLoadProgress; }
+	const float GetCompleteLoadProgress(void) { return completeLoadProgress; }
+
+	void AddCurrentLoadProgress(float _currentLoadProgress) { currentLoadProgress += _currentLoadProgress; }
+	void AddCompleteLoadProgress(float _completeLoadProgress) { completeLoadProgress += _completeLoadProgress; }
+
+	void SetCurrentLoadProgress(float _currentLoadProgress) { currentLoadProgress = _currentLoadProgress; }
+	void SetCompleteLoadProgress(float _completeLoadProgress) { completeLoadProgress = _completeLoadProgress; }
 private:
 	/*Instance of LuaEditor in private so that no one can access directly.*/
 	static LuaEditor* s_instance;
@@ -50,6 +60,9 @@ private:
 	std::function<std::string(unsigned int)>inputSelection;
 
 	std::string* message;
+
+	float currentLoadProgress;
+	float completeLoadProgress;
 protected:
 };
 

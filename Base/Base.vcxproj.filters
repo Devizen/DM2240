@@ -73,6 +73,9 @@
     <Filter Include="Waypoint">
       <UniqueIdentifier>{46d2a60e-0269-4af5-a2ce-5ebb25048af4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{53d51e4d-6f58-43a5-860c-502fd4f4adee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -346,6 +349,12 @@
     </ClInclude>
     <ClInclude Include="Source\Lua\FunctionPointerWrapper.h">
       <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Component\ComponentBase.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Component\Option.h">
+      <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

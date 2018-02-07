@@ -57,6 +57,8 @@
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\AudioPlayer\AudioPlayer.h" />
+    <ClInclude Include="Source\Component\ComponentBase.h" />
+    <ClInclude Include="Source\Component\Option.h" />
     <ClInclude Include="Source\DepthFBO\DepthFBO.h" />
     <ClInclude Include="Source\Enemy\AnimationPattern.h" />
     <ClInclude Include="Source\Enemy\EnemyManager.h" />

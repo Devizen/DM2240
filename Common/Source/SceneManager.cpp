@@ -4,6 +4,8 @@
 #include "SceneText.h"
 #include "Scene\CIntroScene.h"
 #include "Scene\CMenuScene.h"
+#include "LuaEditor\LuaEditor.h"
+#include "KeyboardController.h"
 
 SceneManager::SceneManager() : activeScene(nullptr), nextScene(nullptr)
 {
@@ -21,14 +23,22 @@ void SceneManager::Update(double _dt)
 	// Check for change of scene
 	if (nextScene != activeScene)
 	{
-		if (activeScene)
+		if (LuaEditor::GetInstance()->GetCompleteLoadProgress() == LuaEditor::GetInstance()->GetCurrentLoadProgress())
 		{
-			// Scene is valid, need to call appropriate function to exit
-			activeScene->Exit();
+			if (activeScene)
+			{
+				// Scene is valid, need to call appropriate function to exit
+				activeScene->Exit();
+			}
+
+			activeScene = nextScene;
+			activeScene->Init();
+
+			/*Clear all keyboard input on queue.*/
+			static std::queue<int>* keyInput = KeyboardController::GetInstance()->GetKeyInput();
+			while (!keyInput->empty())
+				keyInput->pop();
 		}
-		
-		activeScene = nextScene;
-		activeScene->Init();
 	}
 
 	if (activeScene)

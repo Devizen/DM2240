@@ -12,6 +12,7 @@
 #include "../QuadTree/CameraManager.h"
 #include "../LuaEditor/LuaEditor.h"
 #include "../Lua/LuaInterface.h"
+
 CMenuScene::CMenuScene()
 {
 }
@@ -53,19 +54,12 @@ void CMenuScene::Render()
 
 	//Render all 3D
 
-	//GraphicsManager::GetInstance()->SetOrthographicProjection(0, Application::GetInstance().GetWindowWidth(), 0, Application::GetInstance().GetWindowHeight(), -10, 10);
-	//GraphicsManager::GetInstance()->DetachCamera();
+	GraphicsManager::GetInstance()->SetOrthographicProjection(0, Application::GetInstance().GetWindowWidth(), 0, Application::GetInstance().GetWindowHeight(), -10, 10);
+	GraphicsManager::GetInstance()->DetachCamera();
 
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
-
-	//ms.PushMatrix();
-	//ms.Translate(halfWindowWidth, halfWindowHeight, 0);
-	//ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
-	//RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
-	//ms.PopMatrix();
-
 
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	GraphicsManager::GetInstance()->DetachCamera();
@@ -78,13 +72,33 @@ void CMenuScene::Render()
 
 	size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
 
-	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-	modelStack.PushMatrix();
-	modelStack.Translate(startPosition);
-	modelStack.Scale(fontSize, fontSize, fontSize);
-	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
-	std::cout << "RENDER" << std::endl;
-	modelStack.PopMatrix();
+	LuaEditor* luaEditor = LuaEditor::GetInstance();
+
+	if (luaEditor->GetCompleteLoadProgress() > 0)
+	{
+		ms.PushMatrix();
+		ms.Translate(0.f/*((halfWindowWidth * 2.f) * (luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) - (halfWindowWidth * 2.f))*/, 0.f, -1.f);
+		ms.Scale((halfWindowWidth * 2.f) * (luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()), halfWindowHeight * 0.25f, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
+		ms.PopMatrix();
+
+		MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+		modelStack.PushMatrix();
+		modelStack.Translate(startPosition);
+		modelStack.Scale(fontSize, fontSize, fontSize);
+		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
+		std::cout << "RENDER" << std::endl;
+		modelStack.PopMatrix();
+
+		modelStack = GraphicsManager::GetInstance()->GetModelStack();
+		modelStack.PushMatrix();
+		modelStack.Translate(0.f, halfWindowHeight * 0.3f, 0.f);
+		modelStack.Scale(fontSize * 2.f, fontSize * 2.f, fontSize * 2.f);
+		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), 
+			std::to_string(static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f)), Color(1.f, 0.f, 0.f));
+		std::cout << "I AM IN RENDER CMENUSCENE: " << static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f) << std::endl;
+		modelStack.PopMatrix();
+	}
 }
 
 void CMenuScene::Exit()

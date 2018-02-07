@@ -4,6 +4,7 @@
 #include "SingletonTemplate.h"
 #include <bitset>
 #include <windows.h>
+#include <queue>
 
 class KeyboardController : public Singleton<KeyboardController>
 {
@@ -20,12 +21,13 @@ public:
 	bool IsKeyUp(unsigned char _slot);
 	bool IsKeyPressed(unsigned char _slot);
 	bool IsKeyReleased(unsigned char _slot);
-
+	std::queue<int>*GetKeyInput(void) { if (keyInput == nullptr) { keyInput = new std::queue<int>(); } return keyInput; }
 private:
 	KeyboardController();
 	~KeyboardController();
 
 	std::bitset<MAX_KEYS> currStatus, prevStatus;
+	std::queue<int>*keyInput;
 };
 
 #endif // KEYBOARD_CONTROLLER_H
