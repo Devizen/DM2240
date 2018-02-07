@@ -185,7 +185,7 @@ void Application::Run()
 	//}
 
 	InitDisplay();
-	SceneManager::GetInstance()->SetActiveScene("Intro");
+	SceneManager::GetInstance()->PushScene("Intro");
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
@@ -397,6 +397,19 @@ void Application::InitDisplay(void)
 	DepthFBO::GetInstance()->m_renderPass = DepthFBO::RENDER_PASS_MAIN;
 }
 
+//void Application::LockMouse(bool b)
+//{
+//	if (b)
+//		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//}
+
+void Application::ShowMouse(bool b)
+{
+	if (b)
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	else
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
 void Application::Iterate()
 {
 	//Scene->Update(m_timer.getElapsedTime());

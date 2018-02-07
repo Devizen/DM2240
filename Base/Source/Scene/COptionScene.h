@@ -1,6 +1,4 @@
 #pragma once
-#ifndef SCENE_MENU_H
-#define SCENE_MENU_H
 
 #include "Scene.h"
 #include "Mtx44.h"
@@ -9,20 +7,15 @@
 #include "MatrixStack.h"
 #include <vector>
 /*Audio Player for music.*/
-#include "../AudioPlayer\AudioPlayer.h"
+//#include "../AudioPlayer\AudioPlayer.h"
 //#include "../SpriteEntity.h"
 #include "../UI/UIObj.h"
 
-//class ShaderProgram;
-//class SceneManager;
-//class TextEntity;
-//class Light;
-
-class CMenuScene : public Scene
+class COptionScene : public Scene
 {
 public:
-	CMenuScene();
-	~CMenuScene();
+	COptionScene();
+	~COptionScene();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -33,8 +26,4 @@ private:
 	//SpriteEntity* background;
 	typedef std::vector<UIObj*> UILIST;
 	UILIST uiObjList;
-
-	bool isLoadingGame;
 };
-
-#endif

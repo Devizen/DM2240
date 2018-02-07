@@ -309,7 +309,8 @@ void SceneText::Init()
 	thisID = CWaypointManager::GetInstance()->AddWaypoint(thisID, Vector3(50, 0, 50));
 	thisID = CWaypointManager::GetInstance()->AddWaypoint(thisID, Vector3(-50, 0, 50));
 
-
+	MouseController::GetInstance()->SetKeepMouseCentered(true);
+	Application::GetInstance().ShowMouse(false);
 }
 
 void SceneText::Update(double dt)
@@ -334,6 +335,11 @@ void SceneText::Update(double dt)
 	else if (KeyboardController::GetInstance()->IsKeyPressed(VK_BACK))
 	{
 		(*LuaEditor::GetInstance()->GetLine()[2]).erase((*LuaEditor::GetInstance()->GetLine()[2]).length() - 1);
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyPressed('P'))
+	{
+		SceneManager::GetInstance()->PushScene("Pause");
 	}
 
 	static float horizontal = lights[0]->position.x;
@@ -446,6 +452,8 @@ void SceneText::Update(double dt)
 	{
 		CameraManager::GetInstance()->toggleBirdEyeView = (CameraManager::GetInstance()->toggleBirdEyeView ? false : true);
 	}
+	if (KeyboardController::GetInstance()->IsKeyPressed(VK_HOME))
+		SceneManager::GetInstance()->PrintSceneStackInfo();
 	// <THERE>
 
 	/*Randomly spawn an enemy on the map.*/
@@ -535,7 +543,7 @@ void SceneText::Update(double dt)
 	}
 
 	/*Randomly spawn a Wall on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyDown('P'))
+	if (KeyboardController::GetInstance()->IsKeyDown('U'))
 	{
 		GenericEntity* wall = Create::Asset("WALL", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
@@ -687,8 +695,16 @@ void SceneText::Exit()
 	}
 
 	// Delete the lights
-	delete lights[0];
-	delete lights[1];
+	GraphicsManager::GetInstance()->RemoveLight(lights[0]->name);
+	GraphicsManager::GetInstance()->RemoveLight(lights[1]->name);
+	//delete lights[0];
+	//delete lights[1];
+	CScoreManager::GetInstance()->ResetScore();
+	delete camera;
+	CameraManager::GetInstance()->AttachPlayerCam(nullptr);
+	//QuadTreeManager::GetInstance()->ground = nullptr;
+	CWaypointManager::GetInstance()->ClearWaypoints();
+	QuadTreeManager::GetInstance()->Clear();
 }
 
 void SceneText::RenderPassGPass(void)
@@ -725,7 +741,9 @@ void SceneText::RenderPassMain(void)
 	glViewport(0, 0, static_cast<GLsizei>(Application::GetInstance().GetWindowWidth()), static_cast<GLsizei>(Application::GetInstance().GetWindowHeight()));
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	if (SceneManager::GetInstance()->IsSceneAtBottom(this))
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	GraphicsManager::GetInstance()->SetActiveShader("default");
 

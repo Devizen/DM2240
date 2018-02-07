@@ -379,6 +379,9 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	Vector3 moveToPlayer;
 	if ((player->GetPos() - this->position).Length() < 10)
 	{
+		//if chasing player, reset waypoint id
+		currWaypointID = nextWaypointID = -1;
+
 		//closer than 10units
 		moveToPlayer = (Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()) * 2.f;
 

@@ -15,8 +15,8 @@ MouseController::~MouseController()
 
 void MouseController::UpdateMousePosition(double _x, double _y)
 {
-	curr_posX = _x * 2.0;
-	curr_posY = _y * 2.0;
+	curr_posX = _x;
+	curr_posY = _y;
 }
 
 void MouseController::UpdateMouseButtonPressed(int _slot)

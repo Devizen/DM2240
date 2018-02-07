@@ -76,6 +76,9 @@
     <Filter Include="Component">
       <UniqueIdentifier>{53d51e4d-6f58-43a5-860c-502fd4f4adee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{173f99a3-3579-4f50-8677-491b59f9ec94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -203,6 +206,12 @@
     </ClCompile>
     <ClCompile Include="Source\LuaEditor\LuaEditor.cpp">
       <Filter>LuaEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\CPauseScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\COptionScene.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,6 +356,12 @@
     <ClInclude Include="Source\LuaEditor\LuaEditor.h">
       <Filter>LuaEditor</Filter>
     </ClInclude>
+    <ClInclude Include="Source\UI\UIObj.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\Button.h">
+      <Filter>UI</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Lua\FunctionPointerWrapper.h">
       <Filter>Lua</Filter>
     </ClInclude>
@@ -355,6 +370,15 @@
     </ClInclude>
     <ClInclude Include="Source\Component\Option.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\CPauseScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\COptionScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\TextField.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

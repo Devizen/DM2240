@@ -36,6 +36,10 @@ void CIntroScene::Init()
 	//background = Create::Sprite2DObject("INTRO_BG", Vector3(halfWindowWidth, halfWindowHeight, 0.f),
 	//	Vector3(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 0.f));
 
+	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
+	MeshBuilder::GetInstance()->GetMesh("text")->textureID[0] = LoadTGA("Image//TEXT.tga");
+	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
+
 	//CameraManager::GetInstance()->
 	std::cout << "Loading Intro" << std::endl;
 }
@@ -45,7 +49,7 @@ void CIntroScene::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_SPACE))
 	{
 		std::cout << "Loading Menu" << std::endl;
-		SceneManager::GetInstance()->SetActiveScene("Menu");
+		SceneManager::GetInstance()->PopnPushScene("Menu");
 	}
 }
 
@@ -66,10 +70,27 @@ void CIntroScene::Render()
 	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 	ms.LoadIdentity();
 
+
 	ms.PushMatrix();
-	ms.Translate(halfWindowWidth, halfWindowHeight, 0);
+	ms.Translate(0, 0, 0);
 	ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
+	ms.PopMatrix();
+
+	ms.PushMatrix();
+	ms.Translate(0, 0, 1);
+	ms.PushMatrix();
+	ms.Translate(6 * -20, 0, 1);
+	ms.Scale(30, 30, 1);
+	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), "SplashScreen", Color(1, 0.2, 0.2));
+	ms.PopMatrix();
+
+	const char wad[] = "<Press Space To Continue>";
+	int len = strlen(wad);
+	ms.Translate(len * 0.5 * -30, -60, 0);
+	ms.Scale(30, 30, 1);
+	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), wad, Color(1, 0.2, 0.2));
+
 	ms.PopMatrix();
 	
 }
@@ -77,5 +98,6 @@ void CIntroScene::Render()
 void CIntroScene::Exit()
 {
 	MeshBuilder::GetInstance()->RemoveMesh("INTRO_BG");
+	MeshBuilder::GetInstance()->RemoveMesh("text");
 	GraphicsManager::GetInstance()->DetachCamera();
 }

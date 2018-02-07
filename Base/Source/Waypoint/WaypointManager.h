@@ -47,6 +47,7 @@ public:
 	// PrintSelf
 	void PrintSelf(void);
 
+	void ClearWaypoints();
 protected:
 	// The next ID to assign to a Waypoint
 	int m_iID;

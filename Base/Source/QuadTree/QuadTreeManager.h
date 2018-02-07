@@ -42,6 +42,7 @@ public:
 	void RenderGrid();
 	void RenderObj();
 
+	void Clear();
 
 	int PutEntitiesInGrid(QuadTree* node, std::list<EntityBase*>& entityList);
 	void InsertEntity(EntityBase* entity) { entityList.push_back(entity);
