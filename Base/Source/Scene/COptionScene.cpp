@@ -48,6 +48,7 @@ void COptionScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("OPTION_OPTION_BUTTON", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("OPTION_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("TEXTFIELD_BG", Color(1, 1, 1), 1.f);
+
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
 
@@ -156,7 +157,6 @@ void COptionScene::Render()
 	ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("OPTION_BACKGROUND"));
 	ms.PopMatrix();
-
 
 	for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
 	{

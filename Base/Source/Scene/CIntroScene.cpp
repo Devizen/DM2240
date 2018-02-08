@@ -79,18 +79,17 @@ void CIntroScene::Render()
 	ms.PopMatrix();
 
 	ms.PushMatrix();
-	ms.Translate(0, 0, 1);
-	ms.PushMatrix();
 	ms.Translate(6 * -20, 0, 1);
 	ms.Scale(30, 30, 1);
 	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), "SplashScreen", Color(1, 0.2, 0.2));
 	ms.PopMatrix();
 
+	ms.PushMatrix();
 	const char wad[] = "<Press Space To Continue>";
 	int len = strlen(wad);
-	ms.Translate(len * 0.5 * -30, -60, 0);
-	ms.Scale(30, 30, 1);
-	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), wad, Color(1, 0.2, 0.2));
+	ms.Translate(-halfWindowWidth + (halfWindowWidth * 0.075f * (len * 0.25f)), -halfWindowHeight * 0.2f, 1.f);
+	ms.Scale(halfWindowHeight * 0.075f, halfWindowHeight * 0.075f, 1);
+	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), wad, Color(0.f, 0.f, 0.f));
 
 	ms.PopMatrix();
 	

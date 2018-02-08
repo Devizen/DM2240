@@ -220,7 +220,7 @@ void SceneText::Init()
 	terrain->SetEntityType(ECEntityTypes::STATIC);
 	terrain->SetScale(Vector3(2000.f, 350.f, 2000.f));
 
-	Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
+	Create::Sprite2DObject("CROSSHAIR", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -596,6 +596,7 @@ void SceneText::Update(double dt)
 						Vector3 spawnPosition = (playerInfo->GetTarget() - playerInfo->GetPos()) * 50.f + camera->GetCameraPos();
 						spawnPosition.y = -10.f;
 						Create::Monk(spawnPosition, Vector3(5.f, 5.f, 5.f), playerInfo);
+						std::cout << CEnemyManager::GetInstance()->GetEnemyList().size() << std::endl;
 					}
 					break;
 				case MapEditor::PLACEWAYPOINT:
