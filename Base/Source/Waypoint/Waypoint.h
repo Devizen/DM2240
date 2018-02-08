@@ -33,9 +33,10 @@ public:
 	// PrintSelf
 	void PrintSelf(void);
 
+	
+	vector<CWaypoint*> relatedWaypoints;
 protected:
 	Vector3 position;
 	int m_iID;
 
-	vector<CWaypoint*> relatedWaypoints;
 };

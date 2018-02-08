@@ -555,7 +555,6 @@ void CMonk::UpdateState(double dt)
 	break;
 	case FLEE:
 	{
-		std::cout << "FLEE" << std::endl;
 		if ((player->GetPos() - core->GetPosition()).Length() > FLEE_DISTANCE)
 		{
 			currState = PATROL;

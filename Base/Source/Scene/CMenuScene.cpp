@@ -99,6 +99,7 @@ void CMenuScene::Update(double dt)
 					{
 						std::cout << "Loading Game" << std::endl;
 						isLoadingGame = true;
+						CPlayerInfo::GetInstance()->Destroy();
 						CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
 						SceneManager::GetInstance()->PushScene("Start");
 						SceneManager::GetInstance()->PushMessage("Menu", SceneManager::MESSAGE::STOPRENDER);

@@ -42,7 +42,7 @@ void CKeyConfigScene::Init()
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_BACKGROUND", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
+	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_BACKGROUND")->textureID[0] = LoadTGA("Image//UI//pausequad.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_CLOSE_BUTTON", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
 	//MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_OPTION_BUTTON", Color(1, 1, 1), 1.f);
@@ -72,6 +72,8 @@ void CKeyConfigScene::Init()
 	{
 		//saveFile->Update(it->second.first.c_str(), *it->first);
 		float the_y = 230 - index * 50;
+		if ((*it).second.first == "")
+			break;
 
 		InputKeyConfig* ikc = new InputKeyConfig();
 		ikc->set_y(the_y);
@@ -113,6 +115,7 @@ void CKeyConfigScene::Update(double dt)
 
 	static InputKeyConfig* selectedConfig = nullptr;
 	static bool selectButtonReleased = true;
+
 
 	for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
 	{

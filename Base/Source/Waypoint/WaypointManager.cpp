@@ -1,5 +1,11 @@
 #include "WaypointManager.h"
 #include <iostream>
+
+#include "RenderHelper.h"
+#include "GraphicsManager.h"
+#include "MeshBuilder.h"
+#include "../PlayerInfo/PlayerInfo.h"
+
 using namespace std;
 
 // Allocating and initializing CPlayerInfo's static data member.  
@@ -179,6 +185,33 @@ void CWaypointManager::ClearWaypoints()
 	for (auto& wp : listOfWaypoints)
 		delete wp;
 	listOfWaypoints.clear();
+}
+
+void CWaypointManager::RenderWaypoints()
+{
+	//MeshBuilder::GetInstance()->GenerateQuad("VOLUMEDOWN", Color(1, 1, 1), 1.f);
+	//MeshBuilder::GetInstance()->GetMesh("VOLUMEDOWN")->textureID[0] = LoadTGA("Image//UI//VOLUMEDOWN.tga");
+	MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+	std::vector<std::pair<Vector3, Vector3>> lines;
+	for (auto &wp : listOfWaypoints)
+	{
+		Vector3 wptome = CPlayerInfo::GetInstance()->GetPos() - wp->GetPosition();
+		float dist = wptome.Length();
+		ms.PushMatrix();
+		ms.Translate(wp->GetPosition().x, -5, wp->GetPosition().z);
+		ms.Rotate(Math::RadianToDegree(atan2(wptome.x, wptome.z)), 0, 1, 0);
+		ms.Scale(5, 5, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("VOLUMEDOWN"));
+		ms.PopMatrix();
+
+		
+		for (auto & related : wp->relatedWaypoints)
+		{
+			lines.push_back(std::make_pair(Vector3(related->GetPosition().x, -5, related->GetPosition().z), Vector3(wp->GetPosition().x, -5, wp->GetPosition().z)));
+		}
+	}
+
+	RenderHelper::DrawLine(lines, Color(0, 0, 1));
 }
 
 // Remove related waypoint

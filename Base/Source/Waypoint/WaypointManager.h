@@ -48,6 +48,8 @@ public:
 	void PrintSelf(void);
 
 	void ClearWaypoints();
+
+	void RenderWaypoints();
 protected:
 	// The next ID to assign to a Waypoint
 	int m_iID;

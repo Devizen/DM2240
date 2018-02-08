@@ -770,6 +770,7 @@ void SceneText::RenderPassMain(void)
 
 		QuadTreeManager::GetInstance()->RenderGrid();
 		CEnemyManager::GetInstance()->RenderStates();
+		CWaypointManager::GetInstance()->RenderWaypoints();
 		CameraManager::GetInstance()->RenderPlayerFrustum();
 
 		static MapEditor* mapEditor = MapEditor::GetInstance();

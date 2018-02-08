@@ -34,7 +34,7 @@ void CVideoConfigScene::Init()
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	MeshBuilder::GetInstance()->GenerateQuad("VC_OPTION_BACKGROUND", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("VC_OPTION_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
+	MeshBuilder::GetInstance()->GetMesh("VC_OPTION_BACKGROUND")->textureID[0] = LoadTGA("Image//UI//pausequad.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("VC_OPTION_CLOSE_BUTTON", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("VC_OPTION_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
 

@@ -51,10 +51,11 @@ void CPauseScene::Init()
 	optionButton->image = MeshBuilder::GetInstance()->GetMesh("PAUSE_OPTION_BUTTON");
 	uiObjList.push_back(optionButton);
 
-	Button* homeButton = new Button("Home");
-	homeButton->set_scale_x(50).set_scale_y(50).set_x(halfWindowWidth * -0.8f).set_y(halfWindowHeight * 0.8f);
-	homeButton->image = MeshBuilder::GetInstance()->GetMesh("PAUSE_HOME_BUTTON");
-	uiObjList.push_back(homeButton);
+	//Button* homeButton = new Button("Home");
+	//homeButton->set_scale_x(50).set_scale_y(50).set_x(halfWindowWidth * -0.8f).set_y(halfWindowHeight * 0.8f);
+	//homeButton->image = MeshBuilder::GetInstance()->GetMesh("PAUSE_HOME_BUTTON");
+	//uiObjList.push_back(homeButton);
+
 	//MeshBuilder::GetInstance()->GenerateText("TEXT", 16.f, 16.f);
 	//MeshBuilder::GetInstance()->GetMesh("TEXT")->textureID[0] = LoadTGA("Image//TEXT.tga");
 }
