@@ -12,11 +12,11 @@
 #include "../UI/UIObj.h"
 #include "../Component/Option.h"
 
-class COptionScene : public Scene
+class CKeyConfigScene : public Scene
 {
 public:
-	COptionScene();
-	~COptionScene();
+	CKeyConfigScene();
+	~CKeyConfigScene();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -28,5 +28,5 @@ private:
 	typedef std::vector<UIObj*> UILIST;
 	UILIST uiObjList;
 
-	//OptionBase<Key>* saveFile;
+	OptionBase<Key>* saveFile;
 };

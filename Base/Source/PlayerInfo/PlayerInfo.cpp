@@ -41,7 +41,7 @@ CPlayerInfo::CPlayerInfo(void)
 	, keyReset(nullptr)
 	, luaInterface(nullptr)
 	, luaState(nullptr)
-	, optimiseUpdate(false)
+	, optimiseUpdate(true)
 {
 }
 

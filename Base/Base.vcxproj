@@ -42,10 +42,13 @@
     <ClCompile Include="Source\SceneGraph\Transform.cpp" />
     <ClCompile Include="Source\SceneGraph\UpdateTransformation.cpp" />
     <ClCompile Include="Source\SceneText.cpp" />
+    <ClCompile Include="Source\Scene\CAudioConfigScene.cpp" />
     <ClCompile Include="Source\Scene\CIntroScene.cpp" />
+    <ClCompile Include="Source\Scene\CKeyConfigScene.cpp" />
     <ClCompile Include="Source\Scene\CMenuScene.cpp" />
     <ClCompile Include="Source\Scene\COptionScene.cpp" />
     <ClCompile Include="Source\Scene\CPauseScene.cpp" />
+    <ClCompile Include="Source\Scene\CVideoConfigScene.cpp" />
     <ClCompile Include="Source\SkyBox\SkyBoxEntity.cpp" />
     <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp" />
     <ClCompile Include="Source\SpatialPartition\SpatialPartitionManager.cpp" />
@@ -97,10 +100,13 @@
     <ClInclude Include="Source\SceneGraph\Transform.h" />
     <ClInclude Include="Source\SceneGraph\UpdateTransformation.h" />
     <ClInclude Include="Source\SceneText.h" />
+    <ClInclude Include="Source\Scene\CAudioConfigScene.h" />
     <ClInclude Include="Source\Scene\CIntroScene.h" />
+    <ClInclude Include="Source\Scene\CKeyConfigScene.h" />
     <ClInclude Include="Source\Scene\CMenuScene.h" />
     <ClInclude Include="Source\Scene\COptionScene.h" />
     <ClInclude Include="Source\Scene\CPauseScene.h" />
+    <ClInclude Include="Source\Scene\CVideoConfigScene.h" />
     <ClInclude Include="Source\SkyBox\SkyBoxEntity.h" />
     <ClInclude Include="Source\SpatialPartition\SpatialPartition.h" />
     <ClInclude Include="Source\SpatialPartition\SpatialPartitionManager.h" />

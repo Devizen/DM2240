@@ -34,6 +34,8 @@ void CMenuScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("BUTTON_BACKGROUND", Color(0.8, 0.8, 0.8), 1.f);
 	//MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("MENU_OPTION_BUTTON", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("MENU_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
 
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
@@ -42,6 +44,11 @@ void CMenuScene::Init()
 	startButton->set_scale_x(100).set_scale_y(50).set_x(0).set_y(0);
 	startButton->image = MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND");
 	uiObjList.push_back(startButton);
+
+	Button* optionButton = new Button("OptionButton");
+	optionButton->set_scale_x(100).set_scale_y(50).set_x(0).set_y(-100);
+	optionButton->image = MeshBuilder::GetInstance()->GetMesh("MENU_OPTION_BUTTON");
+	uiObjList.push_back(optionButton);
 
 	//MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
 
@@ -74,15 +81,21 @@ void CMenuScene::Update(double dt)
 		if (button)
 		{
 			if (button->CheckCollision(cursor_x, cursor_y))
-			{
-				if (button->name == "Button")
+			{ 
+				if (MouseController::GetInstance()->IsButtonReleased(0))
 				{
-					if (MouseController::GetInstance()->IsButtonReleased(0))
+					if (button->name == "Button")
 					{
 						std::cout << "Loading Game" << std::endl;
 						isLoadingGame = true;
 						CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
 						SceneManager::GetInstance()->PushScene("Start");
+						SceneManager::GetInstance()->PushMessage("Menu", SceneManager::MESSAGE::STOPRENDER);
+					}
+					if (button->name == "OptionButton")
+					{
+						std::cout << "Loading Option" << std::endl;
+						SceneManager::GetInstance()->PushScene("Option");
 						SceneManager::GetInstance()->PushMessage("Menu", SceneManager::MESSAGE::STOPRENDER);
 					}
 				}
@@ -91,11 +104,6 @@ void CMenuScene::Update(double dt)
 		}
 		
 	}
-	//if (MouseController::GetInstance()->IsButtonReleased(0))
-	//{
-	//	std::cout << "Loading Game" << std::endl;
-	//	SceneManager::GetInstance()->SetActiveScene("Start");
-	//}
 }
 
 void CMenuScene::Render()
@@ -104,7 +112,6 @@ void CMenuScene::Render()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, static_cast<GLsizei>(Application::GetInstance().GetWindowWidth()), static_cast<GLsizei>(Application::GetInstance().GetWindowHeight()));
 
-	glViewport(0, 0, static_cast<GLsizei>(Application::GetInstance().GetWindowWidth()), static_cast<GLsizei>(Application::GetInstance().GetWindowHeight()));
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(CameraManager::GetInstance()->GetFrustumFoV(),
 		CameraManager::GetInstance()->GetFrustumAspect(), CameraManager::GetInstance()->GetNearPlane(), CameraManager::GetInstance()->GetFarPlane());
 	//GraphicsManager::GetInstance()->AttachCamera(&camera);
@@ -130,7 +137,6 @@ void CMenuScene::Render()
 	size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
 
 	static LuaEditor* luaEditor = LuaEditor::GetInstance();
-
 
 	if (!isLoadingGame)
 	{
@@ -179,7 +185,7 @@ void CMenuScene::Render()
 		modelStack.Translate(-halfWindowWidth, -halfWindowHeight * 0.2f, 0.f);
 		modelStack.Scale(fontSize, fontSize, fontSize);
 		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
-		/*std::cout << "RENDERING in MENU SCENE." << std::endl;*/
+		std::cout << "RENDERING in MENU SCENE." << std::endl;
 		modelStack.PopMatrix();
 
 		/*Loading Percentage.*/
@@ -190,7 +196,7 @@ void CMenuScene::Render()
 		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), 
 			std::to_string(static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f)) + "%",
 			Color(1.f, 0.f, 0.f));
-		/*std::cout << "I AM IN RENDER CMENUSCENE: " << static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f) << std::endl;*/
+		std::cout << "I AM IN RENDER CMENUSCENE: " << static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f) << std::endl;
 		modelStack.PopMatrix();
 	}
 }
@@ -198,6 +204,7 @@ void CMenuScene::Render()
 void CMenuScene::Exit()
 {
 	MeshBuilder::GetInstance()->RemoveMesh("INTRO_BG");
+	MeshBuilder::GetInstance()->RemoveMesh("MENU_OPTION_BUTTON");
 	GraphicsManager::GetInstance()->DetachCamera();
 
 	MouseController::GetInstance()->SetKeepMouseCentered(true);

@@ -303,6 +303,14 @@ void SceneText::Update(double dt)
 	}
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_HOME))
 		SceneManager::GetInstance()->PrintSceneStackInfo();
+	// <THERE>
+
+	/*Randomly spawn an enemy on the map.*/
+	/*if (KeyboardController::GetInstance()->IsKeyDown(VK_BACK))
+	{
+		Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
+	}*/
 
 	/*Run for character.*/
 	static bool activateDefaultSpeedUp = true;
