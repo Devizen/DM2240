@@ -34,6 +34,7 @@ public:
 	void PrintSceneStackInfo();
 
 	bool IsSceneAtBottom(Scene* scene) { if (sceneStack.empty()) return false; return (sceneStack.front() == scene); }
+	bool IsSceneAtTop(Scene* scene) { if (sceneStack.empty()) return false; return (sceneStack.back() == scene); }
 
 	enum MESSAGE
 	{

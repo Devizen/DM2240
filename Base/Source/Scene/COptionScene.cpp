@@ -16,12 +16,14 @@
 #include "../Lua/LuaInterface.h"
 
 #include "../UI/TextField.h"
+#include "../PlayerInfo/PlayerInfo.h"
 
 struct InputKeyConfig : public UIObj
 {
 	TextField* keyname;
 	TextField* keyinput;
 	Button* keyinputbutton;
+	int* input;
 };
 
 COptionScene::COptionScene()
@@ -67,18 +69,43 @@ void COptionScene::Init()
 	float textfieldscaleY= 15;
 
 
-	InputKeyConfig* ikc = new InputKeyConfig();
-	TextField* textField = new TextField("textfield", textfieldbg, "Move Forward", Color(0, 0, 0), textSize);
-	textField->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(-300).set_y(0);
-	TextField* textField2 = new TextField("textfield2", textfieldbg, "Char", Color(0, 0, 0), textSize);
-	textField2->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(200).set_y(0);
-	Button* button = new Button("button");
-	button->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(200).set_y(0);
-	ikc->keyname = textField;
-	ikc->keyinput = textField2;
-	ikc->keyinputbutton = button;
+	saveFile = new OptionBase<Key>();
+	//saveFile->Remove();
+	int index = 0;
+	for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator
+		it = CPlayerInfo::GetInstance()->GetBindKeyMap().begin(); it != CPlayerInfo::GetInstance()->GetBindKeyMap().end(); ++it)
+	{
+		//saveFile->Update(it->second.first.c_str(), *it->first);
+		float the_y = 230 - index * 50;
 
-	uiObjList.push_back(ikc);
+		InputKeyConfig* ikc = new InputKeyConfig();
+		ikc->set_y(the_y);
+
+		TextField* textField = new TextField("textfield", textfieldbg, (*it).second.first, Color(0, 0, 0), textSize);
+		textField->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(-300).set_y(0);
+		std::string text;
+		TextField* textField2 = new TextField("textfield2", textfieldbg, std::to_string((*(*it).first)), Color(0, 0, 0), textSize);
+
+		textField2->asciiText = *it->first;
+
+		textField2->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(200).set_y(0);
+		Button* button = new Button("button");
+		button->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(200).set_y(the_y);
+		button->image = textfieldbg;
+		ikc->keyname = textField;
+		ikc->keyinput = textField2;
+		ikc->keyinputbutton = button;
+	
+		ikc->input = it->first;
+
+		uiObjList.push_back(ikc);
+		++index;
+	}
+	//saveFile->Complete();
+
+
+	
+
 }
 
 void COptionScene::Update(double dt)
@@ -95,6 +122,7 @@ void COptionScene::Update(double dt)
 	cursor_y -= halfWindowHeight;
 
 	static InputKeyConfig* selectedConfig = nullptr;
+	static bool selectButtonReleased = true;
 
 	for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
 	{
@@ -111,8 +139,6 @@ void COptionScene::Update(double dt)
 						SceneManager::GetInstance()->PopScene(this);
 					}
 				}
-
-
 			}
 		}
 		InputKeyConfig* ikc = dynamic_cast<InputKeyConfig*>(*it);
@@ -120,9 +146,11 @@ void COptionScene::Update(double dt)
 		{
 			if (ikc->keyinputbutton->CheckCollision(cursor_x, cursor_y))
 			{
-				if (MouseController::GetInstance()->IsButtonPressed(0))
+				if (MouseController::GetInstance()->IsButtonPressed(0) && selectedConfig == nullptr)
 				{
 					selectedConfig = ikc;
+					std::cout << "wad" << std::endl;
+					selectButtonReleased = false;
 				}
 			}
 		}
@@ -130,26 +158,109 @@ void COptionScene::Update(double dt)
 	}
 
 
-	if (selectedConfig)
+	if (selectedConfig && selectButtonReleased)
 	{
-		for (int i = 0; i < MouseController::BUTTON_TYPE::NUM_MB; ++i)
+		/*Wait for player to input another key to overwrite the current key.*/
+		if (!KeyboardController::GetInstance()->GetKeyInput()->empty())
 		{
-			if (MouseController::GetInstance()->IsButtonPressed(i))
-			{
-				//get the name from InputKeyConfig, save the key using the name.
+#ifdef _DEBUG
+			std::cout << "I AM PRESSSING: " << KeyboardController::GetInstance()->GetKeyInput()->front() << std::endl;
+#endif
+			*selectedConfig->input = KeyboardController::GetInstance()->GetKeyInput()->front();
+			saveFile->Remove();
+			auto bindKeyMap = CPlayerInfo::GetInstance()->GetBindKeyMap();
 
-				selectedConfig = nullptr;
+			for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator it = bindKeyMap.begin(); it != bindKeyMap.end(); ++it)
+			{
+				saveFile->Update(it->second.first.c_str(), *it->first);
 			}
+			saveFile->Complete();
+			char temp[64];
+			sprintf(temp, "%c", KeyboardController::GetInstance()->GetKeyInput()->front());
+			selectedConfig->keyinput->text = std::to_string(KeyboardController::GetInstance()->GetKeyInput()->front());
+			selectedConfig->keyinput->asciiText = KeyboardController::GetInstance()->GetKeyInput()->front();
+			selectedConfig = nullptr;
+
+			std::cout << "bye" << std::endl;
 		}
-		for (char i = 0; i < 128; ++i)
-		{
-			if (KeyboardController::GetInstance()->IsKeyPressed(i))
-			{
 
-				selectedConfig = nullptr;
-			}
+		//std::cout << "hi???" << std::endl;
+		//for (int i = 0; i < MouseController::BUTTON_TYPE::NUM_MB; ++i)
+		//{
+		//	if (MouseController::GetInstance()->IsButtonPressed(i))
+		//	{
+		//		std::cout << "hi" << std::endl;
+		//		//get the name from InputKeyConfig, save the key using the name.
+		//		//auto bindKepMap = CPlayerInfo::GetInstance()->GetBindKeyMap();
+		//		selectedConfig->keyinput->text = i;
+		//		saveFile->Remove();
+
+		//		for (auto uiobj : uiObjList)
+		//		{
+		//			InputKeyConfig* ikc = dynamic_cast<InputKeyConfig*>(uiobj);
+		//			if (ikc)
+		//			{
+		//				int key = ikc->keyinput->text.at(0);//FORCE ONLY ONE CHAR
+		//				if (key == 48)
+		//					key = 0;
+		//				if (key == 49)
+		//					key = 1;
+		//				saveFile->Update(ikc->keyname->text.c_str(), key);
+		//			}
+		//		}
+
+		//		saveFile->Complete();
+		//		selectedConfig->keyinput->text = i;
+		//		selectedConfig = nullptr;
+
+		//		std::cout << "bye" << std::endl;
+		//	}
+		//}
+
+
+		//if (!KeyboardController::GetInstance()->GetKeyInput()->empty())
+		//{
+		//	char key = (char)KeyboardController::GetInstance()->GetKeyInput()->back();
+		//	selectedConfig->keyinput->text = key;
+
+		//	saveFile->Remove();
+
+		//	for (auto uiobj : uiObjList)
+		//	{
+		//		InputKeyConfig* ikc = dynamic_cast<InputKeyConfig*>(uiobj);
+		//		if (ikc)
+		//		{
+		//			int key = ikc->keyinput->text.at(0);//FORCE ONLY ONE CHAR
+		//			if (key == 48) 
+		//				key = 0;
+		//			if (key == 49)
+		//				key = 1;
+		//			saveFile->Update(ikc->keyname->text.c_str(), key);
+		//		}
+		//	}
+
+		//	saveFile->Complete();
+
+		//	selectedConfig = nullptr;
+		//}
+
+		//	
+	}
+	if (MouseController::GetInstance()->IsButtonUp(0))
+	{
+		selectButtonReleased = true;
+		//std::cout << "up" << std::endl;
+		while (KeyboardController::GetInstance()->GetKeyInput()->size())
+		{
+			/*Clearing the key input.*/
+			KeyboardController::GetInstance()->GetKeyInput()->pop();
+#ifdef _DEBUG
+			std::cout << "Current size in queue: " <<
+				KeyboardController::GetInstance()->GetKeyInput()->size() << std::endl;
+#endif
 		}
 	}
+
 
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_HOME))
 		SceneManager::GetInstance()->PrintSceneStackInfo();
@@ -221,19 +332,70 @@ void COptionScene::Render()
 			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), tField->text, tField->textColor);
 			ms.PopMatrix();
 
+			ms.PopMatrix();
+
+			Button* button = static_cast<Button*>(ikc->keyinputbutton);
+			ms.PushMatrix();
+			ms.Translate(button->x, button->y, 1);
+			ms.Scale(button->scale_x, button->scale_y, 1);
+			RenderHelper::RenderMesh(button->image);
+			ms.PopMatrix();
+
+			ms.PushMatrix();
+			ms.Translate(ikc->x, ikc->y, 1);
+
 			tField = static_cast<TextField*>(ikc->keyinput);
+
+			std::string text = "";
+
+			switch (tField->asciiText)
+			{
+			case 0:
+				text = "LMB";
+				break;
+			case 1:
+				text = "RMB";
+				break;
+			case 32:
+				text = "SPC";
+				break;
+			case 262:
+				text = "RIGHT";
+				break;
+			case 263:
+				text = "LEFT";
+				break;
+			case 264:
+				text = "DOWN";
+				break;
+			case 265:
+				text = "UP";
+				break;
+			default:
+				char temp[64];
+				sprintf(temp, "%c", *ikc->input);
+				text = temp;
+				break;
+			}
+
+			////std::string text = tField->text;
+			//if (text == "0")
+			//	text = "LMB";
+			//else if (text == "1")
+			//	text = "RMB";
+			//else
+			//{
+			//	text = (char)std::atoi(tField->text.c_str());
+			//	if (text == " ")
+			//		text = "SPACE";
+			//}
+
 			ms.PushMatrix();
 			ms.Translate(tField->x, tField->y, 1);
 			ms.Scale(tField->scale_x, tField->scale_y, 1);
-			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), tField->text, tField->textColor);
+			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), text, tField->textColor);
 			ms.PopMatrix();
 
-			//Button* button = static_cast<Button*>(ikc->keyinputbutton);
-			//ms.PushMatrix();
-			//ms.Translate(button->x, button->y, 1);
-			//ms.Scale(tField->scale_x, tField->scale_y, 1);
-			//RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), tf->text, tf->textColor);
-			//ms.PopMatrix();
 
 			ms.PopMatrix();
 		}

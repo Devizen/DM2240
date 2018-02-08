@@ -305,7 +305,7 @@ void SceneText::Init()
 	{
 
 		//spawn monks
-		CEnemyManager::GetInstance()->SpawnMonk(Vector3(0, 0, 0));
+		//CEnemyManager::GetInstance()->SpawnMonk(Vector3(0, 0, 0));
 	}
 
 	int thisID = 
@@ -330,7 +330,7 @@ void SceneText::Update(double dt)
 		saveFile->Remove();
 
 		for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator
-			it = playerInfo->GetBindKeyMap().begin(); it != playerInfo->GetBindKeyMap().end(); ++it)
+			it = CPlayerInfo::GetInstance()->GetBindKeyMap().begin(); it != CPlayerInfo::GetInstance()->GetBindKeyMap().end(); ++it)
 		{
 			saveFile->Update(it->second.first.c_str(), *it->first);
 		}
@@ -792,37 +792,44 @@ void SceneText::RenderPassMain(void)
 		QuadTreeManager::GetInstance()->RenderGrid();
 		CameraManager::GetInstance()->RenderPlayerFrustum();
 	}
-	// Setup 2D pipeline then render 2D
-	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
-	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
-	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
-	GraphicsManager::GetInstance()->DetachCamera();
 
-	if (LuaEditor::GetInstance()->GetIsToggle())
+
+	if (SceneManager::GetInstance()->IsSceneAtTop(this))
 	{
-		/*Render Lua Script out.*/
-		float fontSize = (halfWindowWidth / halfWindowHeight) * 20.f;
-		float halfFontSize = fontSize * 0.5f;
-		/*Make the position start from left top.*/
-		Vector3 startPosition(-halfWindowWidth * 0.95f, +halfWindowHeight * 0.95f, 0.f);
+		// Setup 2D pipeline then render 2D
+		int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
+		int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
+		GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
+		GraphicsManager::GetInstance()->DetachCamera();
 
-		size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
-
-		for (size_t i = 0; i < tempSize; ++i)
+		if (LuaEditor::GetInstance()->GetIsToggle())
 		{
-			MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-			modelStack.PushMatrix();
-			modelStack.Translate(startPosition);
-			modelStack.Scale(fontSize, fontSize, fontSize);
-			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
-			modelStack.PopMatrix();
-			startPosition.y -= (halfWindowHeight * 0.1f);
+			/*Render Lua Script out.*/
+			float fontSize = (halfWindowWidth / halfWindowHeight) * 20.f;
+			float halfFontSize = fontSize * 0.5f;
+			/*Make the position start from left top.*/
+			Vector3 startPosition(-halfWindowWidth * 0.95f, +halfWindowHeight * 0.95f, 0.f);
+
+			size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
+
+			for (size_t i = 0; i < tempSize; ++i)
+			{
+				MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+				modelStack.PushMatrix();
+				modelStack.Translate(startPosition);
+				modelStack.Scale(fontSize, fontSize, fontSize);
+				RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
+				modelStack.PopMatrix();
+				startPosition.y -= (halfWindowHeight * 0.1f);
+			}
 		}
+		else
+			EntityManager::GetInstance()->RenderUI();
+		//CScoreManager::GetInstance()->RenderUI();
+		//std::cout << (*camera).GetCameraPos() << std::endl;
 	}
-	else
-		EntityManager::GetInstance()->RenderUI();
-	//CScoreManager::GetInstance()->RenderUI();
-	//std::cout << (*camera).GetCameraPos() << std::endl;
+
+
 
 }
 
