@@ -123,25 +123,20 @@ bool CLuaInterface::Init(void)
 					std::deque<std::pair<std::string, std::string>>pathAndName;
 
 					/*Generate Axes.*/
-					//lua_register(luaState, "GenerateAxes", LuaGenerateAxes);
 					pathAndName.push_back(std::make_pair("Lua//LuaGenerateAxes.lua", "GenerateAxes"));
-					//functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateAxes; };
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateAxes; };
 
 					/*Generate Object(s).*/
-					//lua_register(luaState, "GenerateOBJ", LuaGenerateObj);
-
 					pathAndName.push_back(std::make_pair("Lua//LuaGenerateObj.lua", "GenerateOBJ"));
-					//functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateObj; };
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateObj; };
 
 					/*Generate Quad(s).*/
-					//lua_register(luaState, "GenerateQuad", LuaGenerateQuad);
 					pathAndName.push_back(std::make_pair("Lua//LuaGenerateQuad.lua", "GenerateQuad"));
-					//functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateQuad; };
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateQuad; };
 
 					/*Generate Skyplane(s).*/
-					//lua_register(luaState, "GenerateSkyplane", LuaGenerateSkyplane);
 					pathAndName.push_back(std::make_pair("Lua//LuaGenerateSkyplane.lua", "GenerateSkyplane"));
-					//functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateSkyplane; };
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateSkyplane; };
 
 					/*Generate Text(s).
 					Not needed anymore because this was initialised at the start of the program.*/
@@ -150,11 +145,8 @@ bool CLuaInterface::Init(void)
 
 					/*Getting Mesh for Object(s).
 					For safety reason, this should be placed last because it will get mesh which will crash the application if the mesh has not initialise.*/
-					
-					//lua_register(luaState, "GetMesh", LuaGetMesh);
-					
 					pathAndName.push_back(std::make_pair("Lua//LuaGetMesh.lua", "GetMesh"));
-					//functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGetMesh; };
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGetMesh; };
 
 					size_t totalScriptToLoad = pathAndName.size();
 
@@ -171,51 +163,32 @@ bool CLuaInterface::Init(void)
 						luaEditor->AddCompleteLoadProgress(static_cast<float>(2.f));
 					}
 
-					//for (size_t i = 0; i < totalScriptToLoad; ++i)
-					//{
-					//	/*Load the intended lua script.*/
-					//	luaEditor->ReadLuaScript(pathAndName[i].first);
-					//	luaEditor->AddCurrentLoadProgress(1);
+					for (size_t i = 0; i < totalScriptToLoad; ++i)
+					{
+						std::string tempStr = pathAndName[i].second;
+						/*Register the name to look for using the function binded.*/
+						std::string tempString = "<Registering " + tempStr + " to function " + pathAndName[i].first;
+						lua_register(luaState, tempStr.c_str(), functionToRegister[pathAndName[i].first]());
+						
+						luaEditor->AddCurrentLoadProgress(1);
+						LuaEditor::GetInstance()->SetMessage(tempString);
+						Application::GetInstance().Iterate();
+					}
 
-					//	/*Get the amount of line(s) to loop through.*/
-					//	size_t tempCount = luaEditor->GetLine().size();
-					//
-					//	for (size_t j = 0; j < tempCount; ++j)
-					//	{
-					//		std::string tempStr = pathAndName[i].second;
-					//		//tempStr += std::to_string(j);
-					//		/*Register the name to look for using the function binded.*/
-					//		std::string tempString = "<Registering " + tempStr + " to function " + pathAndName[i].first;
-					//		lua_register(luaState, tempStr.c_str(), functionToRegister[pathAndName[i].first]());
+					for (size_t i = 0; i < totalScriptToLoad; ++i)
+					{
+						/*Execute loading script.*/
+						luaL_dofile(luaState, pathAndName[i].first.c_str());
 
-					//		LuaEditor::GetInstance()->SetMessage(tempString);
-					//		Application::GetInstance().Iterate();
-					//		luaEditor->AddCurrentLoadProgress(1);
-					//		break;
-					//	}
-					//	/*Execute loading script.*/
-					//	luaL_dofile(luaState, pathAndName[i].first.c_str());
-					//	luaEditor->AddCurrentLoadProgress(1);
+						std::string tempString = "<Load Lua Script from " + pathAndName[i].first;
+						std::cout << tempString << std::endl;
 
-					//	std::string tempString = "<Load Lua Script from " + pathAndName[i].first;
-					//	std::cout << "<Load Lua Script from " << pathAndName[i].first << std::endl;
-
-					//	LuaEditor::GetInstance()->SetMessage(tempString);
-					//	Application::GetInstance().Iterate();
-					//}
-
-					lua_register(luaState, "GenerateAxes", LuaGenerateAxes);
-					lua_register(luaState, "GenerateOBJ", LuaGenerateObj);
-					lua_register(luaState, "GenerateQuad", LuaGenerateQuad);
-					lua_register(luaState, "GenerateSkyplane", LuaGenerateSkyplane);
-					lua_register(luaState, "GetMesh", LuaGetMesh);
-
-					luaL_dofile(luaState, "Lua//LuaGenerateAxes.lua");
-					luaL_dofile(luaState, "Lua//LuaGenerateOBJ.lua");
-					luaL_dofile(luaState, "Lua//LuaGenerateQuad.lua");
-					luaL_dofile(luaState, "Lua//LuaGenerateSkyplane.lua");
-					luaL_dofile(luaState, "Lua//LuaGetMesh.lua");
+						luaEditor->AddCurrentLoadProgress(1);
+						LuaEditor::GetInstance()->SetMessage(tempString);
+						Application::GetInstance().Iterate();
+					}
 					s_instance->isInit = true;
+					Application::GetInstance().Iterate();
 				}
 				if (!s_instance->isInit)
 				{
@@ -302,6 +275,8 @@ int luaAdd(lua_State * _state)
 
 int LuaGenerateObj(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
 	int tempSize = lua_gettop(_state);
 	std::deque<std::string>objField;
 	//int textureID = 0;
@@ -330,6 +305,8 @@ int LuaGenerateObj(lua_State * _state)
 
 int LuaGenerateQuad(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
 	int tempSize = lua_gettop(_state);
 	std::deque<std::string>quadField;
 	std::deque<float>quadValue;
@@ -413,6 +390,8 @@ int LuaGenerateRay(lua_State * _state)
 
 int LuaGenerateSkyplane(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
 	int tempSize = lua_gettop(_state);
 	std::deque<std::string>skyplaneField;
 	std::deque<float>skyplaneValue;
@@ -490,6 +469,8 @@ int LuaGenerateSkyplane(lua_State * _state)
 
 static int LuaGenerateAxes(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
 	int tempSize = lua_gettop(_state);
 	std::deque<std::string>axesField;
 	std::deque<float>axesValue;
@@ -548,6 +529,8 @@ int LuaGenerateCrossHair(lua_State * _state)
 
 int LuaGenerateText(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
 	int tempSize = lua_gettop(_state);
 	std::deque<std::string>textField;
 	std::deque<float>textValue;
@@ -601,6 +584,8 @@ int LuaGenerateText(lua_State * _state)
 
 int LuaGetMesh(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
 	int tempSize = lua_gettop(_state);
 	std::deque<std::string>objField;
 	int textureID = 0;
