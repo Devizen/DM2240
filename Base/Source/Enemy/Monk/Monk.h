@@ -8,12 +8,20 @@
 
 class CMonk : public GenericEntity{
 public:
+	enum STATES
+	{
+		PATROL,
+		CHASE,
+		//ALL_CHASE
+	};
+
 	CMonk();
 	~CMonk();
 
 	void Init(void);
 	void SetModelMeshes(Mesh* _head, Mesh* _body, Mesh* _leftArm, Mesh* _rightArm, Mesh* _leftLeg, Mesh* _rightLeg);
 	GenericEntity* GetEntityPart(std::string _part);
+	EntityBase* GetCore();
 	void SetEntityPart(std::string _part, GenericEntity* _entity);
 
 	void UpdatePart(double dt = 0.0, std::string _part = "");
@@ -43,7 +51,11 @@ public:
 	double m_speed;
 	/*Waypoint ID*/
 	int currWaypointID, nextWaypointID;
+
+	STATES GetState() { return currState; }
 private:
+	float moveSpeed;
+
 	Mesh* headModelMesh;
 	Mesh* bodyModelMesh;
 	Mesh* leftArmModelMesh;
@@ -64,6 +76,10 @@ private:
 
 	/*Player.*/
 	CPlayerInfo* player;
+
+	/*States*/
+	STATES currState;
+	void UpdateState(double dt);
 protected:
 };
 
