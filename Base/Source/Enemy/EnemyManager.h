@@ -22,9 +22,8 @@ public:
 	bool GetRenderAABB(void) { return renderAABB; }
 	void ToggleRenderAABB(void) { renderAABB = renderAABB ? false : true; }
 	void SpawnMonk(Vector3 pos);
-
+	std::vector<EntityBase*>& GetEnemyList(void) { return enemyList; }
 	bool GetShouldAllChase();
-
 	void RenderStates();
 	void TriggerFear(Vector3 pos);
 	int nearbyEnemies;

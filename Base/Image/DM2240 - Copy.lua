@@ -13,33 +13,12 @@ function SaveToLuaFile(outputString, overwrite)
    print("OK")
 end
 
-function SaveVolume(outputString, overwrite)
-   print("Saving Lua File.")
-   local f;						--File.
-   if overwrite == 1 then		--Wipe the contents with new data.
-      f = assert(io.open("Lua/LuaVolume.lua", "w"))
-   elseif overwrite == 0 then	--Append with new data.
-      f = assert(io.open("Lua/LuaVolume.lua", "a"))
-   end
-   --Write to the file.
-   f:write(outputString)
-   --Close the file.
-   f:close()
-   print("OK")
-end
-
-
 title = "DM2240 - Week 14 Scripting"
 width = 800
 height = 600
 
 --Volume level
 volumeLevel = 1.0
-
-function UpdateVolumeLevel(newVolume)
-    print(newVolume)
-    volumeLevel = newVolume
-end
 
 hello = luaAdd(100, 100, 100)
 print(hello)

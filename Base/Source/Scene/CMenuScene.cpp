@@ -35,6 +35,7 @@ void CMenuScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("INTRO_BG", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("BUTTON_BACKGROUND", Color(0.8, 0.8, 0.8), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("BUTTON_BACKGROUND_OUTLINE", Color(0.f, 0.f, 0.f), 1.f);
 	//MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("MENU_OPTION_BUTTON", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("MENU_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
@@ -47,15 +48,21 @@ void CMenuScene::Init()
 	startButton->image = MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND");
 	uiObjList.push_back(startButton);
 
+	Button* startButtonOutline = new Button("startButtonOutline");
+	startButtonOutline->set_scale_x(105).set_scale_y(55).set_x(0).set_y(0);
+	startButtonOutline->image = MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND_OUTLINE");
+	uiObjList.push_back(startButtonOutline);
+
 	Button* optionButton = new Button("OptionButton");
-	optionButton->set_scale_x(100).set_scale_y(50).set_x(0).set_y(-100);
+	optionButton->set_scale_x(50).set_scale_y(50).set_x(0).set_y(-100);
 	optionButton->image = MeshBuilder::GetInstance()->GetMesh("MENU_OPTION_BUTTON");
 	uiObjList.push_back(optionButton);
 
 	//MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//WORLD//W_WATER.tga");
 
-	MeshBuilder::GetInstance()->GenerateText("TEXT", 16.f, 16.f);
+	MeshBuilder::GetInstance()->GenerateText("TEXT", 16, 16);
 	MeshBuilder::GetInstance()->GetMesh("TEXT")->textureID[0] = LoadTGA("Image//TEXT.tga");
+	MeshBuilder::GetInstance()->GetMesh("TEXT")->material.kAmbient.Set(1, 0, 0);
 
 	isLoadingGame = false;
 
@@ -153,6 +160,12 @@ void CMenuScene::Render()
 		for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
 		{
 			Button* button = dynamic_cast<Button*>(*it);
+			button->x = button->defaultX * (halfWindowHeight * 0.005f);
+			button->y = button->defaultY * (halfWindowHeight * 0.005f);
+
+			button->scale_x = button->defaultScaleX * (halfWindowHeight * 0.005f);
+			button->scale_y = button->defaultScaleY * (halfWindowHeight * 0.005f);
+
 			if (button)
 			{
 				ms.PushMatrix();
@@ -162,6 +175,22 @@ void CMenuScene::Render()
 				ms.PopMatrix();
 			}
 		}
+
+		ms.PushMatrix();
+		const char wad[] = "AGDev";
+		int len = strlen(wad);
+		ms.Translate(0.f - (halfWindowWidth * 0.02f * len), halfWindowHeight * 0.3f, 1.f);
+		ms.Scale(halfWindowHeight * 0.075f, halfWindowHeight * 0.075f, 1);
+		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), wad, Color(0.f, 0.f, 0.f));
+		ms.PopMatrix();
+
+		ms.PushMatrix();
+		const char start[] = "Start";
+		len = strlen(wad);
+		ms.Translate(0.f - (halfWindowWidth * 0.02f * len), 0.f, 3.f);
+		ms.Scale(halfWindowHeight * 0.075f, halfWindowHeight * 0.075f, 1);
+		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), start, Color(0.f, 0.f, 0.f));
+		ms.PopMatrix();
 	}
 	else if (luaEditor->GetCompleteLoadProgress() > 0)
 	{

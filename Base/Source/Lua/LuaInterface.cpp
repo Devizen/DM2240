@@ -810,7 +810,7 @@ int LuaGenerateCrossHair(lua_State * _state)
 			crossHairField.push_back(lua_tostring(_state, i));
 			continue;
 		}
-		crossHairValue.push_back(static_cast<float>(lua_tointeger(_state, i)));
+		crossHairValue.push_back(static_cast<float>(lua_tonumber(_state, i)));
 	}
 	/*Error prevention.*/
 	if (crossHairField.size() == 0)
