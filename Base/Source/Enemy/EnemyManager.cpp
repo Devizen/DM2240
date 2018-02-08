@@ -4,9 +4,14 @@
 #include "../PlayerInfo/ScoreManager.h"
 #include "../PlayerInfo/PlayerInfo.h"
 
+#include "GraphicsManager.h"
+#include "RenderHelper.h"
+#include "MeshBuilder.h"
+
 CEnemyManager* CEnemyManager::s_instance = 0;
 CEnemyManager::CEnemyManager(void) :
-	renderAABB(false)
+	renderAABB(false),
+	nearbyEnemies(0)
 {
 }
 
@@ -23,6 +28,16 @@ CEnemyManager * CEnemyManager::GetInstance(void)
 
 void CEnemyManager::Update(double dt)
 {
+	nearbyEnemies = 0;
+	for (std::vector<EntityBase*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+	{
+		CMonk* monk = dynamic_cast<CMonk*>(*it);
+		//Calculate if near player
+		Vector3 dir = CPlayerInfo::GetInstance()->GetPos() - monk->GetCore()->GetPosition();
+		if (dir.LengthSquared() < CHASE_DISTANCE * CHASE_DISTANCE)
+			++nearbyEnemies;
+	}
+
 	for (std::vector<EntityBase*>::iterator it = enemyList.begin(); it != enemyList.end();) {
 		if (dynamic_cast<CMonk*>(*it)->GetPartSize()) {
 			dynamic_cast<CMonk*>(*it)->UpdatePart(dt);
@@ -49,4 +64,45 @@ void CEnemyManager::RemoveEnemy(EntityBase * _enemy)
 void CEnemyManager::SpawnMonk(Vector3 pos)
 {
 	Create::Monk(pos, Vector3(5.f, 5.f, 5.f), CPlayerInfo::GetInstance());
+}
+
+bool CEnemyManager::GetShouldAllChase()
+{
+	return nearbyEnemies > 2;
+}
+
+void CEnemyManager::RenderStates()
+{
+	for (auto & e : enemyList)
+	{
+		CMonk * monk = static_cast<CMonk*>(e);
+		MS& ms = GraphicsManager::GetInstance()->GetModelStack();
+		Vector3 corePos = monk->GetCore()->GetPosition();
+		Vector3 monkToMe = -corePos + CPlayerInfo::GetInstance()->GetPos();
+		float dist = monkToMe.Length();
+		Vector3 defaultFacing(0, 0, 1);
+		float angle = 0.f;
+		Vector3 rotateAboutAxis;
+		try {
+			rotateAboutAxis = defaultFacing.Cross(Vector3(monkToMe.x, 0, monkToMe.z).Normalize()).Normalize();
+			angle = Math::RadianToDegree(acos(defaultFacing.Dot(monkToMe.Normalize())));
+		}
+		catch (DivideByZero e) {
+			rotateAboutAxis.Set(0, 1, 0);
+		}
+		std::string text = "Patrol";
+		switch (monk->GetState())
+		{
+		case CMonk::CHASE:
+			text = "Chase";
+			break;
+		}
+
+		ms.PushMatrix();
+		ms.Translate(corePos.x, corePos.y + 20, corePos.z);
+		ms.Rotate(Math::RadianToDegree(atan2(monkToMe.x, monkToMe.z)), 0, 1, 0);
+		ms.Scale(2 * dist / 100.f, 2 * dist / 100.f, 1);
+		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), text, Color(0, 0, 0));
+		ms.PopMatrix();
+	}
 }

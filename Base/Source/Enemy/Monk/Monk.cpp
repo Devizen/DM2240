@@ -20,6 +20,8 @@ CMonk::CMonk() : head(nullptr)
 , nextWaypointID(-1)
 {
 	listOfWaypoints.clear();
+	currState = STATES::PATROL;
+	moveSpeed = 20.f;
 }
 
 CMonk::~CMonk()
@@ -60,6 +62,12 @@ GenericEntity * CMonk::GetEntityPart(std::string _part)
 	else if (_part == "MONK_RIGHT_LEG") {
 		return rightLeg;
 	}
+	return nullptr;
+}
+
+EntityBase * CMonk::GetCore()
+{
+	return head->GetRootNode()->GetEntity();
 	return nullptr;
 }
 
@@ -366,7 +374,6 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	static float timer = 0.f;
 	static bool translateSwitch = false;
 	timer += static_cast<float>(dt);
-	static float moveSpeed = 20.f;
 
 	//cant move
 	if ((leftLeg == rightLeg) && rightLeg == nullptr)
@@ -376,78 +383,7 @@ void CMonk::UpdatePart(double dt, std::string _part)
 	}
 
 	//Movement
-	Vector3 moveToPlayer;
-	if ((player->GetPos() - this->position).Length() < 10)
-	{
-		//if chasing player, reset waypoint id
-		currWaypointID = nextWaypointID = -1;
-
-		//closer than 10units
-		moveToPlayer = (Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()) * 2.f;
-
-		try {
-			moveToPlayer = moveToPlayer.Normalized();
-		}
-		catch (std::string e) {
-			/*Do nothing when object and player is at same position.*/
-		}
-
-
-		if ((Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()).LengthSquared() > 100.f)
-			core->SetDirection(moveToPlayer * 20.f);
-		else
-			core->SetDirection(0.f, 0.f, 0.f);
-	}
-	else
-	{
-		CWaypoint* currentWaypoint = nullptr;
-		CWaypoint* nextWaypoint = nullptr;
-		if (currWaypointID >= 0)
-			currentWaypoint = CWaypointManager::GetInstance()->GetWaypoint(currWaypointID);
-		if (nextWaypointID >= 0)
-			nextWaypoint = CWaypointManager::GetInstance()->GetWaypoint(nextWaypointID);
-		else
-		{
-			//get nearest waypoint
-			nextWaypoint = CWaypointManager::GetInstance()->GetNearestWaypoint(core->GetPosition());
-			nextWaypointID = nextWaypoint->GetID();
-		}
-
-		//move to nextwaypoint
-		Vector3 dir = -core->GetPosition() + Vector3(nextWaypoint->GetPosition().x, core->GetPosition().y, nextWaypoint->GetPosition().z);
-		Vector3 ndir;
-		try {
-			ndir = dir.Normalized();
-		}
-		catch (DivideByZero) {
-			ndir.Set(0, 0, 0);
-		}
-		if (dir.Length() <= (ndir * moveSpeed * dt).Length())
-		{
-			moveToPlayer = nextWaypoint->GetPosition(); // snap to the positiob
-			
-			//core->SetDirection(moveToPlayer * moveSpeed);
-			core->SetPosition(Vector3(nextWaypoint->GetPosition().x, core->GetPosition().y, nextWaypoint->GetPosition().z));
-
-
-			//SetNextWayPoint
-			//select a new nextwaypoint id
-			//NOTE: currWayPointID is the prevID at this point
-			nextWaypoint = nextWaypoint->GetNearestWaypoint(currWaypointID);
-			std::cout << "curr: " <<currWaypointID << "   next: " << nextWaypointID << std::endl;
-
-			currWaypointID = nextWaypointID;
-
-			if (nextWaypoint)
-				nextWaypointID = nextWaypoint->GetID();
-		}
-		else
-		{
-			moveToPlayer = ndir;
-			core->SetDirection(moveToPlayer * moveSpeed);
-		}
-
-	}
+	UpdateState(dt);
 
 
 
@@ -513,6 +449,105 @@ void CMonk::CollisionResponse(EntityBase * other)
 	CollisionManager::GetInstance()->CheckCollision(other->collider, rightArm->collider, 1.0 / 6.0);
 	CollisionManager::GetInstance()->CheckCollision(other->collider, leftLeg->collider, 1.0 / 6.0);
 	CollisionManager::GetInstance()->CheckCollision(other->collider, rightLeg->collider, 1.0 / 6.0);
+}
+
+
+void CMonk::UpdateState(double dt)
+{
+	if (CEnemyManager::GetInstance()->GetShouldAllChase())
+		currState = CHASE;
+
+	EntityBase* core = head->GetRootNode()->GetEntity();
+	Vector3 moveToPlayer;
+	switch (currState)
+	{
+	case PATROL:
+	{
+		if ((player->GetPos() - core->GetPosition()).Length() < CHASE_DISTANCE)
+		{
+			currState = CHASE;
+			break;
+		}
+		CWaypoint* currentWaypoint = nullptr;
+		CWaypoint* nextWaypoint = nullptr;
+		if (currWaypointID >= 0)
+			currentWaypoint = CWaypointManager::GetInstance()->GetWaypoint(currWaypointID);
+		if (nextWaypointID >= 0)
+			nextWaypoint = CWaypointManager::GetInstance()->GetWaypoint(nextWaypointID);
+		else
+		{
+			//get nearest waypoint
+			nextWaypoint = CWaypointManager::GetInstance()->GetNearestWaypoint(core->GetPosition());
+			nextWaypointID = nextWaypoint->GetID();
+		}
+
+		//move to nextwaypoint
+		Vector3 dir = -core->GetPosition() + Vector3(nextWaypoint->GetPosition().x, core->GetPosition().y, nextWaypoint->GetPosition().z);
+		Vector3 ndir;
+		try {
+			ndir = dir.Normalized();
+		}
+		catch (DivideByZero) {
+			ndir.Set(0, 0, 0);
+		}
+		if (dir.Length() <= (ndir * moveSpeed * dt).Length())
+		{
+			moveToPlayer = nextWaypoint->GetPosition(); // snap to the positiob
+
+														//core->SetDirection(moveToPlayer * moveSpeed);
+			core->SetPosition(Vector3(nextWaypoint->GetPosition().x, core->GetPosition().y, nextWaypoint->GetPosition().z));
+
+
+			//SetNextWayPoint
+			//select a new nextwaypoint id
+			//NOTE: currWayPointID is the prevID at this point
+			nextWaypoint = nextWaypoint->GetNearestWaypoint(currWaypointID);
+			std::cout << "curr: " << currWaypointID << "   next: " << nextWaypointID << std::endl;
+
+			currWaypointID = nextWaypointID;
+
+			if (nextWaypoint)
+				nextWaypointID = nextWaypoint->GetID();
+		}
+		else
+		{
+			moveToPlayer = ndir;
+			core->SetDirection(moveToPlayer * moveSpeed);
+		}
+
+	
+	}
+		break;
+	case CHASE:
+	{
+		if ((player->GetPos() - core->GetPosition()).Length() > UNCHASE_DISTANCE)
+		{
+			currState = PATROL;
+			break;
+		}
+
+		//if chasing player, reset waypoint id
+		currWaypointID = nextWaypointID = -1;
+
+		//closer than 10units
+		moveToPlayer = (Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()) * 2.f;
+
+		try {
+			moveToPlayer = moveToPlayer.Normalized();
+		}
+		catch (std::string e) {
+			/*Do nothing when object and player is at same position.*/
+		}
+
+
+		if ((Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()).LengthSquared() > 100.f)
+			core->SetDirection(moveToPlayer * 20.f);
+		else
+			core->SetDirection(0.f, 0.f, 0.f);
+		
+	}
+	break;
+	}
 }
 
 CMonk * Create::Monk(const Vector3 & _position, const Vector3 & _scale, CPlayerInfo* _player)

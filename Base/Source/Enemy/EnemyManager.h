@@ -3,6 +3,9 @@
 #include "EntityBase.h"
 #include <vector>
 
+#define CHASE_DISTANCE 100
+#define UNCHASE_DISTANCE 110
+
 class CEnemyManager {
 	static CEnemyManager* s_instance;
 public:
@@ -17,10 +20,15 @@ public:
 	bool GetRenderAABB(void) { return renderAABB; }
 	void ToggleRenderAABB(void) { renderAABB = renderAABB ? false : true; }
 	void SpawnMonk(Vector3 pos);
+
+	bool GetShouldAllChase();
+
+	void RenderStates();
 private:
 	std::vector<EntityBase*>enemyList;
 	bool renderAABB;
 protected:
+	int nearbyEnemies;
 };
 
 #endif

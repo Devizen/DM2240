@@ -422,11 +422,11 @@ void SceneText::Update(double dt)
 	// <THERE>
 
 	/*Randomly spawn an enemy on the map.*/
-	/*if (KeyboardController::GetInstance()->IsKeyDown(VK_BACK))
+	if (KeyboardController::GetInstance()->IsKeyPressed(VK_ADD))
 	{
 		Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
 			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
-	}*/
+	}
 
 	/*Randomly spawn a tower on the map.*/
 	if (KeyboardController::GetInstance()->IsKeyPressed('L'))
@@ -735,6 +735,7 @@ void SceneText::RenderPassMain(void)
 		MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 
 		QuadTreeManager::GetInstance()->RenderGrid();
+		CEnemyManager::GetInstance()->RenderStates();
 		CameraManager::GetInstance()->RenderPlayerFrustum();
 	}
 
