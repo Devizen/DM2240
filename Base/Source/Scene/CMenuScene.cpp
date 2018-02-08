@@ -179,7 +179,7 @@ void CMenuScene::Render()
 		modelStack.Translate(-halfWindowWidth, -halfWindowHeight * 0.2f, 0.f);
 		modelStack.Scale(fontSize, fontSize, fontSize);
 		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
-		std::cout << "RENDERING in MENU SCENE." << std::endl;
+		/*std::cout << "RENDERING in MENU SCENE." << std::endl;*/
 		modelStack.PopMatrix();
 
 		/*Loading Percentage.*/
@@ -190,7 +190,7 @@ void CMenuScene::Render()
 		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), 
 			std::to_string(static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f)) + "%",
 			Color(1.f, 0.f, 0.f));
-		std::cout << "I AM IN RENDER CMENUSCENE: " << static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f) << std::endl;
+		/*std::cout << "I AM IN RENDER CMENUSCENE: " << static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f) << std::endl;*/
 		modelStack.PopMatrix();
 	}
 }

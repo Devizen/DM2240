@@ -79,6 +79,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{173f99a3-3579-4f50-8677-491b59f9ec94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MapEditor">
+      <UniqueIdentifier>{871a0d70-345b-47de-9833-f62ef1d7e03e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -212,6 +215,9 @@
     </ClCompile>
     <ClCompile Include="Source\Scene\COptionScene.cpp">
       <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MapEditor\MapEditor.cpp">
+      <Filter>MapEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -379,6 +385,9 @@
     </ClInclude>
     <ClInclude Include="Source\UI\TextField.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MapEditor\MapEditor.h">
+      <Filter>MapEditor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

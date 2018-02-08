@@ -1,0 +1,6 @@
+GenerateSphere("LIGHTBALL", 1, 1, 1, 18, 36, 1)
+GenerateSphere("SPHERE", 1, 0, 0, 18, 36, 10)
+GenerateSphere("GREENSPHERE", 0, 1, 0, 18, 36, 5)
+GenerateSphere("BLUESPHERE", 0, 0, 1, 18, 36, 5)
+GenerateSphere("REDSPHERE", 1, 0, 0, 18, 36, 5)
+GenerateSphere("NADE", 0.3, 0.4, 0.3, 10, 10, 0.5)

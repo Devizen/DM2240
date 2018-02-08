@@ -26,6 +26,7 @@
     <ClCompile Include="Source\LuaEditor\LuaEditor.cpp" />
     <ClCompile Include="Source\Lua\LuaInterface.cpp" />
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\MapEditor\MapEditor.cpp" />
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\PlayerInfo\PlayerInfo.cpp" />
     <ClCompile Include="Source\PlayerInfo\ScoreManager.cpp" />
@@ -80,6 +81,7 @@
     <ClInclude Include="Source\Lua\lua.hpp" />
     <ClInclude Include="Source\Lua\luaconf.h" />
     <ClInclude Include="Source\Lua\lualib.h" />
+    <ClInclude Include="Source\MapEditor\MapEditor.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\PlayerInfo\PlayerInfo.h" />
     <ClInclude Include="Source\PlayerInfo\ScoreManager.h" />

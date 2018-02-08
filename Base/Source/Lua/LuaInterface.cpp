@@ -138,6 +138,34 @@ bool CLuaInterface::Init(void)
 					pathAndName.push_back(std::make_pair("Lua//LuaGenerateSkyplane.lua", "GenerateSkyplane"));
 					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateSkyplane; };
 
+					/*Generate CrossHair(s).*/
+					pathAndName.push_back(std::make_pair("Lua//LuaGenerateCrossHair.lua", "GenerateCrossHair"));
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateCrossHair; };
+
+					/*Generate Cone(s).*/
+					pathAndName.push_back(std::make_pair("Lua//LuaGenerateCone.lua", "GenerateCone"));
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateCone; };
+
+					/*Generate Ray(s).*/
+					pathAndName.push_back(std::make_pair("Lua//LuaGenerateRay.lua", "GenerateRay"));
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateRay; };
+
+					/*Generate Sphere(s).*/
+					pathAndName.push_back(std::make_pair("Lua//LuaGenerateSphere.lua", "GenerateSphere"));
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateSphere; };
+
+					/*Generate Ring(s).*/
+					pathAndName.push_back(std::make_pair("Lua//LuaGenerateRing.lua", "GenerateRing"));
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateRing; };
+
+					/*Generate Cube(s).*/
+					pathAndName.push_back(std::make_pair("Lua//LuaGenerateCube.lua", "GenerateCube"));
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateCube; };
+
+					/*Generate Line(s).*/
+					pathAndName.push_back(std::make_pair("Lua//LuaGenerateLine.lua", "GenerateLine"));
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateLine; };
+
 					/*Generate Text(s).
 					Not needed anymore because this was initialised at the start of the program.*/
 					/*pathAndName.push_back(std::make_pair("Lua//LuaGenerateText.lua", "GenerateText"));
@@ -360,21 +388,220 @@ int LuaGenerateQuad(lua_State * _state)
 
 int LuaGenerateSphere(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
+	int tempSize = lua_gettop(_state);
+	std::deque<std::string>sphereField;
+	std::deque<float>sphereValue;
+	//int textureID = 0;
+	for (int i = 1; i <= tempSize; ++i)
+	{
+		if (i == 1)
+		{
+			sphereField.push_back(lua_tostring(_state, i));
+			continue;
+		}
+		sphereValue.push_back(static_cast<float>(lua_tonumber(_state, i)));
+	}
+	/*Error prevention.*/
+	if (sphereField.size() == 0)
+	{
+		sphereField.clear();
+		sphereField.push_back("LIGHTBALL");
+		std::cout << "<LuaGenerateSphere have no name, using default \"LIGHTBALL\" as name.>" << std::endl;
+	}
+	while (sphereValue.size() < 6)
+	{
+		sphereValue.push_back(0);
+		std::cout << "<LuaGenerateSphere have lack of value, using default \"0\" as value.>" << std::endl;
+	}
+
+	if (MeshBuilder::GetInstance()->GenerateSphere(sphereField[0].c_str(), Color(sphereValue[0], sphereValue[1], sphereValue[2]), sphereValue[3], sphereValue[4], sphereValue[5]))
+	{
+		std::string tempString = "<LuaGenerateSphere loaded " + sphereField[0] + " " + std::to_string(sphereValue[0]) +
+			" " + std::to_string(sphereValue[1]) + " " + std::to_string(sphereValue[2]) + " " + std::to_string(sphereValue[1]) + " " + std::to_string(sphereValue[3])
+			+std::to_string(sphereValue[4]) + " " + std::to_string(sphereValue[5]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
+	else
+	{
+		std::string tempString = "<LuaGenerateSphere failed to load " + sphereField[0] + " " + std::to_string(sphereValue[0]) +
+			" " + std::to_string(sphereValue[1]) + " " + std::to_string(sphereValue[2]) + std::to_string(sphereValue[1]) + " " + std::to_string(sphereValue[3])
+			+ std::to_string(sphereValue[4]) + " " + std::to_string(sphereValue[5]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
 int LuaGenerateCube(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
+	int tempSize = lua_gettop(_state);
+	std::deque<std::string>cubeField;
+	std::deque<float>cubeValue;
+	//int textureID = 0;
+	for (int i = 1; i <= tempSize; ++i)
+	{
+		if (i == 1)
+		{
+			cubeField.push_back(lua_tostring(_state, i));
+			continue;
+		}
+		cubeValue.push_back(static_cast<float>(lua_tonumber(_state, i)));
+	}
+	/*Error prevention.*/
+	if (cubeField.size() == 0)
+	{
+		cubeField.clear();
+		cubeField.push_back("CUBE");
+		std::cout << "<LuaGenerateCube have no name, using default \"CUBE\" as name.>" << std::endl;
+	}
+	while (cubeValue.size() < 4)
+	{
+		cubeValue.push_back(0);
+		std::cout << "<LuaGenerateCube have lack of value, using default \"0\" as value.>" << std::endl;
+	}
+
+	if (MeshBuilder::GetInstance()->GenerateCube(cubeField[0].c_str(), Color(cubeValue[0], cubeValue[1], cubeValue[2]), cubeValue[3]))
+	{
+		std::string tempString = "<LuaGenerateCube loaded " + cubeField[0] + " " + std::to_string(cubeValue[0]) +
+			" " + std::to_string(cubeValue[1]) + " " + std::to_string(cubeValue[2]) + " " + std::to_string(cubeValue[1]) + " " + std::to_string(cubeValue[3]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
+	else
+	{
+		std::string tempString = "<LuaGenerateCube failed to load " + cubeField[0] + " " + std::to_string(cubeValue[0]) +
+			" " + std::to_string(cubeValue[1]) + " " + std::to_string(cubeValue[2]) + std::to_string(cubeValue[1]) + " " + std::to_string(cubeValue[3]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
 int LuaGenerateCone(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
+	int tempSize = lua_gettop(_state);
+	std::deque<std::string>coneField;
+	std::deque<float>coneValue;
+	//int textureID = 0;
+	for (int i = 1; i <= tempSize; ++i)
+	{
+		if (i == 1)
+		{
+			coneField.push_back(lua_tostring(_state, i));
+			continue;
+		}
+		coneValue.push_back(static_cast<float>(lua_tointeger(_state, i)));
+	}
+	/*Error prevention.*/
+	if (coneField.size() == 0)
+	{
+		coneField.clear();
+		coneField.push_back("CONE");
+		std::cout << "<LuaGenerateCone have no name, using default \"CONE\" as name.>" << std::endl;
+	}
+	while (coneValue.size() < 6)
+	{
+		coneValue.push_back(0);
+		std::cout << "<LuaGenerateCone have lack of value, using default \"0\" as value.>" << std::endl;
+	}
+
+	if (MeshBuilder::GetInstance()->GenerateCone(coneField[0].c_str(), Color(coneValue[0], coneValue[1], coneValue[2]), coneValue[3], 
+		coneValue[4], coneValue[5]))
+	{
+		std::string tempString = "<LuaGenerateCone loaded " + coneField[0] + " " + std::to_string(coneValue[0]) +
+			" " + std::to_string(coneValue[1]) + " " + std::to_string(coneValue[2]) + std::to_string(coneValue[3]) +
+			std::to_string(coneValue[4]) + std::to_string(coneValue[5]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
+	else
+	{
+		std::string tempString = "<LuaGenerateCone failed to load " + coneField[0] + " " + std::to_string(coneValue[0]) +
+			" " + std::to_string(coneValue[1]) + " " + std::to_string(coneValue[2]) + std::to_string(coneValue[3]) +
+			std::to_string(coneValue[4]) + std::to_string(coneValue[5]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
 int LuaGenerateRing(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
+	int tempSize = lua_gettop(_state);
+	std::deque<std::string>ringField;
+	std::deque<float>ringValue;
+	//int textureID = 0;
+	for (int i = 1; i <= tempSize; ++i)
+	{
+		if (i == 1)
+		{
+			ringField.push_back(lua_tostring(_state, i));
+			continue;
+		}
+		ringValue.push_back(static_cast<float>(lua_tonumber(_state, i)));
+	}
+	/*Error prevention.*/
+	if (ringField.size() == 0)
+	{
+		ringField.clear();
+		ringField.push_back("RING");
+		std::cout << "<LuaGenerateRing have no name, using default \"RING\" as name.>" << std::endl;
+	}
+	while (ringValue.size() < 6)
+	{
+		ringValue.push_back(0);
+		std::cout << "<LuaGenerateRing have lack of value, using default \"0\" as value.>" << std::endl;
+	}
+
+	if (MeshBuilder::GetInstance()->GenerateRing(ringField[0].c_str(), Color(ringValue[0], ringValue[1], ringValue[2]), ringValue[3], ringValue[4], ringValue[5]))
+	{
+		std::string tempString = "<LuaGenerateRing loaded " + ringField[0] + " " + std::to_string(ringValue[0]) +
+			" " + std::to_string(ringValue[1]) + " " + std::to_string(ringValue[2]) + " " + std::to_string(ringValue[1]) + " " + std::to_string(ringValue[3])
+			+ std::to_string(ringValue[4]) + " " + std::to_string(ringValue[5]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
+	else
+	{
+		std::string tempString = "<LuaGenerateRing failed to load " + ringField[0] + " " + std::to_string(ringValue[0]) +
+			" " + std::to_string(ringValue[1]) + " " + std::to_string(ringValue[2]) + std::to_string(ringValue[1]) + " " + std::to_string(ringValue[3])
+			+ std::to_string(ringValue[4]) + " " + std::to_string(ringValue[5]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
@@ -385,6 +612,52 @@ int LuaGenerateTerrain(lua_State * _state)
 
 int LuaGenerateRay(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
+	int tempSize = lua_gettop(_state);
+	std::deque<std::string>rayField;
+	std::deque<float>rayValue;
+	//int textureID = 0;
+	for (int i = 1; i <= tempSize; ++i)
+	{
+		if (i == 1)
+		{
+			rayField.push_back(lua_tostring(_state, i));
+			continue;
+		}
+		rayValue.push_back(static_cast<float>(lua_tointeger(_state, i)));
+	}
+	/*Error prevention.*/
+	if (rayField.size() == 0)
+	{
+		rayField.clear();
+		rayField.push_back("RAY");
+		std::cout << "<LuaGenerateRay have no name, using default \"RAY\" as name.>" << std::endl;
+	}
+	while (rayValue.size() < 1)
+	{
+		rayValue.push_back(0);
+		std::cout << "<LuaGenerateRay have lack of value, using default \"0\" as value.>" << std::endl;
+	}
+
+	if (MeshBuilder::GetInstance()->GenerateRay(rayField[0].c_str(), rayValue[0]))
+	{
+		std::string tempString = "<LuaGenerateRay loaded " + rayField[0] + " " + std::to_string(rayValue[0])+ ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
+	else
+	{
+		std::string tempString = "<LuaGenerateRay failed to load " + rayField[0] + " " + std::to_string(rayValue[0]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
@@ -524,6 +797,54 @@ static int LuaGenerateAxes(lua_State * _state)
 
 int LuaGenerateCrossHair(lua_State * _state)
 {
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
+	int tempSize = lua_gettop(_state);
+	std::deque<std::string>crossHairField;
+	std::deque<float>crossHairValue;
+	//int textureID = 0;
+	for (int i = 1; i <= tempSize; ++i)
+	{
+		if (i == 1)
+		{
+			crossHairField.push_back(lua_tostring(_state, i));
+			continue;
+		}
+		crossHairValue.push_back(static_cast<float>(lua_tointeger(_state, i)));
+	}
+	/*Error prevention.*/
+	if (crossHairField.size() == 0)
+	{
+		crossHairField.clear();
+		crossHairField.push_back("CROSSHAIR");
+		std::cout << "<LuaGenerateCrossHair have no name, using default \"CROSSHAIR\" as name.>" << std::endl;
+	}
+	while (crossHairValue.size() < 4)
+	{
+		crossHairValue.push_back(0);
+		std::cout << "<LuaGenerateCrossHair have lack of value, using default \"0\" as value.>" << std::endl;
+	}
+
+	if (MeshBuilder::GetInstance()->GenerateCrossHair(crossHairField[0].c_str(), crossHairValue[0], crossHairValue[1], crossHairValue[2], crossHairValue[3]))
+	{
+		std::string tempString = "<LuaGenerateCrossHair loaded " + crossHairField[0] + " " + std::to_string(crossHairValue[0]) +
+			" " + std::to_string(crossHairValue[1]) + " " + std::to_string(crossHairValue[2]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
+	else
+	{
+		std::string tempString = "<LuaGenerateCrossHair failed to load " + crossHairField[0] + " " + std::to_string(crossHairValue[0]) +
+			" " + std::to_string(crossHairValue[1]) + " " + std::to_string(crossHairValue[2]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
@@ -611,6 +932,59 @@ int LuaGetMesh(lua_State * _state)
 	{
 		std::string tempString = "<LuaGetMesh failed to load " + objField[0] + " " + std::to_string(textureID) + " " + objField[1] + ">";
 		std::cout << "<LuaGetMesh failed to load " << objField[0].c_str() << " " << std::to_string(textureID) << " " << objField[1].c_str() << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
+	return 0;
+}
+
+int LuaGenerateLine(lua_State * _state)
+{
+	LuaEditor::GetInstance()->AddCurrentLoadProgress(1);
+
+	int tempSize = lua_gettop(_state);
+	std::deque<std::string>lineField;
+	std::deque<float>lineValue;
+	//int textureID = 0;
+	for (int i = 1; i <= tempSize; ++i)
+	{
+		if (i == 1)
+		{
+			lineField.push_back(lua_tostring(_state, i));
+			continue;
+		}
+		lineValue.push_back(static_cast<float>(lua_tointeger(_state, i)));
+	}
+	/*Error prevention.*/
+	if (lineField.size() == 0)
+	{
+		lineField.clear();
+		lineField.push_back("LINE");
+		std::cout << "<LuaGenerateLine have no name, using default \"LINE\" as name.>" << std::endl;
+	}
+	while (lineValue.size() < 3)
+	{
+		lineValue.push_back(0);
+		std::cout << "<LuaGenerateLine have lack of value, using default \"0\" as value.>" << std::endl;
+	}
+
+	if (MeshBuilder::GetInstance()->GenerateLine(lineField[0].c_str(), Color(lineValue[0], lineValue[1], lineValue[2])))
+	{
+		std::string tempString = "<LuaGenerateLine loaded " + lineField[0] + " " + std::to_string(lineValue[0]) +
+			" " + std::to_string(lineValue[1]) + " " + std::to_string(lineValue[2]) + ">";
+
+		std::cout << tempString << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
+	else
+	{
+		std::string tempString = "<LuaGenerateLine failed to load " + lineField[0] + " " + std::to_string(lineValue[0]) +
+			" " + std::to_string(lineValue[1]) + " " + std::to_string(lineValue[2]) + ">";
+
+		std::cout << tempString << std::endl;
 
 		LuaEditor::GetInstance()->SetMessage(tempString);
 		Application::GetInstance().Iterate();
