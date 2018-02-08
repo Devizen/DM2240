@@ -36,9 +36,13 @@ void CMenuScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("INTRO_BG")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("BUTTON_BACKGROUND", Color(0.8, 0.8, 0.8), 1.f);
 	MeshBuilder::GetInstance()->GenerateQuad("BUTTON_BACKGROUND_OUTLINE", Color(0.f, 0.f, 0.f), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("BLACKQUAD", Color(0, 0, 0), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("GREENQUAD", Color(0, 1, 0), 1.f);
 	//MeshBuilder::GetInstance()->GetMesh("BUTTON_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("MENU_OPTION_BUTTON", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("MENU_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("MENU_GREENARROW", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("MENU_GREENARROW")->textureID[0] = LoadTGA("Image//UI//VOLUMEUP.tga");
 
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
@@ -207,11 +211,22 @@ void CMenuScene::Render()
 		MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 		/*Loading Bar.*/
 		ms.PushMatrix();
+		ms.Translate(0.f, 0.f, -2.f);
+		ms.Scale((halfWindowWidth * 2.f), halfWindowHeight * 0.3f, 1.f);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GREENQUAD"));
+		ms.PopMatrix();
+		ms.PushMatrix();
+		ms.Translate(0.f, 0.f, -1.5f);
+		ms.Scale((halfWindowWidth * 1.95f), halfWindowHeight * 0.25f, 1.f);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BLACKQUAD"));
+		ms.PopMatrix();
+
+		ms.PushMatrix();
 		/*Anchored at left position.*/
 		ms.Translate((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * halfWindowWidth, 0.f, 0.f);
-		ms.Translate(-halfWindowWidth, 0.f, -1.f);
-		ms.Scale((halfWindowWidth * 2.f) * (luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()), halfWindowHeight * 0.25f, 1.f);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
+		ms.Translate(-halfWindowWidth + 0.025f, 0.f, -1.f);
+		ms.Scale((halfWindowWidth * 1.95f) * (luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()), halfWindowHeight * 0.25f, 1.f);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GREENQUAD"));
 		ms.PopMatrix();
 
 		/*Loading Text.*/
@@ -220,6 +235,15 @@ void CMenuScene::Render()
 		modelStack.Scale(fontSize, fontSize, fontSize);
 		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
 		std::cout << "RENDERING in MENU SCENE." << std::endl;
+		modelStack.PopMatrix();
+
+		static float angle = 0;
+		angle = (luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 360 * 5;
+		modelStack.PushMatrix();
+		modelStack.Translate(-halfWindowWidth * 0.5f, halfWindowHeight * 0.3f, 0.f);
+		modelStack.Rotate(angle, 0, 0, 1);
+		modelStack.Scale(fontSize, fontSize, fontSize);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("MENU_GREENARROW"));
 		modelStack.PopMatrix();
 
 		/*Loading Percentage.*/
@@ -239,6 +263,9 @@ void CMenuScene::Exit()
 {
 	MeshBuilder::GetInstance()->RemoveMesh("INTRO_BG");
 	MeshBuilder::GetInstance()->RemoveMesh("MENU_OPTION_BUTTON");
+	MeshBuilder::GetInstance()->RemoveMesh("BLACKQUAD");
+	MeshBuilder::GetInstance()->RemoveMesh("GREENQUAD");
+	MeshBuilder::GetInstance()->RemoveMesh("MENU_GREENARROW");
 	GraphicsManager::GetInstance()->DetachCamera();
 
 	MouseController::GetInstance()->SetKeepMouseCentered(true);

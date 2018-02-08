@@ -45,7 +45,6 @@ void QuadTreeManager::Update(double dt)
 		//	delete e;
 		//	e = nullptr;
 		//}
-		std::cout << "removalListSize: " << preUpdateRemovalList.size() << std::endl;
 	}
 	preUpdateRemovalList.clear();
 

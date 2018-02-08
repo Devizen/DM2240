@@ -143,7 +143,6 @@ void CEnemyManager::TriggerFear(Vector3 pos)
 		if ((monk->GetCore()->GetPosition() - pos).Length() <= FEAR_DISTANCE)
 		{
 			monk->SetState(CMonk::STATES::FLEE);
-			std::cout << "FEAR SET" << std::endl;
 		}
 	}
 }
