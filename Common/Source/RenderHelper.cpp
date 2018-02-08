@@ -231,7 +231,7 @@ void RenderHelper::RenderText(Mesh* _mesh, const std::string& _text, Color _colo
 		//characterSpacing.SetToTranslation((i+0.5f) * 1.0f, 0, 0); // 1.0f is the spacing of each character, you may change this value
 		//characterSpacing.SetToTranslation((float)(1 + (int)i), 0.0f, 0.0f); // 1.0f is the spacing of each character, you may change this value
 		//characterSpacing.SetToTranslation((float)(0.5f + (int)i), 0.0f, 0.0f); // 1.0f is the spacing of each character, you may change this value
-		characterSpacing.SetToTranslation(i, 0.5f, 0); //1.0f is the spacing of each character, you may change this value
+		characterSpacing.SetToTranslation(i + 0.5f, 0.5f, 0); //1.0f is the spacing of each character, you may change this value
 		MVP = GraphicsManager::GetInstance()->GetProjectionMatrix() * GraphicsManager::GetInstance()->GetViewMatrix() * GraphicsManager::GetInstance()->GetModelStack().Top() * characterSpacing;
 		currProg->UpdateMatrix44("MVP", &MVP.a[0]);
 

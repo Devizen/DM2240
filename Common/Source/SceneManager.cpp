@@ -4,6 +4,8 @@
 #include "SceneText.h"
 #include "Scene\CIntroScene.h"
 #include "Scene\CMenuScene.h"
+#include "LuaEditor\LuaEditor.h"
+#include "KeyboardController.h"
 #include "Scene\CPauseScene.h"
 #include "Scene\COptionScene.h"
 
@@ -206,6 +208,10 @@ void SceneManager::PushScene(Scene * next)
 	Scene* scene = next;
 	scene->Init();
 	sceneStack.push_back(scene);
+	/*Clear all keyboard input on queue.*/
+	static std::queue<int>* keyInput = KeyboardController::GetInstance()->GetKeyInput();
+	while (!keyInput->empty())
+		keyInput->pop();
 }
 
 void SceneManager::PopScene()

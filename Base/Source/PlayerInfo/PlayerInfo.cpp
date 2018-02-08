@@ -8,6 +8,7 @@
 #include "../WeaponInfo/Pistol.h"
 #include "../Projectile/Explosive.h"
 #include "../QuadTree/CameraManager.h"
+#include "LuaInterface.h"
 
 // Allocating and initializing CPlayerInfo's static data member.  
 // The pointer is allocated but not the object's constructor.
@@ -27,10 +28,19 @@ CPlayerInfo::CPlayerInfo(void)
 	, primaryWeapon(NULL)
 	, secondaryWeapon(NULL)
 	, spatialPartition(nullptr)
-	, keyMoveForward('W')
-	, keyMoveBackward('S')
-	, keyMoveLeft('A')
-	, keyMoveRight('D')
+	, keyMoveForward(nullptr)
+	, keyMoveBackward(nullptr)
+	, keyMoveLeft(nullptr)
+	, keyMoveRight(nullptr)
+	, keyMoveJump(nullptr)
+	, keyReload(nullptr)
+	, keyHitscan(nullptr)
+	, keyFire(nullptr)
+	, keyBomb(nullptr)
+	, keyReset(nullptr)
+	, luaInterface(nullptr)
+	, luaState(nullptr)
+	, optimiseUpdate(false)
 {
 }
 
@@ -47,6 +57,26 @@ CPlayerInfo::~CPlayerInfo(void)
 		primaryWeapon = NULL;
 	}
 	m_pTerrain = NULL;
+
+	while (!bindKeyMap.empty())
+	{
+		int* temp = bindKeyMap.begin()->first;
+		delete temp;
+		temp = nullptr;
+		bindKeyMap.erase(bindKeyMap.begin());
+	}
+	keyMoveForward = nullptr;
+	keyMoveBackward = nullptr;
+	keyMoveLeft = nullptr;
+	keyMoveRight = nullptr;
+	keyMoveJump = nullptr;
+	keyReload = nullptr;
+	keyHitscan = nullptr;
+	keyFire = nullptr;
+	keyBomb = nullptr;
+	keyReset = nullptr;
+
+	optimiseUpdate = false;
 }
 
 // Initialise this class instance
@@ -76,6 +106,230 @@ void CPlayerInfo::Init(void)
 	this->collider->SetMaxAABB(Vector3(0.5f, 2));
 	//this->minAABB.Set(-0.5f, 0);
 	//this->maxAABB.Set(0.5f, 2);
+
+	/*Initialise key with Lua.*/
+	luaInterface = CLuaInterface::GetInstance();
+	luaState = luaInterface->luaState;
+	luaL_dofile(luaState, "Lua//Keyboard.lua");
+
+	/*Move Forward.*/
+	bindKeyMap[new int()];
+	/*Move Backward.*/
+	bindKeyMap[new int()];
+	/*Move Left.*/
+	bindKeyMap[new int()];
+	/*Move Right.*/
+	bindKeyMap[new int()];
+	/*Jump.*/
+	bindKeyMap[new int()];
+	/*Reload.*/
+	bindKeyMap[new int()];
+	/*Hitscan Toggle.*/
+	bindKeyMap[new int()];
+	/*Fire.*/
+	bindKeyMap[new int()];
+	/*Bomb.*/
+	bindKeyMap[new int()];
+	/*Reset.*/
+	bindKeyMap[new int()];
+
+	unsigned int index = 0;
+
+	for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator it = bindKeyMap.begin(); it != bindKeyMap.end(); ++it, ++index)
+	{
+		switch (index)
+		{
+		case 0:
+			keyMoveForward = (*it).first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return KeyboardController::GetInstance()->IsKeyDown(_input);
+			};
+			it->second.first = "keyMoveForward";
+			it->second.second = [this](float _dt)->void
+			{
+				Vector3 viewVector = target - position;
+				Vector3 rightUV;
+				Vector3 temp(viewVector);
+				temp.y = 0;
+				position += temp.Normalized() * (float)m_dSpeed * (float)_dt * CameraManager::GetInstance()->speedUp;
+				// Constrain the position
+				Constrain();
+				// Update the target
+				target = position + viewVector;
+			};
+			break;
+		case 1:
+			keyMoveBackward = (*it).first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return KeyboardController::GetInstance()->IsKeyDown(_input);
+			};
+			it->second.first = "keyMoveBackward";
+			it->second.second = [this](float _dt)->void
+			{
+				Vector3 viewVector = target - position;
+				Vector3 rightUV;
+				Vector3 temp(viewVector);
+				temp.y = 0;
+				position -= temp.Normalized() * (float)m_dSpeed * (float)_dt * CameraManager::GetInstance()->speedUp;
+				// Constrain the position
+				Constrain();
+				// Update the target
+				target = position + viewVector;
+			};
+			break;
+		case 2:
+			keyMoveLeft = (*it).first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return KeyboardController::GetInstance()->IsKeyDown(_input);
+			};
+			it->second.first = "keyMoveLeft";
+			it->second.second = [this](float _dt)->void
+			{
+				Vector3 viewVector = target - position;
+				Vector3 rightUV;
+				rightUV = (viewVector.Normalized()).Cross(up);
+				rightUV.y = 0;
+				rightUV.Normalize();
+				position -= rightUV * (float)m_dSpeed * (float)_dt * CameraManager::GetInstance()->speedUp;
+				// Constrain the position
+				Constrain();
+				// Update the target
+				target = position + viewVector;
+			};
+			break;
+		case 3:
+			keyMoveRight = (*it).first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return KeyboardController::GetInstance()->IsKeyDown(_input);
+			};
+			it->second.first = "keyMoveRight";
+			it->second.second = [this](float _dt)->void
+			{
+				Vector3 viewVector = target - position;
+				Vector3 rightUV;
+				rightUV = (viewVector.Normalized()).Cross(up);
+				rightUV.y = 0;
+				rightUV.Normalize();
+				position += rightUV * (float)m_dSpeed * (float)_dt * CameraManager::GetInstance()->speedUp;
+				// Constrain the position
+				Constrain();
+				// Update the target
+				target = position + viewVector;
+			};
+			break;
+		case 4:
+			keyMoveJump = it->first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return KeyboardController::GetInstance()->IsKeyPressed(_input);
+			};
+			it->second.first = "keyMoveJump";
+			it->second.second = [this](float _dt)->void
+			{
+				SetToJumpUpwards(true);
+			};
+			break;
+		case 5:
+			keyReload = it->first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return KeyboardController::GetInstance()->IsKeyPressed(_input);
+			};
+			it->second.first = "keyReload";
+			it->second.second = [this](float _dt)->void
+			{
+				if (primaryWeapon)
+				{
+					primaryWeapon->Reload();
+#ifdef _DEBUG
+					primaryWeapon->PrintSelf();
+#endif
+				}
+			};
+			break;
+		case 6:
+			keyHitscan = it->first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return KeyboardController::GetInstance()->IsKeyPressed(_input);
+			};
+			it->second.first = "keyHitscan";
+			it->second.second = [this](float _dt)->void
+			{
+				primaryWeapon->hitScan = (primaryWeapon->hitScan ? false : true);
+			};
+			break;
+		case 7:
+			keyFire = it->first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return MouseController::GetInstance()->IsButtonDown(_input);
+			};
+			it->second.first = "keyFire";
+			it->second.second = [this](float _dt)->void
+			{
+				if (primaryWeapon)
+					primaryWeapon->Discharge(position, target, this);
+			};
+			break;
+		case 8:
+			keyBomb = it->first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return MouseController::GetInstance()->IsButtonDown(_input);
+			};
+			it->second.first = "keyBomb";
+			it->second.second = [this](float _dt)->void
+			{
+				CExplosive* nade = Create::Explosive("nade", position, (target - position).Normalize(), 5.0, 75.0, 1, this);
+			};
+			break;
+		case 9:
+			keyReset = it->first;
+			isKeyMap[it->first] = [this](unsigned char _input)->bool
+			{
+				return KeyboardController::GetInstance()->IsKeyPressed(_input);
+			};
+			it->second.first = "keyReset";
+			it->second.second = [this](float _dt)->void
+			{
+				Reset();
+			};
+			break;
+		}
+	}
+
+	/*Movement.*/
+	*keyMoveForward = luaInterface->GetIntValue("keyMoveForward");
+	intToMemMap[(*keyMoveForward)] = keyMoveForward;
+	*keyMoveBackward = luaInterface->GetIntValue("keyMoveBackward");
+	intToMemMap[(*keyMoveBackward)] = keyMoveBackward;
+	*keyMoveLeft = luaInterface->GetIntValue("keyMoveLeft");
+	intToMemMap[(*keyMoveLeft)] = keyMoveLeft;
+	*keyMoveRight = luaInterface->GetIntValue("keyMoveRight");
+	intToMemMap[(*keyMoveRight)] = keyMoveRight;
+
+	*keyMoveJump = luaInterface->GetIntValue("keyMoveJump");
+	intToMemMap[(*keyMoveJump)] = keyMoveJump;
+
+	*keyReload = luaInterface->GetIntValue("keyReload");
+	intToMemMap[(*keyReload)] = keyReload;
+
+	*keyHitscan = luaInterface->GetIntValue("keyHitscan");
+	intToMemMap[(*keyHitscan)] = keyHitscan;
+
+	*keyFire = luaInterface->GetIntValue("keyFire");
+	intToMemMap[(*keyFire)] = keyFire;
+
+	*keyBomb = luaInterface->GetIntValue("keyBomb");
+	intToMemMap[(*keyBomb)] = keyBomb;
+
+	*keyReset = luaInterface->GetIntValue("keyReset");
+	intToMemMap[(*keyReset)] = keyReset;
 }
 
 // Returns true if the player is on ground
@@ -297,110 +551,104 @@ void CPlayerInfo::UpdateFreeFall(double dt)
  Hero Update
  ********************************************************************************/
 void CPlayerInfo::Update(double dt)
-{
+{	
+	static int iterateCount = 0;
+	/*Handles all the keyboard controls; type of key (press, down or up) and functionality.*/
+
+	switch (optimiseUpdate)
+	{
+	case false:
+	{
+		/*Not optimised as it loop through the entire key map.
+		Uncomment this to see how much iteration(s) it does for each frame.*/
+		for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator it = bindKeyMap.begin(); it != bindKeyMap.end(); ++it)
+		{
+			/*Check if it is key press, down or up.*/
+			if (isKeyMap[it->first]((*(it->first))))
+				/*Call the function pointer binded to the key.*/
+				bindKeyMap[it->first].second((static_cast<float>(dt)));
+
+#ifdef _DEBUG
+			std::cout << "<Looping> " << std::to_string(iterateCount) << std::endl;
+			++iterateCount;
+#endif
+		}
+		break;
+	}
+	case true:
+	{
+		/*Optimised version, enter the respective call based on input callback.
+		Eliminated looping through the keyMap and if statement.*/
+		static std::queue<int>*keyInput = KeyboardController::GetInstance()->GetKeyInput();
+		static std::set<int>pressedKey;
+		while (!keyInput->empty())
+		{
+			if (intToMemMap[keyInput->front()])
+			{
+#ifdef _DEBUG
+				std::cout << "<Input exist in map.>" << std::endl;
+				std::cout << "<Adding to pressedKey.>" << std::to_string(iterateCount) << std::endl;
+				++iterateCount;
+#endif
+				pressedKey.insert(keyInput->front());
+			}
+#ifdef _DEBUG
+			else
+			{
+				std::cout << "<Input does not exist in map.>" << std::to_string(iterateCount) << std::endl;
+				++iterateCount;
+			}
+#endif
+			keyInput->pop();
+		}
+
+		if (!pressedKey.empty())
+		{
+#ifdef _DEBUG
+			std::cout << "<Starting to iterate through pressedKey.> " << std::to_string(iterateCount) << std::endl;
+			++iterateCount;
+#endif
+			for (std::set<int>::iterator it = pressedKey.begin(); it != pressedKey.end();)
+			{
+				/*Check if it is key press, down or up.*/
+				if (isKeyMap[intToMemMap[(*it)]]((*(intToMemMap[(*it)]))))
+				{
+					/*Call the function pointer binded to the key.*/
+					bindKeyMap[intToMemMap[(*it)]].second((static_cast<float>(dt)));
+#ifdef _DEBUG
+					std::cout << "<Pressing \"" << std::to_string((*it)) << "\" key.> " << std::to_string(iterateCount) << std::endl;
+					++iterateCount;
+#endif
+				}
+				/*Remove from pressedKey if there was no input to prevent it from unwanted loop check.*/
+				else
+				{
+#ifdef _DEBUG
+					std::cout << "<Not pressing \"" << std::to_string((*it)) << "\" key, removing key from pressedKey set.> " << std::to_string(iterateCount) << std::endl;
+					++iterateCount;
+#endif
+					it = pressedKey.erase(it);
+					continue;
+				}
+				++it;
+			}
+		}
+#ifdef _DEBUG
+		else
+		{
+			std::cout << "<Nothing was pressed for this frame.> " << std::to_string(iterateCount) << std::endl;
+			++iterateCount;
+		}
+#endif
+		break;
+	}
+	}
+
 	double mouse_diff_x, mouse_diff_y;
 	MouseController::GetInstance()->GetMouseDelta(mouse_diff_x, mouse_diff_y);
 
 	double camera_yaw = mouse_diff_x * 0.0174555555555556;		// 3.142 / 180.0
 	double camera_pitch = mouse_diff_y * 0.0174555555555556;	// 3.142 / 180.0
-
-	// Update the position if the WASD buttons were activated
-	if (KeyboardController::GetInstance()->IsKeyDown('W') ||
-		KeyboardController::GetInstance()->IsKeyDown('A') ||
-		KeyboardController::GetInstance()->IsKeyDown('S') ||
-		KeyboardController::GetInstance()->IsKeyDown('D'))
-	{
-		Vector3 viewVector = target - position;
-		Vector3 rightUV;
-		if (KeyboardController::GetInstance()->IsKeyDown('W'))
-		{
-			Vector3 temp(viewVector);
-			temp.y = 0;
-			position += temp.Normalized() * (float)m_dSpeed * (float)dt * CameraManager::GetInstance()->speedUp;
-		}
-		else if (KeyboardController::GetInstance()->IsKeyDown('S'))
-		{
-			Vector3 temp(viewVector);
-			temp.y = 0;
-			position -= temp.Normalized() * (float)m_dSpeed * (float)dt * CameraManager::GetInstance()->speedUp;
-		}
-		if (KeyboardController::GetInstance()->IsKeyDown('A'))
-		{
-			rightUV = (viewVector.Normalized()).Cross(up);
-			rightUV.y = 0;
-			rightUV.Normalize();
-			position -= rightUV * (float)m_dSpeed * (float)dt * CameraManager::GetInstance()->speedUp;
-		}
-		else if (KeyboardController::GetInstance()->IsKeyDown('D'))
-		{
-			rightUV = (viewVector.Normalized()).Cross(up);
-			rightUV.y = 0;
-			rightUV.Normalize();
-			position += rightUV * (float)m_dSpeed * (float)dt * CameraManager::GetInstance()->speedUp;
-		}
-		// Constrain the position
-		Constrain();
-		// Update the target
-		target = position + viewVector;
-	}
-
-	// Rotate the view direction
-	if (KeyboardController::GetInstance()->IsKeyDown(VK_LEFT) ||
-		KeyboardController::GetInstance()->IsKeyDown(VK_RIGHT) ||
-		KeyboardController::GetInstance()->IsKeyDown(VK_UP) ||
-		KeyboardController::GetInstance()->IsKeyDown(VK_DOWN))
-	{
-		Vector3 viewUV = (target - position).Normalized();
-		Vector3 rightUV;
-		if (KeyboardController::GetInstance()->IsKeyDown(VK_LEFT))
-		{
-			float yaw = (float)m_dSpeed * (float)dt;
-			Mtx44 rotation;
-			rotation.SetToRotation(yaw, 0, 1, 0);
-			viewUV = rotation * viewUV;
-			target = position + viewUV;
-			rightUV = viewUV.Cross(up);
-			rightUV.y = 0;
-			rightUV.Normalize();
-			up = rightUV.Cross(viewUV).Normalized();
-		}
-		else if (KeyboardController::GetInstance()->IsKeyDown(VK_RIGHT))
-		{
-			float yaw = (float)(-m_dSpeed * (float)dt);
-			Mtx44 rotation;
-			rotation.SetToRotation(yaw, 0, 1, 0);
-			viewUV = rotation * viewUV;
-			target = position + viewUV;
-			rightUV = viewUV.Cross(up);
-			rightUV.y = 0;
-			rightUV.Normalize();
-			up = rightUV.Cross(viewUV).Normalized();
-		}
-		if (KeyboardController::GetInstance()->IsKeyDown(VK_UP))
-		{
-			float pitch = (float)(m_dSpeed * (float)dt);
-			rightUV = viewUV.Cross(up);
-			rightUV.y = 0;
-			rightUV.Normalize();
-			up = rightUV.Cross(viewUV).Normalized();
-			Mtx44 rotation;
-			rotation.SetToRotation(pitch, rightUV.x, rightUV.y, rightUV.z);
-			viewUV = rotation * viewUV;
-			target = position + viewUV;
-		}
-		else if (KeyboardController::GetInstance()->IsKeyDown(VK_DOWN))
-		{
-			float pitch = (float)(-m_dSpeed * (float)dt);
-			rightUV = viewUV.Cross(up);
-			rightUV.y = 0;
-			rightUV.Normalize();
-			up = rightUV.Cross(viewUV).Normalized();
-			Mtx44 rotation;
-			rotation.SetToRotation(pitch, rightUV.x, rightUV.y, rightUV.z);
-			viewUV = rotation * viewUV;
-			target = position + viewUV;
-		}
-	}
 
 	//Update the camera direction based on mouse move
 	{
@@ -431,53 +679,14 @@ void CPlayerInfo::Update(double dt)
 		}
 	}
 
-	// If the user presses SPACEBAR, then make him jump
-	if (KeyboardController::GetInstance()->IsKeyDown(VK_SPACE) &&
-		position.y == m_pTerrain->GetTerrainHeight(position))
-	{
-		SetToJumpUpwards(true);
-	}
-
-	// Update the weapons
-	if (KeyboardController::GetInstance()->IsKeyReleased('R'))
-	{
-		if (primaryWeapon)
-		{
-			primaryWeapon->Reload();
-			//primaryWeapon->PrintSelf();
-		}
-	}
-	if (KeyboardController::GetInstance()->IsKeyReleased('H'))
-	{
-		primaryWeapon->hitScan = (primaryWeapon->hitScan ? false : true );
-	}
 	if (primaryWeapon)
 		primaryWeapon->Update(dt);
 	if (secondaryWeapon)
 		secondaryWeapon->Update(dt);
 
-	// if Mouse Buttons were activated, then act on them
-	if (MouseController::GetInstance()->IsButtonDown(MouseController::LMB))
-	{
-		if (primaryWeapon)
-			primaryWeapon->Discharge(position, target, this);
-	}
-	else if (MouseController::GetInstance()->IsButtonPressed(MouseController::RMB))
-	{
-		CExplosive* nade = Create::Explosive("nade", position, (target - position).Normalize(), 5.0, 75.0, 1, this);
-	}
-
-	// If the user presses R key, then reset the view to default values
-	if (KeyboardController::GetInstance()->IsKeyDown('T'))
-	{
-		Reset();
-	}
-	else
-	{
-		UpdateJumpUpwards(dt);
-		UpdateFreeFall(dt);
-	}
-
+	UpdateJumpUpwards(dt);
+	UpdateFreeFall(dt);
+	
 	// If a camera is attached to this playerInfo class, then update it
 	if (attachedCamera)
 	{

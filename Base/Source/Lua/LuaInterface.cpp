@@ -137,9 +137,10 @@ bool CLuaInterface::Init(void)
 					pathAndName.push_back(std::make_pair("Lua//LuaGenerateSkyplane.lua", "GenerateSkyplane"));
 					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateSkyplane; };
 
-					/*Generate Text(s).*/
-					pathAndName.push_back(std::make_pair("Lua//LuaGenerateText.lua", "GenerateText"));
-					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateText; };
+					/*Generate Text(s).
+					Not needed anymore because this was initialised at the start of the program.*/
+					/*pathAndName.push_back(std::make_pair("Lua//LuaGenerateText.lua", "GenerateText"));
+					functionToRegister[pathAndName.back().first] = [](void)->lua_CFunction { return LuaGenerateText; };*/
 
 					/*Getting Mesh for Object(s).
 					For safety reason, this should be placed last because it will get mesh which will crash the application if the mesh has not initialise.*/
@@ -148,10 +149,25 @@ bool CLuaInterface::Init(void)
 
 					size_t totalScriptToLoad = pathAndName.size();
 
+					luaEditor->SetCurrentLoadProgress(0);
+					luaEditor->SetCompleteLoadProgress(0);
 					for (size_t i = 0; i < totalScriptToLoad; ++i)
 					{
 						/*Load the intended lua script.*/
 						luaEditor->ReadLuaScript(pathAndName[i].first);
+						/*Get the amount of line(s) to loop through.*/
+						size_t tempCount = luaEditor->GetLine().size();
+						luaEditor->AddCompleteLoadProgress(static_cast<float>(tempCount));
+						/*Add for reading and doing file.*/
+						luaEditor->AddCompleteLoadProgress(static_cast<float>(2.f));
+					}
+
+					for (size_t i = 0; i < totalScriptToLoad; ++i)
+					{
+						/*Load the intended lua script.*/
+						luaEditor->ReadLuaScript(pathAndName[i].first);
+						luaEditor->AddCurrentLoadProgress(1);
+
 						/*Get the amount of line(s) to loop through.*/
 						size_t tempCount = luaEditor->GetLine().size();
 					
@@ -160,16 +176,34 @@ bool CLuaInterface::Init(void)
 							std::string tempStr = pathAndName[i].second;
 							tempStr += std::to_string(j);
 							/*Register the name to look for using the function binded.*/
+							std::string tempString = "<Registering " + tempStr + " to function " + pathAndName[i].first;
 							lua_register(luaState, tempStr.c_str(), functionToRegister[pathAndName[i].first]());
+
+							LuaEditor::GetInstance()->SetMessage(tempString);
+							Application::GetInstance().Iterate();
+							luaEditor->AddCurrentLoadProgress(1);
 						}
 						/*Execute loading script.*/
 						luaL_dofile(luaState, pathAndName[i].first.c_str());
+						luaEditor->AddCurrentLoadProgress(1);
+
+						std::string tempString = "<Load Lua Script from " + pathAndName[i].first;
 						std::cout << "<Load Lua Script from " << pathAndName[i].first << std::endl;
+
+						LuaEditor::GetInstance()->SetMessage(tempString);
+						Application::GetInstance().Iterate();
 					}
 					s_instance->isInit = true;
 				}
 				if (!s_instance->isInit)
+				{
+					std::string tempString = "<Failed to initialise Lua State.>";
+
 					std::cout << "<Failed to initialise Lua State.>" << std::endl;
+
+					LuaEditor::GetInstance()->SetMessage(tempString);
+					Application::GetInstance().Iterate();
+				}
 			}
 			)));
 		}
@@ -189,7 +223,13 @@ int CLuaInterface::GetIntValue(const char* _value)
 
 char CLuaInterface::GetCharValue(const char * _value)
 {
-	return 0;
+	/*Read variables.*/
+	/*Go into .lua to find the "_value".*/
+	lua_getglobal(s_instance->luaState, _value);
+
+	/*Extract value, -1 because we extract 1 value from lua_getglobal.
+	Takes index 0 because it is a char.*/
+	return (lua_tostring(s_instance->luaState, -1))[0];
 }
 
 void CLuaInterface::SaveIntValue(const char * _varName, const int _value, const bool _overwrite)
@@ -256,7 +296,13 @@ int LuaGenerateObj(lua_State * _state)
 		
 	}
 	else
+	{
+		std::string tempString = "<LuaGenerateObj failed to load " + objField[0] + " " + objField[1] + ">";
 		std::cout << "<LuaGenerateObj failed to load " << objField[0].c_str() << " " << objField[1].c_str() << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
@@ -289,11 +335,27 @@ int LuaGenerateQuad(lua_State * _state)
 	}
 
 	if (MeshBuilder::GetInstance()->GenerateQuad(quadField[0].c_str(), Color(quadValue[0], quadValue[1], quadValue[2]), quadValue[3]))
+	{
+		std::string tempString = "<LuaGenerateQuad loaded " + quadField[0] + " Color(" + std::to_string(quadValue[0]) +
+			"," + std::to_string(quadValue[1]) + "," + std::to_string(quadValue[2]) + ") Length " + std::to_string(quadValue[3]) + ">";
+
 		std::cout << "<LuaGenerateQuad loaded " << quadField[0].c_str() << " Color(" << std::to_string(quadValue[0]) <<
-		"," << std::to_string(quadValue[1]) << "," << std::to_string(quadValue[2]) << ") Length " << std::to_string(quadValue[3]) << ">" << std::endl;
+			"," << std::to_string(quadValue[1]) << "," << std::to_string(quadValue[2]) << ") Length " << std::to_string(quadValue[3]) << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	else
+	{
+		std::string tempString = "<LuaGenerateQuad failed to load " + quadField[0] + " Color(" + std::to_string(quadValue[0]) +
+			"," + std::to_string(quadValue[1]) + "," + std::to_string(quadValue[2]) + ") Length " + std::to_string(quadValue[3]) + ">";
+
 		std::cout << "<LuaGenerateQuad failed to load " << quadField[0].c_str() << " Color(" << std::to_string(quadValue[0]) <<
-		"," << std::to_string(quadValue[1]) << "," << std::to_string(quadValue[2]) << ") Length " << std::to_string(quadValue[3]) << ">" << std::endl;
+			"," << std::to_string(quadValue[1]) << "," << std::to_string(quadValue[2]) << ") Length " << std::to_string(quadValue[3]) << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
@@ -372,15 +434,35 @@ int LuaGenerateSkyplane(lua_State * _state)
 
 	if (MeshBuilder::GetInstance()->GenerateSkyPlane(skyplaneField[0].c_str(), Color(skyplaneValue[0], skyplaneValue[1], skyplaneValue[2]), skyplaneValue[3],
 		skyplaneValue[4], skyplaneValue[5], skyplaneValue[6], skyplaneValue[7]))
+	{
+		std::string tempString = "<LuaGenerateSkyplane loaded " + skyplaneField[0] + " Color(" + std::to_string(skyplaneValue[0]) +
+			"," + std::to_string(skyplaneValue[1]) + "," + std::to_string(skyplaneValue[2]) + ") Slices " + std::to_string(skyplaneValue[3]) +
+			" Planet Radius " + std::to_string(skyplaneValue[4]) + " Atmosphere Radius " + std::to_string(skyplaneValue[5]) +
+			" hTile " + std::to_string(skyplaneValue[6]) + " vTile " + std::to_string(skyplaneValue[7]) + ">";
+
 		std::cout << "<LuaGenerateSkyplane loaded " << skyplaneField[0].c_str() << " Color(" << std::to_string(skyplaneValue[0]) <<
-		"," << std::to_string(skyplaneValue[1]) << "," << std::to_string(skyplaneValue[2]) << ") Slices " << std::to_string(skyplaneValue[3]) <<
-		" Planet Radius " << std::to_string(skyplaneValue[4]) << " Atmosphere Radius " << std::to_string(skyplaneValue[5]) <<
-		" hTile " << std::to_string(skyplaneValue[6]) << " vTile " << std::to_string(skyplaneValue[7]) << ">" << std::endl;
+			"," << std::to_string(skyplaneValue[1]) << "," << std::to_string(skyplaneValue[2]) << ") Slices " << std::to_string(skyplaneValue[3]) <<
+			" Planet Radius " << std::to_string(skyplaneValue[4]) << " Atmosphere Radius " << std::to_string(skyplaneValue[5]) <<
+			" hTile " << std::to_string(skyplaneValue[6]) << " vTile " << std::to_string(skyplaneValue[7]) << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	else
+	{
+		std::string tempString = "<LuaGenerateSkyplane failed to load " + skyplaneField[0] + " Color(" + std::to_string(skyplaneValue[0]) +
+			"," + std::to_string(skyplaneValue[1]) + "," + std::to_string(skyplaneValue[2]) + ") Slices " + std::to_string(skyplaneValue[3]) +
+			" Planet Radius " + std::to_string(skyplaneValue[4]) + " Atmosphere Radius " + std::to_string(skyplaneValue[5]) +
+			" hTile " + std::to_string(skyplaneValue[6]) + " vTile " + std::to_string(skyplaneValue[7]) + ">";
+
 		std::cout << "<LuaGenerateSkyplane failed to load " << skyplaneField[0].c_str() << " Color(" << std::to_string(skyplaneValue[0]) <<
-		"," << std::to_string(skyplaneValue[1]) << "," << std::to_string(skyplaneValue[2]) << ") Slices " << std::to_string(skyplaneValue[3]) <<
-		" Planet Radius " << std::to_string(skyplaneValue[4]) << " Atmosphere Radius " << std::to_string(skyplaneValue[5]) <<
-		" hTile " << std::to_string(skyplaneValue[6]) << " vTile " << std::to_string(skyplaneValue[7]) << ">" << std::endl;
+			"," << std::to_string(skyplaneValue[1]) << "," << std::to_string(skyplaneValue[2]) << ") Slices " << std::to_string(skyplaneValue[3]) <<
+			" Planet Radius " << std::to_string(skyplaneValue[4]) << " Atmosphere Radius " << std::to_string(skyplaneValue[5]) <<
+			" hTile " << std::to_string(skyplaneValue[6]) << " vTile " << std::to_string(skyplaneValue[7]) << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
@@ -413,11 +495,27 @@ static int LuaGenerateAxes(lua_State * _state)
 	}
 
 	if (MeshBuilder::GetInstance()->GenerateAxes(axesField[0].c_str(), axesValue[0], axesValue[1], axesValue[2]))
-		std::cout << "<LuaGenerateAxes loaded " << axesField[0].c_str() << " " << std::to_string(axesValue[0]) << 
+	{
+		std::string tempString = "<LuaGenerateAxes loaded " + axesField[0] + " " + std::to_string(axesValue[0]) +
+			" " + std::to_string(axesValue[1]) + " " + std::to_string(axesValue[2]) + ">";
+
+		std::cout << "<LuaGenerateAxes loaded " << axesField[0].c_str() << " " << std::to_string(axesValue[0]) <<
 			" " << std::to_string(axesValue[1]) << " " << std::to_string(axesValue[2]) << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	else
+	{
+		std::string tempString = "<LuaGenerateAxes failed to load " + axesField[0] + " " + std::to_string(axesValue[0]) +
+			" " + std::to_string(axesValue[1]) + " " + std::to_string(axesValue[2]) + ">";
+
 		std::cout << "<LuaGenerateAxes failed to load " << axesField[0].c_str() << " " << std::to_string(axesValue[0]) <<
-		" " << std::to_string(axesValue[1]) << " " << std::to_string(axesValue[2]) << ">" << std::endl;
+			" " << std::to_string(axesValue[1]) << " " << std::to_string(axesValue[2]) << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
@@ -455,11 +553,27 @@ int LuaGenerateText(lua_State * _state)
 	}
 
 	if (MeshBuilder::GetInstance()->GenerateText(textField[0].c_str(), textValue[0], textValue[1]))
+	{
+		std::string tempString = "<LuaGenerateText loaded " + textField[0] + " Size(" + std::to_string(textValue[0]) +
+			"," + std::to_string(textValue[1]) + ")>";
+
 		std::cout << "<LuaGenerateText loaded " << textField[0].c_str() << " Size(" << std::to_string(textValue[0]) <<
-		"," << std::to_string(textValue[1]) << ")>" << std::endl;
+			"," << std::to_string(textValue[1]) << ")>" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	else
+	{
+		std::string tempString = "<LuaGenerateText failed to load " + textField[0] + " Size(" + std::to_string(textValue[0]) +
+			"," + std::to_string(textValue[1]) + ")>";
+
 		std::cout << "<LuaGenerateText failed to load " << textField[0].c_str() << " Size(" << std::to_string(textValue[0]) <<
-		"," << std::to_string(textValue[1]) << ")>" << std::endl;
+			"," << std::to_string(textValue[1]) << ")>" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 
@@ -479,16 +593,21 @@ int LuaGetMesh(lua_State * _state)
 	}
 	if (MeshBuilder::GetInstance()->GetMesh(objField[0].c_str()) != nullptr)
 	{
-		if (MeshBuilder::GetInstance()->GetMesh(objField[0])->textureID[textureID] = LoadTGA(objField[1].c_str()))
-		{
-			std::string tempString = "<LuaGetMesh loaded " + objField[0] + " " + std::to_string(textureID) + " " + objField[1] + ">";
-			std::cout << "<LuaGetMesh loaded " << objField[0].c_str() << " " << std::to_string(textureID) << " " << objField[1].c_str() << ">" << std::endl;
-			LuaEditor::GetInstance()->SetMessage(tempString);
-			Application::GetInstance().Iterate();
-		}
+		MeshBuilder::GetInstance()->GetMesh(objField[0])->textureID[textureID] = LoadTGA(objField[1].c_str());
+		std::string tempString = "<LuaGetMesh loaded " + objField[0] + " " + std::to_string(textureID) + " " + objField[1] + ">";
+		std::cout << "<LuaGetMesh loaded " << objField[0].c_str() << " " << std::to_string(textureID) << " " << objField[1].c_str() << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
 	}
 	else
+	{
+		std::string tempString = "<LuaGetMesh failed to load " + objField[0] + " " + std::to_string(textureID) + " " + objField[1] + ">";
 		std::cout << "<LuaGetMesh failed to load " << objField[0].c_str() << " " << std::to_string(textureID) << " " << objField[1].c_str() << ">" << std::endl;
+
+		LuaEditor::GetInstance()->SetMessage(tempString);
+		Application::GetInstance().Iterate();
+	}
 	return 0;
 }
 

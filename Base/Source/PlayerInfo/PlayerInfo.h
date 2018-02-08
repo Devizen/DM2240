@@ -6,6 +6,15 @@
 #include "../SpatialPartition/SpatialPartition.h"
 #include "Collider\Collider.h"
 
+#include "../Component/Option.h"
+#include <map>
+#include <functional>
+#include <bitset>
+#include <conio.h>
+#include <set>
+
+class CLuaInterface;
+struct lua_State;
 
 class CPlayerInfo : public EntityBase//, public CCollider//, public CSpatialPartition,
 {
@@ -104,6 +113,9 @@ public:
 
 	/*For checking if hitscan is on.*/
 	CWeaponInfo* GetPrimaryWeapon(void) { return primaryWeapon; }
+
+	void SetOptimiseUpdate(bool _optimiseUpdate) { optimiseUpdate = _optimiseUpdate; }
+	const bool* GetOptimiseUpdate(void) { return &optimiseUpdate; }
 private:
 	Vector3 defaultPosition, defaultTarget, defaultUp;
 	Vector3 position, target, up;
@@ -131,8 +143,27 @@ private:
 	/*Spatial Partitioning Info.*/
 	CSpatialPartition* spatialPartition;
 
-	char keyMoveForward;
-	char keyMoveBackward;
-	char keyMoveLeft;
-	char keyMoveRight;
+	int* keyMoveForward;
+	int* keyMoveBackward;
+	int* keyMoveLeft;
+	int* keyMoveRight;
+	int* keyMoveJump;
+	int* keyReload;
+	int* keyHitscan;
+	int* keyFire;
+	int* keyBomb;
+	int* keyReset;
+
+	/*For converting int (input) to memory address for accessing bindKeyMap.*/
+	std::map<int, int*>intToMemMap;
+	/*Binding the key to their respective function to reduce if statement(s).
+	The pair consists of the variable name for storing into lua and the function pointer to execute the respective function based on button input.*/
+	std::map<int*, std::pair<std::string, std::function<void(float)>>>bindKeyMap;
+	/*For checking if the button is key pressed, key down or key up.*/
+	std::map<int*, std::function<bool(int)>>isKeyMap;
+	//std::function<void(std::string*)> bindKeyMap;
+	OptionBase<Key>keyCheck;
+	CLuaInterface* luaInterface;
+	lua_State* luaState;
+	bool optimiseUpdate;
 };

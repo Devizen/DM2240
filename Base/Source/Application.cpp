@@ -3,6 +3,8 @@
 #include "KeyboardController.h"
 #include "SceneManager.h"
 #include "GraphicsManager.h"
+#include "LuaEditor\LuaEditor.h"
+#include "DepthFBO\DepthFBO.h"
 
 //Include GLEW
 #include <GL/glew.h>
@@ -36,7 +38,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-
+	static std::queue<int>*keyInput = KeyboardController::GetInstance()->GetKeyInput();
+	keyInput->push(key);
 }
 
 void resize_callback(GLFWwindow* window, int w, int h)
@@ -126,7 +129,8 @@ void Application::Init()
 	glfwMakeContextCurrent(m_window);
 
 	//Sets the key callback
-	//glfwSetKeyCallback(m_window, key_callback);
+	/*Top priority key detection.*/
+	glfwSetKeyCallback(m_window, key_callback);
 	glfwSetWindowSizeCallback(m_window, resize_callback);
 
 	glewExperimental = true; // Needed for core profile
@@ -253,7 +257,11 @@ void Application::MouseButtonCallbacks(GLFWwindow* window, int button, int actio
 {
 	// Send the callback to the mouse controller to handle
 	if (action == GLFW_PRESS)
+	{
+		static std::queue<int>*keyInput = KeyboardController::GetInstance()->GetKeyInput();
+		keyInput->push(button);
 		MouseController::GetInstance()->UpdateMouseButtonPressed(button);
+	}
 	else
 		MouseController::GetInstance()->UpdateMouseButtonReleased(button);
 }
@@ -308,7 +316,10 @@ void Application::MakeWindowedMode(void)
 void Application::InitDisplay(void)
 {
 	glClearColor(1.0f, 0.0f, 1.0f, 0.0f);
+	//GraphicsManager::GetInstance()->LoadShader("gpass", "Shader//GPass.vertexshader", "Shader//GPass.fragmentshader");
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Shadow.vertexshader", "Shader//Shadow.fragmentshader");
+	// Tell the graphics manager to use the shader we just loaded
+	GraphicsManager::GetInstance()->SetActiveShader("default");
 
 	// Tell the shader program to store these uniform locations
 	currProg->AddUniform("MVP");
@@ -389,6 +400,8 @@ void Application::InitDisplay(void)
 	/*Shadow*/
 	currProg->AddUniform("lightDepthMVP");
 	currProg->AddUniform("shadowMap");
+
+	DepthFBO::GetInstance()->m_renderPass = DepthFBO::RENDER_PASS_MAIN;
 }
 
 //void Application::LockMouse(bool b)

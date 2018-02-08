@@ -66,6 +66,8 @@ void LuaEditor::ReadLuaScript(const std::string _path)
 
 LuaEditor::LuaEditor() :
 	isToggle(false)
+	, currentLoadProgress(0)
+	, completeLoadProgress(0)
 {
 	message = new std::string();
 }
