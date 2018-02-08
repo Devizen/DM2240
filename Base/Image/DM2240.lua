@@ -25,3 +25,7 @@ moveRight = "D"
 
 hello = luaAdd(100, 100, 100)
 print(hello)
+hello = luaAdd(200, 100, 100)
+print(hello)
+hello = luaAdd(300, 100, 100)
+print(hello)

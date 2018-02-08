@@ -1,3 +1,3 @@
-GenerateQuad0("QUAD", 1, 1, 1, 1)
-GenerateQuad1("OQUAD", 1, 0, 1, 1)
-GenerateQuad2("COMGROUND", 1, 1, 1, 1)
+GenerateQuad("QUAD", 1, 1, 1, 1)
+GenerateQuad("OQUAD", 1, 0, 1, 1)
+GenerateQuad("COMGROUND", 1, 1, 1, 1)
