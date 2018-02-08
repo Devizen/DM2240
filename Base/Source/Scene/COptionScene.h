@@ -10,6 +10,7 @@
 //#include "../AudioPlayer\AudioPlayer.h"
 //#include "../SpriteEntity.h"
 #include "../UI/UIObj.h"
+#include "../Component/Option.h"
 
 class COptionScene : public Scene
 {
@@ -26,4 +27,6 @@ private:
 	//SpriteEntity* background;
 	typedef std::vector<UIObj*> UILIST;
 	UILIST uiObjList;
+
+	OptionBase<Key>* saveFile;
 };

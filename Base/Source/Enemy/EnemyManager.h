@@ -16,6 +16,7 @@ public:
 	void SetRenderAABB(bool _renderAABB) { renderAABB = _renderAABB; }
 	bool GetRenderAABB(void) { return renderAABB; }
 	void ToggleRenderAABB(void) { renderAABB = renderAABB ? false : true; }
+	void SpawnMonk(Vector3 pos);
 private:
 	std::vector<EntityBase*>enemyList;
 	bool renderAABB;
