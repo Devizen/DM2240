@@ -19,8 +19,8 @@ public:
 		//std::cout << -scale_x + this->x << " , " << x << " , " << scale_x + this->x << std::endl;
 		//std::cout << -scale_y + this->y << " , " << y << " , " << scale_y + this->y << std::endl;
 
-		if (-scale_x + this->x < x && x < scale_x + this->x &&
-			-scale_y + this->y < y && y < scale_y + this->y)
+		if (-scale_x * 0.5f + this->x < x && x < scale_x  * 0.5f + this->x &&
+			-scale_y * 0.5f + this->y < y && y < scale_y * 0.5f + this->y)
 		{
 			return true;
 		}

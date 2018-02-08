@@ -23,6 +23,8 @@ class QuadTreeManager
 
 	std::deque<EntityBase*> entityList;
 
+	std::deque<EntityBase*> preUpdateRemovalList;
+
 	void CheckTreeNode(QuadTree* node);
 	std::list<EntityBase*> GetEntityList();
 	std::vector<Vector3> GetGridVertices(QuadTree* node);

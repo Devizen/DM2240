@@ -26,6 +26,12 @@ CMonk::CMonk() : head(nullptr)
 
 CMonk::~CMonk()
 {
+	delete head;
+	delete body;
+	delete leftArm;
+	delete rightArm;
+	delete leftLeg;
+	delete rightLeg;
 }
 
 void CMonk::Init(void)
@@ -454,7 +460,7 @@ void CMonk::CollisionResponse(EntityBase * other)
 
 void CMonk::UpdateState(double dt)
 {
-	if (CEnemyManager::GetInstance()->GetShouldAllChase())
+	if (CEnemyManager::GetInstance()->GetShouldAllChase() && currState != STATES::FLEE)
 		currState = CHASE;
 
 	EntityBase* core = head->GetRootNode()->GetEntity();
@@ -520,7 +526,7 @@ void CMonk::UpdateState(double dt)
 		break;
 	case CHASE:
 	{
-		if ((player->GetPos() - core->GetPosition()).Length() > UNCHASE_DISTANCE)
+		if ((player->GetPos() - core->GetPosition()).Length() > UNCHASE_DISTANCE && !CEnemyManager::GetInstance()->GetShouldAllChase())
 		{
 			currState = PATROL;
 			break;
@@ -547,6 +553,34 @@ void CMonk::UpdateState(double dt)
 		
 	}
 	break;
+	case FLEE:
+	{
+		std::cout << "FLEE" << std::endl;
+		if ((player->GetPos() - core->GetPosition()).Length() > FLEE_DISTANCE)
+		{
+			currState = PATROL;
+			break;
+		}
+
+		//if chasing player, reset waypoint id
+		currWaypointID = nextWaypointID = -1;
+
+		moveToPlayer = -(Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition());
+
+		try {
+			moveToPlayer = moveToPlayer.Normalized();
+		}
+		catch (std::string e) {
+			/*Do nothing when object and player is at same position.*/
+		}
+
+		//closer than 10units dont move
+		if ((Vector3(player->GetPos().x, core->GetPosition().y, player->GetPos().z) - core->GetPosition()).LengthSquared() > 100.f)
+			core->SetDirection(moveToPlayer * moveSpeed * 2.f);
+		else
+			core->SetDirection(0.f, 0.f, 0.f);
+	}
+		break;
 	}
 }
 

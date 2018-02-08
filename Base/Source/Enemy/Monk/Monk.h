@@ -13,6 +13,7 @@ public:
 		PATROL,
 		CHASE,
 		//ALL_CHASE
+		FLEE,
 	};
 
 	CMonk();
@@ -53,6 +54,7 @@ public:
 	int currWaypointID, nextWaypointID;
 
 	STATES GetState() { return currState; }
+	void SetState(STATES state) { currState = state; }
 private:
 	float moveSpeed;
 

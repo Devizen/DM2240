@@ -34,6 +34,21 @@ void QuadTreeManager::Update(double dt)
 		root = nullptr;
 	}
 
+	//Delete them
+	
+	for (auto & e : preUpdateRemovalList)
+	{
+		//this->RemoveEntity(e);
+		CEnemyManager::GetInstance()->RemoveEnemy(e);
+		//if (e)
+		//{
+		//	delete e;
+		//	e = nullptr;
+		//}
+		std::cout << "removalListSize: " << preUpdateRemovalList.size() << std::endl;
+	}
+	preUpdateRemovalList.clear();
+
 	//recreate tree
 	if (entityList.size())
 	{
@@ -99,7 +114,10 @@ void QuadTreeManager::PostUpdate(double dt)
 					eChild = nullptr;
 				}
 			}
+			EntityBase* del = entityList[i];
+			preUpdateRemovalList.push_back(del);
 			this->RemoveEntity(entityList[i]);
+			//CEnemyManager::GetInstance()->RemoveEnemy(del);
 		}
 		else
 			++i;
@@ -216,7 +234,7 @@ void QuadTreeManager::RenderGrid()
 		ms.PushMatrix();
 		ms.Translate((*it).pos);
 		ms.Scale((*it).scale);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("sphere"));
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SPHERE"));
 		ms.PopMatrix();
 	}
 }

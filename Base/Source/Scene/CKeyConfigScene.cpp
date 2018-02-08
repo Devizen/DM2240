@@ -45,8 +45,8 @@ void CKeyConfigScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_CLOSE_BUTTON", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_OPTION_BUTTON", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
+	//MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_OPTION_BUTTON", Color(1, 1, 1), 1.f);
+	//MeshBuilder::GetInstance()->GetMesh("KC_OPTION_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("KC_TEXTFIELD_BG", Color(1, 1, 1), 1.f);
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
@@ -55,11 +55,6 @@ void CKeyConfigScene::Init()
 	startButton->set_scale_x(30).set_scale_y(30).set_x(halfWindowWidth * 0.8f).set_y(halfWindowHeight * 0.8f);
 	startButton->image = MeshBuilder::GetInstance()->GetMesh("KC_OPTION_CLOSE_BUTTON");
 	uiObjList.push_back(startButton);
-
-	Button* optionButton = new Button("Option");
-	optionButton->set_scale_x(50).set_scale_y(50).set_x(0).set_y(0);
-	optionButton->image = MeshBuilder::GetInstance()->GetMesh("KC_OPTION_OPTION_BUTTON");
-	uiObjList.push_back(optionButton);
 
 	float aspectXRatio = Application::GetInstance().GetWindowWidth() / 800.f;
 	float aspectYRatio = Application::GetInstance().GetWindowHeight() / 600.f;

@@ -654,6 +654,15 @@ void SceneText::Update(double dt)
 	ss1 << "Editor Mode: " << (mapEditor->GetEditorMode() ? "ON" : "OFF");
 	textObj[5]->SetText(ss1.str());
 
+
+	ss1.str("");
+	ss1 << "Num Chase: " << CEnemyManager::GetInstance()->nearbyEnemies << " (" << CEnemyManager::GetInstance()->GetShouldAllChase() << ")";
+	textObj[6]->SetText(ss1.str());
+
+	ss1.str("");
+	ss1 << "Editor Mode: " << (mapEditor->GetEditorMode() ? "ON" : "OFF");
+	textObj[5]->SetText(ss1.str());
+
 	ss1.str("");
 	ss1 << "Score: " << std::to_string(static_cast<int>(CScoreManager::GetInstance()->GetScore()));
 	textObj[21]->SetText(ss1.str());

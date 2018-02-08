@@ -28,6 +28,7 @@ public:
 	int GetWindowWidth();
 	void MakeFullScreen(void);
 	void MakeWindowedMode(void);
+	void SetResolution(int width, int height);
 
 	bool screenMode;
 

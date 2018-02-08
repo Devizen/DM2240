@@ -15,6 +15,8 @@
 #include "../LuaEditor/LuaEditor.h"
 #include "../Lua/LuaInterface.h"
 
+#include "../PlayerInfo/PlayerInfo.h"
+
 CMenuScene::CMenuScene()
 {
 }
@@ -56,6 +58,8 @@ void CMenuScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("TEXT")->textureID[0] = LoadTGA("Image//TEXT.tga");
 
 	isLoadingGame = false;
+
+	CPlayerInfo::GetInstance()->Init();
 }
 
 void CMenuScene::Update(double dt)

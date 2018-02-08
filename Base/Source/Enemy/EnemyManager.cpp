@@ -38,6 +38,8 @@ void CEnemyManager::Update(double dt)
 			++nearbyEnemies;
 	}
 
+
+
 	for (std::vector<EntityBase*>::iterator it = enemyList.begin(); it != enemyList.end();) {
 		if (dynamic_cast<CMonk*>(*it)->GetPartSize()) {
 			dynamic_cast<CMonk*>(*it)->UpdatePart(dt);
@@ -58,7 +60,26 @@ void CEnemyManager::AddEnemy(EntityBase * _enemy)
 
 void CEnemyManager::RemoveEnemy(EntityBase * _enemy)
 {
-	enemyList.erase(std::remove(enemyList.begin(), enemyList.end(), _enemy), enemyList.end());
+	for (std::vector<EntityBase*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+	{
+		CMonk * monk = static_cast<CMonk*>(*it);
+		if (monk->IsDone())
+			continue;
+		if (monk->GetEntityPart("MONK_HEAD") == _enemy)
+		{
+			Vector3 pos = monk->GetCore()->GetPosition();
+			//it = enemyList.erase(it, enemyList.end());
+			monk->SetIsDone(true);
+
+			TriggerFear(pos);
+
+			return;
+		}
+	}
+	//std::vector<EntityBase*>::iterator it = std::remove(enemyList.begin(), enemyList.end(), _enemy);
+	//if (it == enemyList.end())
+	//	return;
+
 }
 
 void CEnemyManager::SpawnMonk(Vector3 pos)
@@ -75,6 +96,8 @@ void CEnemyManager::RenderStates()
 {
 	for (auto & e : enemyList)
 	{
+		if (e->IsDone())
+			continue;
 		CMonk * monk = static_cast<CMonk*>(e);
 		MS& ms = GraphicsManager::GetInstance()->GetModelStack();
 		Vector3 corePos = monk->GetCore()->GetPosition();
@@ -96,6 +119,9 @@ void CEnemyManager::RenderStates()
 		case CMonk::CHASE:
 			text = "Chase";
 			break;
+		case CMonk::FLEE:
+			text = "FLEE";
+			break;
 		}
 
 		ms.PushMatrix();
@@ -104,5 +130,20 @@ void CEnemyManager::RenderStates()
 		ms.Scale(2 * dist / 100.f, 2 * dist / 100.f, 1);
 		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), text, Color(0, 0, 0));
 		ms.PopMatrix();
+	}
+}
+
+void CEnemyManager::TriggerFear(Vector3 pos)
+{
+	for (std::vector<EntityBase*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+	{
+		CMonk* monk = static_cast<CMonk*>(*it);
+		if (monk->IsDone())
+			continue;
+		if ((monk->GetCore()->GetPosition() - pos).Length() <= FEAR_DISTANCE)
+		{
+			monk->SetState(CMonk::STATES::FLEE);
+			std::cout << "FEAR SET" << std::endl;
+		}
 	}
 }

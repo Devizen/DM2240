@@ -303,13 +303,26 @@ void Application::MakeWindowedMode(void)
 {
 	/*Get Monitor*/
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	m_window_width = 800;
-	m_window_height = 600;
+	//m_window_width = 800;
+	//m_window_height = 600;
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
 	//glfwSetWindowSize(m_window, m_window_width, m_window_height);
 	glfwSetWindowMonitor(m_window, NULL, 0, 0, m_window_width, m_window_height, mode->refreshRate);
 	screenMode = false;
+}
+
+void Application::SetResolution(int width, int height)
+{
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	m_window_width = width;
+	m_window_height = height;
+
+	if (screenMode)
+		glfwSetWindowMonitor(m_window, glfwGetPrimaryMonitor(), 0, 0, width, height, mode->refreshRate);
+	else
+		glfwSetWindowMonitor(m_window, NULL, 0, 0, width, height, mode->refreshRate);
 }
 
 #include "Light.h"
