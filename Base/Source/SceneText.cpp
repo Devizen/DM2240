@@ -580,13 +580,13 @@ void SceneText::Update(double dt)
 	}
 
 	/*Toggle between Windowed and Fullscreen Mode.*/
-	if (KeyboardController::GetInstance()->IsKeyDown(VK_LMENU) && KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN)) {
-		if (Application::GetInstance().screenMode) {
-			Application::GetInstance().MakeWindowedMode();
-		}
-		else
-			Application::GetInstance().MakeFullScreen();
-	}
+	//if (KeyboardController::GetInstance()->IsKeyDown(VK_LMENU) && KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN)) {
+	//	if (Application::GetInstance().screenMode) {
+	//		Application::GetInstance().MakeWindowedMode();
+	//	}
+	//	else
+	//		Application::GetInstance().MakeFullScreen();
+	//}
 	/*Run for character.*/
 	static bool activateDefaultSpeedUp = true;
 	if (KeyboardController::GetInstance()->IsKeyDown(VK_LSHIFT)) {
