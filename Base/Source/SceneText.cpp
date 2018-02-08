@@ -58,6 +58,7 @@
 #include "Waypoint\WaypointManager.h"
 
 #include "Component\Option.h"
+#include "MapEditor\MapEditor.h"
 
 #include <iostream>
 using namespace std;
@@ -267,22 +268,14 @@ void SceneText::Init()
 
 void SceneText::Update(double dt)
 {
+	static MapEditor* mapEditor = MapEditor::GetInstance();
+
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD5))
 		playerInfo->SetOptimiseUpdate(!*playerInfo->GetOptimiseUpdate());
 
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD0))
 	{
-		static OptionBase<Key>* saveFile = new OptionBase<Key>();
-
-		saveFile->Remove();
-
-		for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator
-			it = CPlayerInfo::GetInstance()->GetBindKeyMap().begin(); it != CPlayerInfo::GetInstance()->GetBindKeyMap().end(); ++it)
-		{
-			saveFile->Update(it->second.first.c_str(), *it->first);
-		}
-
-		saveFile->Complete();
+		mapEditor->SetEditorMode(!mapEditor->GetEditorMode());
 	}
 	//static OptionBase<Key>* test = new OptionBase<Key>();
 
@@ -299,272 +292,18 @@ void SceneText::Update(double dt)
 	//	(*LuaEditor::GetInstance()->GetLine()[2]) += 'A';
 	//}
 
-	else if (KeyboardController::GetInstance()->IsKeyPressed(VK_BACK))
-	{
-		(*LuaEditor::GetInstance()->GetLine()[2]).erase((*LuaEditor::GetInstance()->GetLine()[2]).length() - 1);
-	}
-
 	if (KeyboardController::GetInstance()->IsKeyPressed('P'))
 	{
 		SceneManager::GetInstance()->PushScene("Pause");
 	}
 
-	static float horizontal = lights[0]->position.x;
-	static float vertical = lights[0]->position.y;
-	static float frontback = lights[0]->position.z;
-
-	/*Spawner.*/
-	static float spawnTimer = 5.f;
-	static float spawnCooldown = 0.f;
-	spawnCooldown += static_cast<float>(dt);
-	if (spawnTimer <= 2.f)
-		spawnTimer = 2.f;
-	if (spawnTimer - spawnCooldown < 0.f) {
-		std::string spawnType[] = { /*"MONK", */"TOWER", "CRATE", "BUILDING_1", "WALL" };
-		Spawner(spawnType[Math::RandIntMinMax(0, /*4*/3)]);
-		spawnCooldown = 0.f;
-		spawnTimer -= 0.01f;
-	}
-
-	/*Update the text object position and scale when the screen size is different. Example, Windowed Mode to Fullscreen Mode.*/
-	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
-	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
-	float fontSize = (halfWindowWidth / halfWindowHeight) * 20.f;
-	float halfFontSize = fontSize * 0.5f;
-	for (size_t i = 0; i < sizeof(textObj) / sizeof(textObj[0]); ++i)
-	{
-		textObj[i]->SetPosition(Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f));
-		textObj[i]->SetScale(Vector3(fontSize, fontSize, fontSize));
-	}
-
-	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD4))
-		horizontal -= 10.f * static_cast<float>(dt);
-	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD6))
-		horizontal += 10.f * static_cast<float>(dt);
-	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD2))
-		vertical -= 10.f * static_cast<float>(dt);
-	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD8))
-		vertical += 10.f * static_cast<float>(dt);
-
-	lights[0]->position.Set(horizontal, vertical, frontback);
-	// Update our entities
-	EntityManager::GetInstance()->Update(dt);
-
-	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
-	if (KeyboardController::GetInstance()->IsKeyDown('1'))
-		glEnable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('2'))
-		glDisable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('3'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (KeyboardController::GetInstance()->IsKeyDown('4'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	if (KeyboardController::GetInstance()->IsKeyDown('5'))
-	{
-		lights[0]->type = Light::LIGHT_POINT;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
-	{
-		lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
-	{
-		lights[0]->type = Light::LIGHT_SPOT;
-	}
-
-	//if (KeyboardController::GetInstance()->IsKeyDown('I'))
-	//	lights[0]->position.z -= (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('K'))
-	//	lights[0]->position.z += (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('J'))
-	//	lights[0]->position.x -= (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('L'))
-	//	lights[0]->position.x += (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('O'))
-	//	lights[0]->position.y -= (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('P'))
-	//	lights[0]->position.y += (float)(10.f * dt);
-
-	// if the left mouse button was released
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
-	{
-		cout << "Left Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
-	{
-		cout << "Right Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
-	{
-		cout << "Middle Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
-	{
-		cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
-	{
-		cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
-	}
-
-	if (KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN))
-	{
-		QuadTreeManager::GetInstance()->toggle = (QuadTreeManager::GetInstance()->toggle ? false :
-			CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true));
-		//CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true);
-		std::cout << "QuadTree " << QuadTreeManager::GetInstance()->toggle << "   SpatialPartition " << CSpatialPartitionManager::GetInstance()->toggle << std::endl;
-	}
 	if (KeyboardController::GetInstance()->IsKeyPressed('M'))
 	{
 		CameraManager::GetInstance()->toggleBirdEyeView = (CameraManager::GetInstance()->toggleBirdEyeView ? false : true);
 	}
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_HOME))
 		SceneManager::GetInstance()->PrintSceneStackInfo();
-	// <THERE>
 
-	/*Randomly spawn an enemy on the map.*/
-	/*if (KeyboardController::GetInstance()->IsKeyDown(VK_BACK))
-	{
-		Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
-			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
-	}*/
-
-	/*Randomly spawn a tower on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyPressed('L'))
-	{
-		Create::Tower(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
-			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(2.f, 2.f, 2.f));
-	}
-
-	/*Randomly spawn a crate on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyDown('I'))
-	{
-		GenericEntity* crate = Create::Asset("CRATE", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
-			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
-		crate->InitLoD("CRATE", "CRATE_MID", "CRATE_LOW");
-		/*Create root for Scene Graph.*/
-		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
-		rootNode->GetEntity()->SetPosition(crate->GetPosition());
-
-		/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
-		The entire Scene Graph will be traversed from the root.*/
-		crate->SetSceneGraph(Create::SceneGraph(rootNode));
-		Create::SceneNode(rootNode, rootNode, crate);
-
-		/*Set AABB.*/
-		crate->SetEntityType(ECEntityTypes::OBJECT);
-		crate->collider = new CCollider(crate);
-		crate->collider->SetMinAABB(Vector3(crate->GetPosition().x - 5.f, crate->GetPosition().y, crate->GetPosition().z - 5.f));
-		crate->collider->SetMaxAABB(Vector3(crate->GetPosition().x + 5.f, crate->GetPosition().y + 10.f, crate->GetPosition().z + 5.f));
-		crate->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(crate->GetPosition(), crate->GetScale()));
-		CollisionManager::GetInstance()->AddCollider(crate->collider, crate->GetPartitionPtr());
-
-		/*Set AABB.*/
-		rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
-		rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
-		rootNode->GetEntity()->collider->SetMaxAABB(crate->collider->GetMaxAABB() - crate->GetPosition());
-		rootNode->GetEntity()->collider->SetMinAABB(crate->collider->GetMinAABB() - crate->GetPosition());
-		rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
-		rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
-		rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
-		CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
-	}
-
-	/*Randomly spawn a Building_0 on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyDown('O'))
-	{
-		GenericEntity* building = Create::Asset("BUILDING_1", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
-			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(0.2f, 0.2f, 0.2f), Vector3(5.f, 5.f, 5.f), true);
-		building->InitLoD("BUILDING_1", "BUILDING_1_MID", "BUILDING_1_LOW");
-		/*Create root for Scene Graph.*/
-		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
-		rootNode->GetEntity()->SetPosition(building->GetPosition());
-
-		/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
-		The entire Scene Graph will be traversed from the root.*/
-		building->SetSceneGraph(Create::SceneGraph(rootNode));
-		Create::SceneNode(rootNode, rootNode, building);
-
-		/*Set AABB.*/
-		building->SetEntityType(ECEntityTypes::OBJECT);
-		building->collider = new CCollider(building);
-		building->collider->SetMinAABB(Vector3(building->GetPosition().x - 13.5f,
-			building->GetPosition().y,
-			building->GetPosition().z - 12.5f));
-		building->collider->SetMaxAABB(Vector3(building->GetPosition().x + 13.5f,
-			building->GetPosition().y + 45.f,
-			building->GetPosition().z + 12.5f));
-		building->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(building->GetPosition(), building->GetScale()));
-		CollisionManager::GetInstance()->AddCollider(building->collider, building->GetPartitionPtr());
-
-		/*Set AABB.*/
-		rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
-		rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
-		rootNode->GetEntity()->collider->SetMaxAABB(building->collider->GetMaxAABB() - building->GetPosition());
-		rootNode->GetEntity()->collider->SetMinAABB(building->collider->GetMinAABB() - building->GetPosition());
-		rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
-		rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
-		rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
-		CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
-	}
-
-	/*Randomly spawn a Wall on the map.*/
-	if (KeyboardController::GetInstance()->IsKeyDown('U'))
-	{
-		GenericEntity* wall = Create::Asset("WALL", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
-			Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
-		wall->InitLoD("WALL", "WALL_MID", "WALL_LOW");
-		/*Create root for Scene Graph.*/
-		CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
-		rootNode->GetEntity()->SetPosition(wall->GetPosition());
-
-		/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
-		The entire Scene Graph will be traversed from the root.*/
-		wall->SetSceneGraph(Create::SceneGraph(rootNode));
-		Create::SceneNode(rootNode, rootNode, wall);
-
-		/*Set AABB.*/
-		wall->SetEntityType(ECEntityTypes::OBJECT);
-		wall->collider = new CCollider(wall);
-		/*Set AABB.*/
-		wall->SetEntityType(ECEntityTypes::OBJECT);
-		wall->collider = new CCollider(wall);
-		wall->collider->SetMinAABB(Vector3(wall->GetPosition().x - 40.f,
-			wall->GetPosition().y,
-			wall->GetPosition().z - 0.5f));
-		wall->collider->SetMaxAABB(Vector3(wall->GetPosition().x + 40.f,
-			wall->GetPosition().y + 35.f,
-			wall->GetPosition().z + 0.5f));
-		wall->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(wall->GetPosition(), wall->GetScale()));
-		wall->isDestroyable = true;
-		CollisionManager::GetInstance()->AddCollider(wall->collider, wall->GetPartitionPtr());
-
-		/*Set AABB.*/
-		rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
-		rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
-		rootNode->GetEntity()->collider->SetMaxAABB(wall->collider->GetMaxAABB() - wall->GetPosition());
-		rootNode->GetEntity()->collider->SetMinAABB(wall->collider->GetMinAABB() - wall->GetPosition());
-		rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
-		rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
-		rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
-		CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
-	}
-
-	/*Display AABB of enemy.*/
-	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
-	{
-		CEnemyManager::GetInstance()->ToggleRenderAABB();
-	}
-
-	/*Toggle between Windowed and Fullscreen Mode.*/
-	//if (KeyboardController::GetInstance()->IsKeyDown(VK_LMENU) && KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN)) {
-	//	if (Application::GetInstance().screenMode) {
-	//		Application::GetInstance().MakeWindowedMode();
-	//	}
-	//	else
-	//		Application::GetInstance().MakeFullScreen();
-	//}
 	/*Run for character.*/
 	static bool activateDefaultSpeedUp = true;
 	if (KeyboardController::GetInstance()->IsKeyDown(VK_LSHIFT)) {
@@ -588,6 +327,277 @@ void SceneText::Update(double dt)
 			(*it)->SetIsDone(true);
 		}
 	}
+
+	/*Display AABB of enemy.*/
+	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
+	{
+		CEnemyManager::GetInstance()->ToggleRenderAABB();
+	}
+
+	switch (mapEditor->GetEditorMode())
+	{
+		case false:
+		{	
+			static float horizontal = lights[0]->position.x;
+			static float vertical = lights[0]->position.y;
+			static float frontback = lights[0]->position.z;
+
+			/*Spawner.*/
+			//static float spawnTimer = 5.f;
+			//static float spawnCooldown = 0.f;
+			//spawnCooldown += static_cast<float>(dt);
+			//if (spawnTimer <= 2.f)
+			//	spawnTimer = 2.f;
+			//if (spawnTimer - spawnCooldown < 0.f)
+			//{
+			//	std::string spawnType[] = { /*"MONK", */"TOWER", "CRATE", "BUILDING_1", "WALL" };
+			//	Spawner(spawnType[Math::RandIntMinMax(0, /*4*/3)]);
+			//	spawnCooldown = 0.f;
+			//	spawnTimer -= 0.01f;
+			//}
+
+			/*Update the text object position and scale when the screen size is different. Example, Windowed Mode to Fullscreen Mode.*/
+			float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
+			float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
+			float fontSize = (halfWindowWidth / halfWindowHeight) * 20.f;
+			float halfFontSize = fontSize * 0.5f;
+			for (size_t i = 0; i < sizeof(textObj) / sizeof(textObj[0]); ++i)
+			{
+				textObj[i]->SetPosition(Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f));
+				textObj[i]->SetScale(Vector3(fontSize, fontSize, fontSize));
+			}
+
+			if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD4))
+				horizontal -= 10.f * static_cast<float>(dt);
+			if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD6))
+				horizontal += 10.f * static_cast<float>(dt);
+			if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD2))
+				vertical -= 10.f * static_cast<float>(dt);
+			if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD8))
+				vertical += 10.f * static_cast<float>(dt);
+
+			lights[0]->position.Set(horizontal, vertical, frontback);
+			// Update our entities
+			EntityManager::GetInstance()->Update(dt);
+
+			// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
+			if (KeyboardController::GetInstance()->IsKeyDown('1'))
+				glEnable(GL_CULL_FACE);
+			if (KeyboardController::GetInstance()->IsKeyDown('2'))
+				glDisable(GL_CULL_FACE);
+			if (KeyboardController::GetInstance()->IsKeyDown('3'))
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			if (KeyboardController::GetInstance()->IsKeyDown('4'))
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+			if (KeyboardController::GetInstance()->IsKeyDown('5'))
+			{
+				lights[0]->type = Light::LIGHT_POINT;
+			}
+			else if (KeyboardController::GetInstance()->IsKeyDown('6'))
+			{
+				lights[0]->type = Light::LIGHT_DIRECTIONAL;
+			}
+			else if (KeyboardController::GetInstance()->IsKeyDown('7'))
+			{
+				lights[0]->type = Light::LIGHT_SPOT;
+			}
+
+			//if (KeyboardController::GetInstance()->IsKeyDown('I'))
+			//	lights[0]->position.z -= (float)(10.f * dt);
+			//if (KeyboardController::GetInstance()->IsKeyDown('K'))
+			//	lights[0]->position.z += (float)(10.f * dt);
+			//if (KeyboardController::GetInstance()->IsKeyDown('J'))
+			//	lights[0]->position.x -= (float)(10.f * dt);
+			//if (KeyboardController::GetInstance()->IsKeyDown('L'))
+			//	lights[0]->position.x += (float)(10.f * dt);
+			//if (KeyboardController::GetInstance()->IsKeyDown('O'))
+			//	lights[0]->position.y -= (float)(10.f * dt);
+			//if (KeyboardController::GetInstance()->IsKeyDown('P'))
+			//	lights[0]->position.y += (float)(10.f * dt);
+
+			// if the left mouse button was released
+			if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
+			{
+				cout << "Left Mouse Button was released!" << endl;
+			}
+			if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
+			{
+				cout << "Right Mouse Button was released!" << endl;
+			}
+			if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
+			{
+				cout << "Middle Mouse Button was released!" << endl;
+			}
+			if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
+			{
+				cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
+			}
+			if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
+			{
+				cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
+			}
+
+			if (KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN))
+			{
+				QuadTreeManager::GetInstance()->toggle = (QuadTreeManager::GetInstance()->toggle ? false :
+					CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true));
+				//CSpatialPartitionManager::GetInstance()->toggle = (CSpatialPartitionManager::GetInstance()->toggle ? false : true);
+				std::cout << "QuadTree " << QuadTreeManager::GetInstance()->toggle << "   SpatialPartition " << CSpatialPartitionManager::GetInstance()->toggle << std::endl;
+			}
+
+
+			// <THERE>
+
+			/*Randomly spawn an enemy on the map.*/
+			/*if (KeyboardController::GetInstance()->IsKeyDown(VK_BACK))
+			{
+				Create::Monk(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+					Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), playerInfo);
+			}*/
+
+			/*Randomly spawn a tower on the map.*/
+			if (KeyboardController::GetInstance()->IsKeyPressed('L'))
+			{
+				Create::Tower(Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+					Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(2.f, 2.f, 2.f));
+			}
+
+			/*Randomly spawn a crate on the map.*/
+			if (KeyboardController::GetInstance()->IsKeyDown('I'))
+			{
+				GenericEntity* crate = Create::Asset("CRATE", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+					Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
+				crate->InitLoD("CRATE", "CRATE_MID", "CRATE_LOW");
+				/*Create root for Scene Graph.*/
+				CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
+				rootNode->GetEntity()->SetPosition(crate->GetPosition());
+
+				/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
+				The entire Scene Graph will be traversed from the root.*/
+				crate->SetSceneGraph(Create::SceneGraph(rootNode));
+				Create::SceneNode(rootNode, rootNode, crate);
+
+				/*Set AABB.*/
+				crate->SetEntityType(ECEntityTypes::OBJECT);
+				crate->collider = new CCollider(crate);
+				crate->collider->SetMinAABB(Vector3(crate->GetPosition().x - 5.f, crate->GetPosition().y, crate->GetPosition().z - 5.f));
+				crate->collider->SetMaxAABB(Vector3(crate->GetPosition().x + 5.f, crate->GetPosition().y + 10.f, crate->GetPosition().z + 5.f));
+				crate->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(crate->GetPosition(), crate->GetScale()));
+				CollisionManager::GetInstance()->AddCollider(crate->collider, crate->GetPartitionPtr());
+
+				/*Set AABB.*/
+				rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
+				rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
+				rootNode->GetEntity()->collider->SetMaxAABB(crate->collider->GetMaxAABB() - crate->GetPosition());
+				rootNode->GetEntity()->collider->SetMinAABB(crate->collider->GetMinAABB() - crate->GetPosition());
+				rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
+				rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
+				rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
+				CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+			}
+
+			/*Randomly spawn a Building_0 on the map.*/
+			if (KeyboardController::GetInstance()->IsKeyDown('O'))
+			{
+				GenericEntity* building = Create::Asset("BUILDING_1", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+					Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(0.2f, 0.2f, 0.2f), Vector3(5.f, 5.f, 5.f), true);
+				building->InitLoD("BUILDING_1", "BUILDING_1_MID", "BUILDING_1_LOW");
+				/*Create root for Scene Graph.*/
+				CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
+				rootNode->GetEntity()->SetPosition(building->GetPosition());
+
+				/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
+				The entire Scene Graph will be traversed from the root.*/
+				building->SetSceneGraph(Create::SceneGraph(rootNode));
+				Create::SceneNode(rootNode, rootNode, building);
+
+				/*Set AABB.*/
+				building->SetEntityType(ECEntityTypes::OBJECT);
+				building->collider = new CCollider(building);
+				building->collider->SetMinAABB(Vector3(building->GetPosition().x - 13.5f,
+					building->GetPosition().y,
+					building->GetPosition().z - 12.5f));
+				building->collider->SetMaxAABB(Vector3(building->GetPosition().x + 13.5f,
+					building->GetPosition().y + 45.f,
+					building->GetPosition().z + 12.5f));
+				building->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(building->GetPosition(), building->GetScale()));
+				CollisionManager::GetInstance()->AddCollider(building->collider, building->GetPartitionPtr());
+
+				/*Set AABB.*/
+				rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
+				rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
+				rootNode->GetEntity()->collider->SetMaxAABB(building->collider->GetMaxAABB() - building->GetPosition());
+				rootNode->GetEntity()->collider->SetMinAABB(building->collider->GetMinAABB() - building->GetPosition());
+				rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
+				rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
+				rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
+				CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+			}
+
+			/*Randomly spawn a Wall on the map.*/
+			if (KeyboardController::GetInstance()->IsKeyDown('U'))
+			{
+				GenericEntity* wall = Create::Asset("WALL", Vector3(Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f), -10.f,
+					Math::RandFloatMinMax(-(groundScale * 0.5f) + 1.f, (groundScale * 0.5f) - 1.f)), Vector3(5.f, 5.f, 5.f), Vector3(5.f, 5.f, 5.f), true);
+				wall->InitLoD("WALL", "WALL_MID", "WALL_LOW");
+				/*Create root for Scene Graph.*/
+				CSceneNode* rootNode = Create::SceneNode(nullptr, nullptr, nullptr);
+				rootNode->GetEntity()->SetPosition(wall->GetPosition());
+
+				/*Create an empty Scene Graph which will be rendered and updated in QuadTreeManager.
+				The entire Scene Graph will be traversed from the root.*/
+				wall->SetSceneGraph(Create::SceneGraph(rootNode));
+				Create::SceneNode(rootNode, rootNode, wall);
+
+				/*Set AABB.*/
+				wall->SetEntityType(ECEntityTypes::OBJECT);
+				wall->collider = new CCollider(wall);
+				/*Set AABB.*/
+				wall->SetEntityType(ECEntityTypes::OBJECT);
+				wall->collider = new CCollider(wall);
+				wall->collider->SetMinAABB(Vector3(wall->GetPosition().x - 40.f,
+					wall->GetPosition().y,
+					wall->GetPosition().z - 0.5f));
+				wall->collider->SetMaxAABB(Vector3(wall->GetPosition().x + 40.f,
+					wall->GetPosition().y + 35.f,
+					wall->GetPosition().z + 0.5f));
+				wall->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(wall->GetPosition(), wall->GetScale()));
+				wall->isDestroyable = true;
+				CollisionManager::GetInstance()->AddCollider(wall->collider, wall->GetPartitionPtr());
+
+				/*Set AABB.*/
+				rootNode->GetEntity()->SetEntityType(ECEntityTypes::OBJECT);
+				rootNode->GetEntity()->collider = new CCollider(rootNode->GetEntity());
+				rootNode->GetEntity()->collider->SetMaxAABB(wall->collider->GetMaxAABB() - wall->GetPosition());
+				rootNode->GetEntity()->collider->SetMinAABB(wall->collider->GetMinAABB() - wall->GetPosition());
+				rootNode->GetEntity()->constMaxAABB = rootNode->GetEntity()->collider->GetMaxAABB();
+				rootNode->GetEntity()->constMinAABB = rootNode->GetEntity()->collider->GetMinAABB();
+				rootNode->GetEntity()->SetPartition(CSpatialPartitionManager::GetInstance()->GetPartitionIndices(rootNode->GetEntity()->GetPosition(), rootNode->GetEntity()->GetScale()));
+				CollisionManager::GetInstance()->AddCollider(rootNode->GetEntity()->collider, rootNode->GetEntity()->GetPartitionPtr());
+			}
+		break;
+		}
+		case true:
+		{
+			switch (mapEditor->status)
+			{
+				case MapEditor::PLACEOBJECT:
+					if (MouseController::GetInstance()->IsButtonPressed(0))
+					{
+						Vector3 spawnPosition = (playerInfo->GetTarget() - playerInfo->GetPos()) * 50.f + camera->GetCameraPos();
+						spawnPosition.y = -10.f;
+						Create::Monk(spawnPosition, Vector3(5.f, 5.f, 5.f), playerInfo);
+					}
+					break;
+				case MapEditor::PLACEWAYPOINT:
+					break;
+			}
+			break;
+		}
+	}
+
+
 	// Update the player position and other details based on keyboard and mouse inputs
 	playerInfo->Update(dt);
 
@@ -631,6 +641,10 @@ void SceneText::Update(double dt)
 	ss1.str("");
 	ss1 << "Hitscan: " << (playerInfo->GetPrimaryWeapon()->hitScan ? "ON" : "OFF");
 	textObj[4]->SetText(ss1.str());
+
+	ss1.str("");
+	ss1 << "Editor Mode: " << (mapEditor->GetEditorMode() ? "ON" : "OFF");
+	textObj[5]->SetText(ss1.str());
 
 	ss1.str("");
 	ss1 << "Score: " << std::to_string(static_cast<int>(CScoreManager::GetInstance()->GetScore()));
@@ -738,6 +752,37 @@ void SceneText::RenderPassMain(void)
 
 		QuadTreeManager::GetInstance()->RenderGrid();
 		CameraManager::GetInstance()->RenderPlayerFrustum();
+
+		static MapEditor* mapEditor = MapEditor::GetInstance();
+		switch (mapEditor->GetEditorMode())
+		{
+		case true:
+			static Mesh* monk[] = 
+			{
+				MeshBuilder::GetInstance()->GetMesh("MONK_HEAD"),
+				MeshBuilder::GetInstance()->GetMesh("MONK_BODY"),
+				MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_ARM"),
+				MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_ARM"),
+				MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_LEG"),
+				MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_LEG")
+			};
+
+			static unsigned int tempSize = sizeof(monk) / sizeof(monk[0]);
+
+			for (unsigned int i = 0; i < tempSize; ++i)
+			{
+				Vector3 offsetFromPlayer = (playerInfo->GetTarget() - playerInfo->GetPos()) * 50.f + camera->GetCameraPos();
+				offsetFromPlayer.y = -10.f;
+				MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+				modelStack.PushMatrix();
+				modelStack.Translate(offsetFromPlayer);
+				modelStack.Rotate(0.f, 0.f, 0.f, 1.f);
+				modelStack.Scale(Vector3(5.f, 5.f, 5.f));
+				RenderHelper::RenderMesh(monk[i]);
+				modelStack.PopMatrix();
+			}
+			break;
+		}
 	}
 
 
@@ -749,31 +794,17 @@ void SceneText::RenderPassMain(void)
 		GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 		GraphicsManager::GetInstance()->DetachCamera();
 
-		if (LuaEditor::GetInstance()->GetIsToggle())
-		{
-			/*Render Lua Script out.*/
-			float fontSize = (halfWindowWidth / halfWindowHeight) * 20.f;
-			float halfFontSize = fontSize * 0.5f;
-			/*Make the position start from left top.*/
-			Vector3 startPosition(-halfWindowWidth * 0.95f, +halfWindowHeight * 0.95f, 0.f);
-
-			size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
-
-			for (size_t i = 0; i < tempSize; ++i)
-			{
-				MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-				modelStack.PushMatrix();
-				modelStack.Translate(startPosition);
-				modelStack.Scale(fontSize, fontSize, fontSize);
-				RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("text"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
-				modelStack.PopMatrix();
-				startPosition.y -= (halfWindowHeight * 0.1f);
-			}
-		}
-		else
-			EntityManager::GetInstance()->RenderUI();
+		EntityManager::GetInstance()->RenderUI();
 		//CScoreManager::GetInstance()->RenderUI();
 		//std::cout << (*camera).GetCameraPos() << std::endl;
+
+		//MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+		//modelStack.PushMatrix();
+		//modelStack.Translate(0.f, 0.f, 0.f);
+		//modelStack.Scale((halfWindowWidth / halfWindowHeight) * 50.f, (halfWindowWidth / halfWindowHeight) * 50.f, 1.f);
+		//std::string editorModeStatus = MapEditor::GetInstance()->GetEditorMode() ? "Map Editor: ON" : "Map Editor: OFF";
+		//RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), editorModeStatus, Color(1.f, 1.f, 0.f));
+		//modelStack.PopMatrix();
 	}
 
 

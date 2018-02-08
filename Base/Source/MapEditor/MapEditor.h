@@ -18,10 +18,21 @@ public:
 		TOTAL
 	};
 
+	enum STATUS
+	{
+		PLACEOBJECT = 0,
+		PLACEWAYPOINT
+	} status;
+
 	bool SpawnObject(TYPE _type, Vector3 _position);
+
+	void SetEditorMode(const bool _editorMode) { editorMode = _editorMode; }
+	const bool GetEditorMode(void) { return editorMode; }
 private:
-	MapEditor(void) {};
+	MapEditor(void) : editorMode(false), status(PLACEOBJECT) {};
 	static MapEditor* s_instance;
+
+	bool editorMode;
 };
 
 #endif

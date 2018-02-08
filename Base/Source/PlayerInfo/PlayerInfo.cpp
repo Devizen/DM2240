@@ -9,6 +9,7 @@
 #include "../Projectile/Explosive.h"
 #include "../QuadTree/CameraManager.h"
 #include "LuaInterface.h"
+#include "../MapEditor/MapEditor.h"
 
 // Allocating and initializing CPlayerInfo's static data member.  
 // The pointer is allocated but not the object's constructor.
@@ -552,6 +553,7 @@ void CPlayerInfo::UpdateFreeFall(double dt)
  ********************************************************************************/
 void CPlayerInfo::Update(double dt)
 {	
+	static MapEditor* mapEditor = MapEditor::GetInstance();
 	static int iterateCount = 0;
 	/*Handles all the keyboard controls; type of key (press, down or up) and functionality.*/
 
@@ -610,6 +612,20 @@ void CPlayerInfo::Update(double dt)
 #endif
 			for (std::set<int>::iterator it = pressedKey.begin(); it != pressedKey.end();)
 			{
+				if (mapEditor->GetEditorMode())
+				{
+					if ((*it) == *keyFire)
+					{
+						++it;
+						continue;
+					}
+					else if ((*it) == *keyBomb)
+					{
+						++it;
+						continue;
+					}
+
+				}
 				/*Check if it is key press, down or up.*/
 				if (isKeyMap[intToMemMap[(*it)]]((*(intToMemMap[(*it)]))))
 				{
