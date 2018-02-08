@@ -34,11 +34,22 @@ public:
 	void PrintSceneStackInfo();
 
 	bool IsSceneAtBottom(Scene* scene) { if (sceneStack.empty()) return false; return (sceneStack.front() == scene); }
+
+	enum MESSAGE
+	{
+		NOMESSAGE = 0,
+		STARTRENDER,
+		STOPRENDER,
+		TOTAL
+	};
+	void PushMessage(std::string _sceneName, MESSAGE _type);
+
 private:
 	SceneManager();
 	~SceneManager();
 
 	std::map<std::string, Scene*> sceneMap;
+	std::string currScene;
 	//Scene* activeScene, *nextScene, *previousScene;
 	Scene* nextScene;
 	typedef std::deque<Scene*> s_Container;
@@ -53,9 +64,13 @@ private:
 		MULTIPLE_POP
 	} action;
 
+	std::deque<std::pair<std::string, MESSAGE>>messageDeque;
+
 	void PushScene(Scene* next);
 	void PopScene();
 	void PopToScene(Scene* next);
+
+	void UpdateMessage(double _dt);
 };
 
 #endif // SCENE_MANAGER_H

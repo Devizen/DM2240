@@ -12,7 +12,9 @@
 #define PRINTINFO_HEADER "========== SceneStack Info =========="
 #define PRINTINFO_FOOTER "======== End SceneStack Info ========"
 
-SceneManager::SceneManager() :  nextScene(nullptr)//, activeScene(nullptr)
+SceneManager::SceneManager() :  
+	nextScene(nullptr)
+	, currScene("")//, activeScene(nullptr)
 {
 	sceneMap["Start"] = new SceneText();
 	sceneMap["Intro"] = new CIntroScene();
@@ -62,13 +64,19 @@ void SceneManager::Update(double _dt)
 	//}
 	//if (activeScene)
 	//	activeScene->Update(_dt);
+	UpdateMessage(_dt);
 }
 
 void SceneManager::Render()
 {
 	for (std::deque<Scene*>::iterator it = sceneStack.begin(); it != sceneStack.end(); ++it)
 	{
-		(*it)->Render();
+		switch ((*it)->stopRender)
+		{
+		case false:
+			(*it)->Render();
+			break;
+		}
 	}
 	//if (activeScene)
 	//	activeScene->Render();
@@ -95,12 +103,12 @@ void SceneManager::AddScene(const std::string& _name, Scene* _scene)
 	if (CheckSceneExist(_name))
 	{
 		// Scene Exist, unable to proceed
-		throw std::exception("Duplicate scene name provided");
+		throw std::exception("<Duplicate scene name provided.>");
 	}
 
 	if (_scene == nullptr)
 	{
-		throw std::invalid_argument("Invalid scene pointer");
+		throw std::invalid_argument("<Invalid scene pointer>");
 	}
 
 	// Nothing wrong, add the scene to our map
@@ -203,6 +211,11 @@ void SceneManager::PrintSceneStackInfo()
 	std::cout << PRINTINFO_FOOTER << std::endl;
 }
 
+void SceneManager::PushMessage(std::string _sceneName, MESSAGE _type)
+{
+	messageDeque.push_back(std::make_pair(_sceneName, _type));
+}
+
 void SceneManager::PushScene(Scene * next)
 {
 	Scene* scene = next;
@@ -231,5 +244,30 @@ void SceneManager::PopToScene(Scene * next)
 	{
 		sceneStack.back()->Exit();
 		sceneStack.pop_back();
+	}
+}
+
+void SceneManager::UpdateMessage(double _dt)
+{
+	for (std::deque<std::pair<std::string, MESSAGE>>::iterator it = messageDeque.begin(); it != messageDeque.end();)
+	{
+		bool deleted = false;
+		switch (it->second)
+		{
+		case STARTRENDER:
+			sceneMap[it->first]->stopRender = false;
+			it = messageDeque.erase(it);
+			deleted = true;
+			break;
+		case STOPRENDER:
+			sceneMap[it->first]->stopRender = true;
+			it = messageDeque.erase(it);
+			deleted = true;
+			break;
+		}
+		if (deleted)
+			continue;
+
+		++it;
 	}
 }

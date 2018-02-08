@@ -1,4 +1,3 @@
---Keyboard Inputs
 keyMoveForward = 87
 keyMoveBackward = 83
 keyMoveLeft = 65

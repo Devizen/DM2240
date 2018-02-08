@@ -116,6 +116,8 @@ public:
 
 	void SetOptimiseUpdate(bool _optimiseUpdate) { optimiseUpdate = _optimiseUpdate; }
 	const bool* GetOptimiseUpdate(void) { return &optimiseUpdate; }
+
+	std::map<int*, std::pair<std::string, std::function<void(float)>>>&GetBindKeyMap(void) { return bindKeyMap; }
 private:
 	Vector3 defaultPosition, defaultTarget, defaultUp;
 	Vector3 position, target, up;

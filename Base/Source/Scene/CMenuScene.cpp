@@ -83,7 +83,7 @@ void CMenuScene::Update(double dt)
 						isLoadingGame = true;
 						CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
 						SceneManager::GetInstance()->PushScene("Start");
-						
+						SceneManager::GetInstance()->PushMessage("Menu", SceneManager::MESSAGE::STOPRENDER);
 					}
 				}
 
@@ -119,8 +119,6 @@ void CMenuScene::Render()
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	GraphicsManager::GetInstance()->DetachCamera();
 
-	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
-	GraphicsManager::GetInstance()->DetachCamera();
 	/*Render loading text out.*/
 	/*Render Lua Script out.*/
 	float fontSize = (halfWindowWidth / halfWindowHeight) * 10.f;
@@ -130,14 +128,14 @@ void CMenuScene::Render()
 
 	size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
 
-	LuaEditor* luaEditor = LuaEditor::GetInstance();
+	static LuaEditor* luaEditor = LuaEditor::GetInstance();
 
 
 	if (!isLoadingGame)
 	{
 		ms.PushMatrix();
-		ms.Translate(0, 0, 0);
-		ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
+		ms.Translate(0, 0, -1.f);
+		ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1.f);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
 		ms.PopMatrix();
 
@@ -160,35 +158,39 @@ void CMenuScene::Render()
 		/*Render Lua Script out.*/
 		float fontSize = (halfWindowWidth / halfWindowHeight) * 10.f;
 		float halfFontSize = fontSize * 0.5f;
-		/*Make the position start from left top.*/
+		/*Make the position start from left.*/
 		Vector3 startPosition(-halfWindowWidth, 0, 0.f);
 
 		size_t tempSize = LuaEditor::GetInstance()->GetLine().size();
 
 		MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-		modelStack.PushMatrix();
-		modelStack.Translate(startPosition);
-		modelStack.Scale(fontSize, fontSize, fontSize);
-		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
-		std::cout << "RENDER" << std::endl;
-		modelStack.PopMatrix();
-
-
+		/*Loading Bar.*/
 		ms.PushMatrix();
-		ms.Translate(0.f/*((halfWindowWidth * 2.f) * (luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) - (halfWindowWidth * 2.f))*/, 0.f, -1.f);
-		ms.Scale((halfWindowWidth * 2.f) * (luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()), halfWindowHeight * 0.25f, 1);
+		/*Anchored at left position.*/
+		ms.Translate((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * halfWindowWidth, 0.f, 0.f);
+		ms.Translate(-halfWindowWidth, 0.f, -1.f);
+		ms.Scale((halfWindowWidth * 2.f) * (luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()), halfWindowHeight * 0.25f, 1.f);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("INTRO_BG"));
 		ms.PopMatrix();
 
+		/*Loading Text.*/
+		modelStack.PushMatrix();
+		modelStack.Translate(-halfWindowWidth, -halfWindowHeight * 0.2f, 0.f);
+		modelStack.Scale(fontSize, fontSize, fontSize);
+		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), *LuaEditor::GetInstance()->GetMesage(), Color(1.f, 0.f, 0.f));
+		std::cout << "RENDERING in MENU SCENE." << std::endl;
+		modelStack.PopMatrix();
 
-	/*	modelStack = GraphicsManager::GetInstance()->GetModelStack();
+		/*Loading Percentage.*/
+		modelStack = GraphicsManager::GetInstance()->GetModelStack();
 		modelStack.PushMatrix();
 		modelStack.Translate(0.f, halfWindowHeight * 0.3f, 0.f);
 		modelStack.Scale(fontSize * 2.f, fontSize * 2.f, fontSize * 2.f);
 		RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), 
-			std::to_string(static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f)), Color(1.f, 0.f, 0.f));
+			std::to_string(static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f)) + "%",
+			Color(1.f, 0.f, 0.f));
 		std::cout << "I AM IN RENDER CMENUSCENE: " << static_cast<int>((luaEditor->GetCurrentLoadProgress() / luaEditor->GetCompleteLoadProgress()) * 100.f) << std::endl;
-		modelStack.PopMatrix();*/
+		modelStack.PopMatrix();
 	}
 }
 

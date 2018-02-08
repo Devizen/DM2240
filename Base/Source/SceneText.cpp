@@ -317,6 +317,21 @@ void SceneText::Update(double dt)
 {
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD5))
 		playerInfo->SetOptimiseUpdate(!*playerInfo->GetOptimiseUpdate());
+
+	if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD0))
+	{
+		static OptionBase<Key>* saveFile = new OptionBase<Key>();
+
+		saveFile->Remove();
+
+		for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator
+			it = playerInfo->GetBindKeyMap().begin(); it != playerInfo->GetBindKeyMap().end(); ++it)
+		{
+			saveFile->Update(it->second.first.c_str(), *it->first);
+		}
+
+		saveFile->Complete();
+	}
 	//static OptionBase<Key>* test = new OptionBase<Key>();
 
 	//if (KeyboardController::GetInstance()->IsKeyPressed(VK_NUMPAD0))
