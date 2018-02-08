@@ -1,4 +1,4 @@
-#include "COptionScene.h"
+#include "CKeyConfigScene.h"
 
 #include "GL\glew.h"
 #include "GraphicsManager.h"
@@ -26,54 +26,84 @@ struct InputKeyConfig : public UIObj
 	int* input;
 };
 
-COptionScene::COptionScene()
+CKeyConfigScene::CKeyConfigScene()
 {
 }
 
-COptionScene::~COptionScene()
+CKeyConfigScene::~CKeyConfigScene()
 {
 }
 
-void COptionScene::Init()
+void CKeyConfigScene::Init()
 {
 	MouseController::GetInstance()->SetKeepMouseCentered(false);
 	Application::GetInstance().ShowMouse(true);
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
-	MeshBuilder::GetInstance()->GenerateQuad("OPTION_BACKGROUND", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("OPTION_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("OPTION_CLOSE_BUTTON", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("OPTION_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("OPTION_OPTION_BUTTON", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("OPTION_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("TEXTFIELD_BG", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_BACKGROUND", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_CLOSE_BUTTON", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("KC_OPTION_OPTION_BUTTON", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("KC_OPTION_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("KC_TEXTFIELD_BG", Color(1, 1, 1), 1.f);
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
 
 	Button* startButton = new Button("Button");
 	startButton->set_scale_x(30).set_scale_y(30).set_x(halfWindowWidth * 0.8f).set_y(halfWindowHeight * 0.8f);
-	startButton->image = MeshBuilder::GetInstance()->GetMesh("OPTION_CLOSE_BUTTON");
+	startButton->image = MeshBuilder::GetInstance()->GetMesh("KC_OPTION_CLOSE_BUTTON");
 	uiObjList.push_back(startButton);
 
-	Button* keyConfigButton = new Button("keyConfig");
-	keyConfigButton->set_scale_x(50).set_scale_y(50).set_x(0).set_y(100);
-	keyConfigButton->image = MeshBuilder::GetInstance()->GetMesh("OPTION_OPTION_BUTTON");
-	uiObjList.push_back(keyConfigButton);
+	Button* optionButton = new Button("Option");
+	optionButton->set_scale_x(50).set_scale_y(50).set_x(0).set_y(0);
+	optionButton->image = MeshBuilder::GetInstance()->GetMesh("KC_OPTION_OPTION_BUTTON");
+	uiObjList.push_back(optionButton);
 
-	Button* audioConfigButton = new Button("audioConfig");
-	audioConfigButton->set_scale_x(50).set_scale_y(50).set_x(0).set_y(0);
-	audioConfigButton->image = MeshBuilder::GetInstance()->GetMesh("OPTION_OPTION_BUTTON");
-	uiObjList.push_back(audioConfigButton);
+	float aspectXRatio = Application::GetInstance().GetWindowWidth() / 800.f;
+	float aspectYRatio = Application::GetInstance().GetWindowHeight() / 600.f;
+	float textSize = 15.f;
+	Mesh* textfieldbg = MeshBuilder::GetInstance()->GetMesh("KC_TEXTFIELD_BG");
+	float textfieldscaleX = 20;
+	float textfieldscaleY = 15;
 
-	Button* videoConfigButton = new Button("videoConfig");
-	videoConfigButton->set_scale_x(50).set_scale_y(50).set_x(0).set_y(-100);
-	videoConfigButton->image = MeshBuilder::GetInstance()->GetMesh("OPTION_OPTION_BUTTON");
-	uiObjList.push_back(videoConfigButton);
 
+	saveFile = new OptionBase<Key>();
+	//saveFile->Remove();
+	int index = 0;
+	for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator
+		it = CPlayerInfo::GetInstance()->GetBindKeyMap().begin(); it != CPlayerInfo::GetInstance()->GetBindKeyMap().end(); ++it)
+	{
+		//saveFile->Update(it->second.first.c_str(), *it->first);
+		float the_y = 230 - index * 50;
+
+		InputKeyConfig* ikc = new InputKeyConfig();
+		ikc->set_y(the_y);
+
+		TextField* textField = new TextField("textfield", textfieldbg, (*it).second.first, Color(0, 0, 0), textSize);
+		textField->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(-300).set_y(0);
+		std::string text;
+		TextField* textField2 = new TextField("textfield2", textfieldbg, std::to_string((*(*it).first)), Color(0, 0, 0), textSize);
+
+		textField2->asciiText = *it->first;
+
+		textField2->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(200).set_y(0);
+		Button* button = new Button("button");
+		button->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(200).set_y(the_y);
+		button->image = textfieldbg;
+		ikc->keyname = textField;
+		ikc->keyinput = textField2;
+		ikc->keyinputbutton = button;
+
+		ikc->input = it->first;
+
+		uiObjList.push_back(ikc);
+		++index;
+	}
 }
 
-void COptionScene::Update(double dt)
+void CKeyConfigScene::Update(double dt)
 {
 	float cursor_x, cursor_y;
 	MouseController::GetInstance()->GetMousePosition(cursor_x, cursor_y);
@@ -102,35 +132,72 @@ void COptionScene::Update(double dt)
 					{
 						std::cout << "Closing Option" << std::endl;
 						SceneManager::GetInstance()->PopScene(this);
-						SceneManager::GetInstance()->PushMessage(SceneManager::GetInstance()->GetScene(-1), SceneManager::MESSAGE::STARTRENDER);
+						SceneManager::GetInstance()->PushMessage("Option", SceneManager::MESSAGE::STARTRENDER);
 					}
-					if (button->name == "keyConfig")
-					{
-						std::cout << "Opening Key Config" << std::endl;
-						SceneManager::GetInstance()->PushScene("KeyConfig");
-						SceneManager::GetInstance()->PushMessage("Option", SceneManager::MESSAGE::STOPRENDER);
-					}
-					if (button->name == "audioConfig")
-					{
-						std::cout << "Opening Audio Config" << std::endl;
-						SceneManager::GetInstance()->PushScene("AudioConfig");
-						SceneManager::GetInstance()->PushMessage("Option", SceneManager::MESSAGE::STOPRENDER);
-					}
-					if (button->name == "videoConfig")
-					{
-						std::cout << "Opening Video Config" << std::endl;
-						SceneManager::GetInstance()->PushScene("VideoConfig");
-						SceneManager::GetInstance()->PushMessage("Option", SceneManager::MESSAGE::STOPRENDER);
-					}
+				}
+			}
+		}
+		InputKeyConfig* ikc = dynamic_cast<InputKeyConfig*>(*it);
+		if (ikc)
+		{
+			if (ikc->keyinputbutton->CheckCollision(cursor_x, cursor_y))
+			{
+				if (MouseController::GetInstance()->IsButtonPressed(0) && selectedConfig == nullptr)
+				{
+					selectedConfig = ikc;
+					std::cout << "wad" << std::endl;
+					selectButtonReleased = false;
 				}
 			}
 		}
 
 	}
 
+
+	if (selectedConfig && selectButtonReleased)
+	{
+		/*Wait for player to input another key to overwrite the current key.*/
+		if (!KeyboardController::GetInstance()->GetKeyInput()->empty())
+		{
+#ifdef _DEBUG
+			std::cout << "I AM PRESSSING: " << KeyboardController::GetInstance()->GetKeyInput()->front() << std::endl;
+#endif
+			*selectedConfig->input = KeyboardController::GetInstance()->GetKeyInput()->front();
+			saveFile->Remove();
+			auto bindKeyMap = CPlayerInfo::GetInstance()->GetBindKeyMap();
+
+			for (std::map<int*, std::pair<std::string, std::function<void(float)>>>::iterator it = bindKeyMap.begin(); it != bindKeyMap.end(); ++it)
+			{
+				saveFile->Update(it->second.first.c_str(), *it->first);
+			}
+			saveFile->Complete();
+			char temp[64];
+			sprintf(temp, "%c", KeyboardController::GetInstance()->GetKeyInput()->front());
+			selectedConfig->keyinput->text = std::to_string(KeyboardController::GetInstance()->GetKeyInput()->front());
+			selectedConfig->keyinput->asciiText = KeyboardController::GetInstance()->GetKeyInput()->front();
+			selectedConfig = nullptr;
+
+			std::cout << "bye" << std::endl;
+		}
+	}
+	if (MouseController::GetInstance()->IsButtonUp(0))
+	{
+		selectButtonReleased = true;
+		//std::cout << "up" << std::endl;
+		while (KeyboardController::GetInstance()->GetKeyInput()->size())
+		{
+			/*Clearing the key input.*/
+			KeyboardController::GetInstance()->GetKeyInput()->pop();
+#ifdef _DEBUG
+			std::cout << "Current size in queue: " <<
+				KeyboardController::GetInstance()->GetKeyInput()->size() << std::endl;
+#endif
+		}
+	}
+
 }
 
-void COptionScene::Render()
+void CKeyConfigScene::Render()
 {
 	if (SceneManager::GetInstance()->IsSceneAtBottom(this))
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -154,9 +221,8 @@ void COptionScene::Render()
 	ms.PushMatrix();
 	ms.Translate(0, 0, 0);
 	ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("OPTION_BACKGROUND"));
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("KC_OPTION_BACKGROUND"));
 	ms.PopMatrix();
-
 
 	for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
 	{
@@ -243,18 +309,6 @@ void COptionScene::Render()
 				break;
 			}
 
-			////std::string text = tField->text;
-			//if (text == "0")
-			//	text = "LMB";
-			//else if (text == "1")
-			//	text = "RMB";
-			//else
-			//{
-			//	text = (char)std::atoi(tField->text.c_str());
-			//	if (text == " ")
-			//		text = "SPACE";
-			//}
-
 			ms.PushMatrix();
 			ms.Translate(tField->x, tField->y, 1);
 			ms.Scale(tField->scale_x, tField->scale_y, 1);
@@ -267,12 +321,12 @@ void COptionScene::Render()
 	}
 }
 
-void COptionScene::Exit()
+void CKeyConfigScene::Exit()
 {
-	MeshBuilder::GetInstance()->RemoveMesh("OPTION_BACKGROUND");
-	MeshBuilder::GetInstance()->RemoveMesh("OPTION_CLOSE_BUTTON");
-	MeshBuilder::GetInstance()->RemoveMesh("OPTION_OPTION_BUTTON");
-	MeshBuilder::GetInstance()->RemoveMesh("TEXTFIELD_BG");
+	MeshBuilder::GetInstance()->RemoveMesh("KC_OPTION_BACKGROUND");
+	MeshBuilder::GetInstance()->RemoveMesh("KC_OPTION_CLOSE_BUTTON");
+	MeshBuilder::GetInstance()->RemoveMesh("KC_OPTION_OPTION_BUTTON");
+	MeshBuilder::GetInstance()->RemoveMesh("KC_TEXTFIELD_BG");
 
 	for (auto & uiobj : uiObjList)
 		delete uiobj;

@@ -1,4 +1,4 @@
-#include "CPauseScene.h"
+#include "CAudioConfigScene.h"
 
 #include "GL\glew.h"
 #include "GraphicsManager.h"
@@ -15,51 +15,40 @@
 #include "../LuaEditor/LuaEditor.h"
 #include "../Lua/LuaInterface.h"
 
-CPauseScene::CPauseScene()
+#include "../UI/TextField.h"
+#include "../PlayerInfo/PlayerInfo.h"
+
+CAudioConfigScene::CAudioConfigScene()
 {
 }
 
-CPauseScene::~CPauseScene()
+CAudioConfigScene::~CAudioConfigScene()
 {
 }
 
-void CPauseScene::Init()
+void CAudioConfigScene::Init()
 {
 	MouseController::GetInstance()->SetKeepMouseCentered(false);
 	Application::GetInstance().ShowMouse(true);
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
-	MeshBuilder::GetInstance()->GenerateQuad("PAUSE_BACKGROUND", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("PAUSE_BACKGROUND")->textureID[0] = LoadTGA("Image//UI//pausequad.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("PAUSE_CLOSE_BUTTON", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("PAUSE_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("PAUSE_OPTION_BUTTON", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("PAUSE_OPTION_BUTTON")->textureID[0] = LoadTGA("Image//UI//optionbutton.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("PAUSE_HOME_BUTTON", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("PAUSE_HOME_BUTTON")->textureID[0] = LoadTGA("Image//UI//homebutton.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("AC_OPTION_BACKGROUND", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("AC_OPTION_BACKGROUND")->textureID[0] = LoadTGA("Image//SKYPLANE.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("AC_OPTION_CLOSE_BUTTON", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("AC_OPTION_CLOSE_BUTTON")->textureID[0] = LoadTGA("Image//UI//closebutton.tga");
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
 
+	background = MeshBuilder::GetInstance()->GetMesh("AC_OPTION_BACKGROUND");
+
 	Button* startButton = new Button("Button");
 	startButton->set_scale_x(30).set_scale_y(30).set_x(halfWindowWidth * 0.8f).set_y(halfWindowHeight * 0.8f);
-	startButton->image = MeshBuilder::GetInstance()->GetMesh("PAUSE_CLOSE_BUTTON");
+	startButton->image = MeshBuilder::GetInstance()->GetMesh("AC_OPTION_CLOSE_BUTTON");
 	uiObjList.push_back(startButton);
-
-	Button* optionButton = new Button("Option");
-	optionButton->set_scale_x(50).set_scale_y(50).set_x(0).set_y(0);
-	optionButton->image = MeshBuilder::GetInstance()->GetMesh("PAUSE_OPTION_BUTTON");
-	uiObjList.push_back(optionButton);
-
-	Button* homeButton = new Button("Home");
-	homeButton->set_scale_x(50).set_scale_y(50).set_x(halfWindowWidth * -0.8f).set_y(halfWindowHeight * 0.8f);
-	homeButton->image = MeshBuilder::GetInstance()->GetMesh("PAUSE_HOME_BUTTON");
-	uiObjList.push_back(homeButton);
-	//MeshBuilder::GetInstance()->GenerateText("TEXT", 16.f, 16.f);
-	//MeshBuilder::GetInstance()->GetMesh("TEXT")->textureID[0] = LoadTGA("Image//TEXT.tga");
 }
 
-void CPauseScene::Update(double dt)
+void CAudioConfigScene::Update(double dt)
 {
 	float cursor_x, cursor_y;
 	MouseController::GetInstance()->GetMousePosition(cursor_x, cursor_y);
@@ -83,30 +72,17 @@ void CPauseScene::Update(double dt)
 				{
 					if (button->name == "Button")
 					{
-						std::cout << "Closing Pause" << std::endl;
+						std::cout << "Closing Audio Config Option" << std::endl;
 						SceneManager::GetInstance()->PopScene(this);
-					}
-					if (button->name == "Option")
-					{
-						std::cout << "Opening Option" << std::endl;
-						SceneManager::GetInstance()->PushScene("Option");
-						SceneManager::GetInstance()->PushMessage("Pause", SceneManager::MESSAGE::STOPRENDER);
-					}
-					if (button->name == "Home")
-					{
-						std::cout << "Going Back To Main Menu" << std::endl;
-						SceneManager::GetInstance()->PopToScene("Menu");
+						SceneManager::GetInstance()->PushMessage("Option", SceneManager::MESSAGE::STARTRENDER);
 					}
 				}
-				
-
 			}
 		}
-
 	}
 }
 
-void CPauseScene::Render()
+void CAudioConfigScene::Render()
 {
 	if (SceneManager::GetInstance()->IsSceneAtBottom(this))
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -130,7 +106,7 @@ void CPauseScene::Render()
 	ms.PushMatrix();
 	ms.Translate(0, 0, 0);
 	ms.Scale(halfWindowWidth * 2.f, halfWindowHeight * 2.f, 1);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("PAUSE_BACKGROUND"));
+	RenderHelper::RenderMesh(background);
 	ms.PopMatrix();
 
 	for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
@@ -147,19 +123,8 @@ void CPauseScene::Render()
 	}
 }
 
-void CPauseScene::Exit()
+void CAudioConfigScene::Exit()
 {
-	MouseController::GetInstance()->SetKeepMouseCentered(true);
-	Application::GetInstance().ShowMouse(false);
-
-	MeshBuilder::GetInstance()->RemoveMesh("PAUSE_BACKGROUND");
-	MeshBuilder::GetInstance()->RemoveMesh("PAUSE_CLOSE_BUTTON");
-	MeshBuilder::GetInstance()->RemoveMesh("PAUSE_OPTION_BUTTON");
-	MeshBuilder::GetInstance()->RemoveMesh("PAUSE_HOME_BUTTON");
-
-	for (auto & uiobj : uiObjList)
-		delete uiobj;
-	uiObjList.clear();
-
-	//GraphicsManager::GetInstance()->DetachCamera();
+	MeshBuilder::GetInstance()->RemoveMesh("AC_OPTION_BACKGROUND");
+	MeshBuilder::GetInstance()->RemoveMesh("AC_OPTION_CLOSE_BUTTON");
 }

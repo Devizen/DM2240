@@ -472,8 +472,6 @@ void SceneText::Update(double dt)
 	{
 		CameraManager::GetInstance()->toggleBirdEyeView = (CameraManager::GetInstance()->toggleBirdEyeView ? false : true);
 	}
-	if (KeyboardController::GetInstance()->IsKeyPressed(VK_HOME))
-		SceneManager::GetInstance()->PrintSceneStackInfo();
 	// <THERE>
 
 	/*Randomly spawn an enemy on the map.*/

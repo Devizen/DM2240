@@ -213,6 +213,15 @@
     <ClCompile Include="Source\Scene\COptionScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\CKeyConfigScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\CAudioConfigScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\CVideoConfigScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -379,6 +388,15 @@
     </ClInclude>
     <ClInclude Include="Source\UI\TextField.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\CKeyConfigScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\CAudioConfigScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\CVideoConfigScene.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

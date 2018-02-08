@@ -33,8 +33,9 @@ public:
 
 	void PrintSceneStackInfo();
 
-	bool IsSceneAtBottom(Scene* scene) { if (sceneStack.empty()) return false; return (sceneStack.front() == scene); }
+	bool IsSceneAtBottom(Scene* scene);
 	bool IsSceneAtTop(Scene* scene) { if (sceneStack.empty()) return false; return (sceneStack.back() == scene); }
+	std::string GetScene(int decre = 0) { if (decre > 0) return ""; if (-decre >= sceneStack.size()) return GetSceneName(sceneStack.front()); return GetSceneName(sceneStack.at(sceneStack.size() + decre - 1)); }
 
 	enum MESSAGE
 	{
@@ -72,6 +73,10 @@ private:
 	void PopToScene(Scene* next);
 
 	void UpdateMessage(double _dt);
+
+	std::string GetSceneName(Scene* scene) {
+		for (auto& pair : sceneMap) if (pair.second == scene) return pair.first; return "";
+	}
 };
 
 #endif // SCENE_MANAGER_H

@@ -12,11 +12,11 @@
 #include "../UI/UIObj.h"
 #include "../Component/Option.h"
 
-class COptionScene : public Scene
+class CVideoConfigScene : public Scene
 {
 public:
-	COptionScene();
-	~COptionScene();
+	CVideoConfigScene();
+	~CVideoConfigScene();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -27,6 +27,6 @@ private:
 	//SpriteEntity* background;
 	typedef std::vector<UIObj*> UILIST;
 	UILIST uiObjList;
-
-	//OptionBase<Key>* saveFile;
+	Mesh* background;
+	//OptionBase<>* saveFile;
 };

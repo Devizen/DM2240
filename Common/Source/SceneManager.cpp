@@ -8,6 +8,9 @@
 #include "KeyboardController.h"
 #include "Scene\CPauseScene.h"
 #include "Scene\COptionScene.h"
+#include "Scene\CKeyConfigScene.h"
+#include "Scene\CAudioConfigScene.h"
+#include "Scene\CVideoConfigScene.h"
 
 #define PRINTINFO_HEADER "========== SceneStack Info =========="
 #define PRINTINFO_FOOTER "======== End SceneStack Info ========"
@@ -21,6 +24,9 @@ SceneManager::SceneManager() :
 	sceneMap["Menu"] = new CMenuScene();
 	sceneMap["Pause"] = new CPauseScene();
 	sceneMap["Option"] = new COptionScene();
+	sceneMap["KeyConfig"] = new CKeyConfigScene();
+	sceneMap["AudioConfig"] = new CAudioConfigScene();
+	sceneMap["VideoConfig"] = new CVideoConfigScene();
 
 	action = NONE;
 }
@@ -65,6 +71,9 @@ void SceneManager::Update(double _dt)
 	//if (activeScene)
 	//	activeScene->Update(_dt);
 	UpdateMessage(_dt);
+
+	if (KeyboardController::GetInstance()->IsKeyPressed(VK_HOME))
+		this->PrintSceneStackInfo();
 }
 
 void SceneManager::Render()
@@ -270,4 +279,17 @@ void SceneManager::UpdateMessage(double _dt)
 
 		++it;
 	}
+}
+
+bool SceneManager::IsSceneAtBottom(Scene* scene) {
+	if (sceneStack.empty()) return false;
+	for (auto & s : sceneStack)
+	{
+		if (s->stopRender)
+			continue;
+		if (s == scene)
+			return true;
+	}
+
+	return false;
 }
