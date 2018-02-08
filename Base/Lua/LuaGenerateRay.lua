@@ -1,0 +1,1 @@
+GenerateRay("RAY", 1)

@@ -187,70 +187,17 @@ void SceneText::Init()
 	//ObjectGeneration->Run(object, text);
 	//std::deque<std::string>check = LuaEditor::GetInstance()->list;
 	//CLuaInterface::GetInstance()->functionMap[CLuaInterface::OBJECT]->Run();
-	
-	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair", 0.f, 0.f, 0.f, 3.f);
-	MeshBuilder::GetInstance()->GenerateLine("redline", Color(1, 0, 0));
+
 	MeshBuilder::GetInstance()->GetMesh("TEXT")->material.kAmbient.Set(1, 0, 0);
-	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
-	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
-	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 10.f);
-	MeshBuilder::GetInstance()->GenerateCone("cone", Color(0.5f, 1, 0.3f), 36, 10.f, 10.f);
-	MeshBuilder::GetInstance()->GetMesh("cone")->material.kDiffuse.Set(0.99f, 0.99f, 0.99f);
-	MeshBuilder::GetInstance()->GetMesh("cone")->material.kSpecular.Set(0.f, 0.f, 0.f);
-	MeshBuilder::GetInstance()->GenerateCube("cube", Color(1.0f, 1.0f, 1.0f), 1.0f);
-
-	/*Generate Ray.*/
-	MeshBuilder::GetInstance()->GenerateRay("RAY", 1.f);
-
-	/*3 different spheres to show Level of Detail.*/
-	MeshBuilder::GetInstance()->GenerateSphere("GREENSPHERE", Color(0, 1, 0), 18, 36, 5.f);
-	MeshBuilder::GetInstance()->GenerateSphere("BLUESPHERE", Color(0, 0, 1), 18, 36, 5.f);
-	MeshBuilder::GetInstance()->GenerateSphere("REDSPHERE", Color(1, 0, 0), 18, 36, 5.f);
-
-
+	MeshBuilder::GetInstance()->GetMesh("CONE")->material.kDiffuse.Set(0.99f, 0.99f, 0.99f);
+	MeshBuilder::GetInstance()->GetMesh("CONE")->material.kSpecular.Set(0.f, 0.f, 0.f);
+	
 	/*Terrain.*/
 	MeshBuilder::GetInstance()->GenerateTerrain("TERRAIN", "Image//TERRAIN//heightMap.raw", heightMap);
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[0] = LoadTGA("Image//WORLD//W_GRASS.tga");
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[1] = LoadTGA("Image//WORLD//W_SNOW.tga");
 	MeshBuilder::GetInstance()->GetMesh("TERRAIN")->textureID[2] = LoadTGA("Image//WORLD//W_WATER.tga");
 
-	/*Enemy*/
-	/*MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD", "OBJ//MONK//MONK_HEAD.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD_MID", "OBJ//MONK//MONK_HEAD_MID.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_HEAD_LOW", "OBJ//MONK//MONK_HEAD_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_HEAD_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_ao.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_BODY", "OBJ//MONK//MONK_BODY.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_BODY")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_BODY_MID", "OBJ//MONK//MONK_BODY_MID.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_BODY_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_BODY_LOW", "OBJ//MONK//MONK_BODY_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_BODY_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_ao.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_ARM", "OBJ//MONK//MONK_LEFT_ARM.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_ARM")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_ARM_MID", "OBJ//MONK//MONK_LEFT_ARM_MID.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_ARM_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_ARM_LOW", "OBJ//MONK//MONK_LEFT_ARM_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_ARM_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_ao.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_ARM", "OBJ//MONK//MONK_RIGHT_ARM.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_ARM")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_ARM_MID", "OBJ//MONK//MONK_RIGHT_ARM_MID.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_ARM_MID")->textureID[0] = LoadTGA("Image//MONK//bad tang_roughness.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_ARM_LOW", "OBJ//MONK//MONK_RIGHT_ARM_LOW.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_ARM_LOW")->textureID[0] = LoadTGA("Image//MONK//bad tang_ao.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_LEFT_LEG", "OBJ//MONK//MONK_LEFT_LEG.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_LEFT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");
-
-	MeshBuilder::GetInstance()->GenerateOBJ("MONK_RIGHT_LEG", "OBJ//MONK//MONK_RIGHT_LEG.obj");
-	MeshBuilder::GetInstance()->GetMesh("MONK_RIGHT_LEG")->textureID[0] = LoadTGA("Image//MONK//bad tang_diffuse.tga");*/
-
-	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.f, 0.64f, 0.f), 1.0f);
-	MeshBuilder::GetInstance()->GenerateSphere("nade", Color(0.3, 0.4, 0.3), 10, 10, .5f);
 	/*Number of partitions for each X-axis and Z-axis.*/
 	const unsigned numOfPartitionXZ = 5;
 	groundScale = 400.f;

@@ -58,6 +58,9 @@ public:
 	friend int LuaGenerateCrossHair(lua_State* _state);
 	friend int LuaGenerateText(lua_State* _state);
 	friend int LuaGetMesh(lua_State * _state);
+	friend int LuaGenerateLine(lua_State * _state);
+	friend int LuaGenerateCube(lua_State * _state);
+
 
 	/*Boolean to check if Lua Interface is initialised.*/
 	bool isInit;

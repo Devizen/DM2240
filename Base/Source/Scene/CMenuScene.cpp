@@ -138,7 +138,6 @@ void CMenuScene::Render()
 
 	static LuaEditor* luaEditor = LuaEditor::GetInstance();
 
-	std::cout << "MENU" << std::endl;
 	if (!isLoadingGame)
 	{
 		ms.PushMatrix();

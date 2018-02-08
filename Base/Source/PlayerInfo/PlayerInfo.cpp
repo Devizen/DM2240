@@ -285,7 +285,7 @@ void CPlayerInfo::Init(void)
 			it->second.first = "keyBomb";
 			it->second.second = [this](float _dt)->void
 			{
-				CExplosive* nade = Create::Explosive("nade", position, (target - position).Normalize(), 5.0, 75.0, 1, this);
+				CExplosive* nade = Create::Explosive("NADE", position, (target - position).Normalize(), 5.0, 75.0, 1, this);
 			};
 			break;
 		case 9:
