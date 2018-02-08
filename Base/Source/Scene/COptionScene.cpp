@@ -94,6 +94,8 @@ void COptionScene::Update(double dt)
 	cursor_x -= halfWindowWidth; /// coz 0,0 is middle
 	cursor_y -= halfWindowHeight;
 
+	static InputKeyConfig* selectedConfig = nullptr;
+
 	for (UILIST::iterator it = uiObjList.begin(); it != uiObjList.end(); ++it)
 	{
 		Button* button = dynamic_cast<Button*>(*it);
@@ -113,7 +115,40 @@ void COptionScene::Update(double dt)
 
 			}
 		}
+		InputKeyConfig* ikc = dynamic_cast<InputKeyConfig*>(*it);
+		if (ikc)
+		{
+			if (ikc->keyinputbutton->CheckCollision(cursor_x, cursor_y))
+			{
+				if (MouseController::GetInstance()->IsButtonPressed(0))
+				{
+					selectedConfig = ikc;
+				}
+			}
+		}
 
+	}
+
+
+	if (selectedConfig)
+	{
+		for (int i = 0; i < MouseController::BUTTON_TYPE::NUM_MB; ++i)
+		{
+			if (MouseController::GetInstance()->IsButtonPressed(i))
+			{
+				//get the name from InputKeyConfig, save the key using the name.
+
+				selectedConfig = nullptr;
+			}
+		}
+		for (char i = 0; i < 128; ++i)
+		{
+			if (KeyboardController::GetInstance()->IsKeyPressed(i))
+			{
+
+				selectedConfig = nullptr;
+			}
+		}
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_HOME))

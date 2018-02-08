@@ -2,6 +2,7 @@
 #include "Monk\Monk.h"
 #include <algorithm>
 #include "../PlayerInfo/ScoreManager.h"
+#include "../PlayerInfo/PlayerInfo.h"
 
 CEnemyManager* CEnemyManager::s_instance = 0;
 CEnemyManager::CEnemyManager(void) :
@@ -43,4 +44,9 @@ void CEnemyManager::AddEnemy(EntityBase * _enemy)
 void CEnemyManager::RemoveEnemy(EntityBase * _enemy)
 {
 	enemyList.erase(std::remove(enemyList.begin(), enemyList.end(), _enemy), enemyList.end());
+}
+
+void CEnemyManager::SpawnMonk(Vector3 pos)
+{
+	Create::Monk(pos, Vector3(5.f, 5.f, 5.f), CPlayerInfo::GetInstance());
 }

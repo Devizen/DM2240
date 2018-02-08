@@ -302,6 +302,11 @@ void SceneText::Init()
 	audioPlayer = CAudioPlayer::GetInstance()->GetISoundEngine();
 	audioPlayer->play2D("Audio/BGM/GAME.ogg", true);
 
+	{
+
+		//spawn monks
+		CEnemyManager::GetInstance()->SpawnMonk(Vector3(0, 0, 0));
+	}
 
 	int thisID = 
 	CWaypointManager::GetInstance()->AddWaypoint(Vector3(-50, 0, -50));
