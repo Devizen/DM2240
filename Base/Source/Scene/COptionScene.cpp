@@ -66,9 +66,19 @@ void COptionScene::Init()
 	float textfieldscaleX = 20;
 	float textfieldscaleY= 15;
 
+
+	InputKeyConfig* ikc = new InputKeyConfig();
 	TextField* textField = new TextField("textfield", textfieldbg, "Move Forward", Color(0, 0, 0), textSize);
-	textField->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(-halfWindowWidth * 0.25f).set_y(halfWindowHeight * 0.75f);
-	uiObjList.push_back(textField);
+	textField->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(-300).set_y(0);
+	TextField* textField2 = new TextField("textfield2", textfieldbg, "Char", Color(0, 0, 0), textSize);
+	textField2->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(200).set_y(0);
+	Button* button = new Button("button");
+	button->set_scale_x(textfieldscaleX * aspectXRatio).set_scale_y(textfieldscaleY * aspectYRatio).set_x(200).set_y(0);
+	ikc->keyname = textField;
+	ikc->keyinput = textField2;
+	ikc->keyinputbutton = button;
+
+	uiObjList.push_back(ikc);
 }
 
 void COptionScene::Update(double dt)
@@ -114,7 +124,7 @@ void COptionScene::Render()
 {
 	if (SceneManager::GetInstance()->IsSceneAtBottom(this))
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	glViewport(0, 0, static_cast<GLsizei>(Application::GetInstance().GetWindowWidth()), static_cast<GLsizei>(Application::GetInstance().GetWindowHeight()));
 
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(CameraManager::GetInstance()->GetFrustumFoV(),
 		CameraManager::GetInstance()->GetFrustumAspect(), CameraManager::GetInstance()->GetNearPlane(), CameraManager::GetInstance()->GetFarPlane());
@@ -161,6 +171,35 @@ void COptionScene::Render()
 			ms.Translate(tf->x, tf->y, 2);
 			ms.Scale(tf->textScale, tf->textScale, 1);
 			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), tf->text, tf->textColor);
+			ms.PopMatrix();
+		}
+		InputKeyConfig* ikc = dynamic_cast<InputKeyConfig*>(*it);
+		if (ikc)
+		{
+			ms.PushMatrix();
+			ms.Translate(ikc->x, ikc->y, 1);
+
+			TextField* tField = static_cast<TextField*>(ikc->keyname);
+			ms.PushMatrix();
+			ms.Translate(tField->x, tField->y, 1);
+			ms.Scale(tField->scale_x, tField->scale_y, 1);
+			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), tField->text, tField->textColor);
+			ms.PopMatrix();
+
+			tField = static_cast<TextField*>(ikc->keyinput);
+			ms.PushMatrix();
+			ms.Translate(tField->x, tField->y, 1);
+			ms.Scale(tField->scale_x, tField->scale_y, 1);
+			RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), tField->text, tField->textColor);
+			ms.PopMatrix();
+
+			//Button* button = static_cast<Button*>(ikc->keyinputbutton);
+			//ms.PushMatrix();
+			//ms.Translate(button->x, button->y, 1);
+			//ms.Scale(tField->scale_x, tField->scale_y, 1);
+			//RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("TEXT"), tf->text, tf->textColor);
+			//ms.PopMatrix();
+
 			ms.PopMatrix();
 		}
 	}

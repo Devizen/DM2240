@@ -201,6 +201,13 @@ void Application::Run()
 		//Swap buffers
 		glfwSwapBuffers(m_window);
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
+		if (KeyboardController::GetInstance()->IsKeyDown(VK_LMENU) && KeyboardController::GetInstance()->IsKeyPressed(VK_RETURN)) {
+			if (Application::GetInstance().screenMode) {
+				Application::GetInstance().MakeWindowedMode();
+			}
+			else
+				Application::GetInstance().MakeFullScreen();
+		}
 
 		PostInputUpdate();
         m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
